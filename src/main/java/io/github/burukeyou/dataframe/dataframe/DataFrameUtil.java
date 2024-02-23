@@ -1,6 +1,7 @@
 package io.github.burukeyou.dataframe.dataframe;
 
 
+import io.github.burukeyou.dataframe.JDFrame;
 import io.github.burukeyou.dataframe.dataframe.item.FItem2;
 import io.github.burukeyou.dataframe.dataframe.item.FItem3;
 import io.github.burukeyou.dataframe.dataframe.item.FItem4;
@@ -36,7 +37,7 @@ public class DataFrameUtil {
             return;
         }
 
-        BigDecimal sum = DataFrame.read(dataList).sum(rateGetFunction);
+        BigDecimal sum = JDFrame.read(dataList).sum(rateGetFunction);
         T t = dataList.get(dataList.size() - 1);
         BigDecimal totalSum =  rateColumnIsPercentage ? new BigDecimal("100") : new BigDecimal("1");
         BigDecimal diff = totalSum.subtract(sum);
@@ -74,7 +75,7 @@ public class DataFrameUtil {
                                                Function<T,R> function,
                                                SetFunction<T,BigDecimal> setFunction){
         // 汇总该列的和
-        BigDecimal sum = DataFrame.read(dataList).sum(function);
+        BigDecimal sum = JDFrame.read(dataList).sum(function);
         calcOccupyForList(dataList, function, setFunction, sum);
     }
 
@@ -100,7 +101,7 @@ public class DataFrameUtil {
     public static <T,E> List<FItem3<T,E, BigDecimal>> calcOccupyForItem2(List<FItem2<T,E>> dataList,
                                                                          Function<FItem2<T,E>,E> function){
         // 汇总该列的和
-        BigDecimal sum = DataFrame.read(dataList).sum(function);
+        BigDecimal sum = JDFrame.read(dataList).sum(function);
         return calcOccupyForItem2(dataList,function,sum);
     }
 
@@ -128,7 +129,7 @@ public class DataFrameUtil {
     public static <T,E,R extends Number> List<FItem4<T,E, R,BigDecimal>> calcOccupyForItem3(List<FItem3<T,E, R>> dataList,
                                                                                             Function<FItem3<T,E, R>, R> function){
         // 汇总该列的和
-        BigDecimal sum = DataFrame.read(dataList).sum(function);
+        BigDecimal sum = JDFrame.read(dataList).sum(function);
         List<FItem4<T,E, R,BigDecimal>> result = new ArrayList<>(dataList.size());
         for (FItem3<T,E, R> item : dataList) {
             R value = function.apply(item);

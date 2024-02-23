@@ -1,5 +1,6 @@
 package io.github.burukeyou.dataframe.dataframe;
 
+import io.github.burukeyou.dataframe.JDFrame;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -137,8 +138,8 @@ public class DFList<T> {
     }
 
 
-    public DataFrame<T> toDataFrame(){
-        return DataFrame.read(data);
+    public JDFrame<T> toDataFrame(){
+        return JDFrame.read(data);
     }
 
     public List<T> build(){

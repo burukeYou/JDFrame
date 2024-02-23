@@ -1,6 +1,7 @@
 package io.github.burukeyou.dataframe.dataframe;
 
 
+import io.github.burukeyou.dataframe.JDFrame;
 import io.github.burukeyou.dataframe.dataframe.item.FItem2;
 import io.github.burukeyou.dataframe.dataframe.item.FItem3;
 import io.github.burukeyou.dataframe.dataframe.item.FItem4;
@@ -19,30 +20,25 @@ import static java.util.stream.Collectors.*;
 
 
 /**
- * DataFrame
- * <p>
- * 注意:
- * 暂时不支持流复用， 请重新read生成流
- *
  * @author caizhihao
  */
-public class DataFrame<T> {
+public class JDFrameImpl<T> implements JDFrame<T> {
 
     protected Stream<T> data;
 
-    public DataFrame(List<T> list) {
+    public JDFrameImpl(List<T> list) {
         this.data = list.stream();
     }
 
-    public static <T> DataFrame<T> read(List<T> list) {
-        return new DataFrame<>(list);
+    private static <T> JDFrameImpl<T> read(List<T> list) {
+        return new JDFrameImpl<>(list);
     }
 
     /**
      * ===========================   原生stream包装相关  =====================================
      **/
 
-    public DataFrame<T> filter(Predicate<? super T> predicate) {
+    public JDFrameImpl<T> filter(Predicate<? super T> predicate) {
         data = data.filter(predicate);
         return this;
     }
@@ -64,12 +60,12 @@ public class DataFrame<T> {
      * ===========================   排序相关  =====================================
      **/
 
-    public DataFrame<T> sortDesc(Comparator<T> comparator) {
+    public JDFrameImpl<T> sortDesc(Comparator<T> comparator) {
         data = data.sorted(comparator.reversed());
         return this;
     }
 
-    public <R extends Comparable<R>> DataFrame<T> sortDesc(Function<T, R> function) {
+    public <R extends Comparable<R>> JDFrameImpl<T> sortDesc(Function<T, R> function) {
         sortDesc(Comparator.comparing(function));
         return this;
     }
@@ -79,7 +75,7 @@ public class DataFrame<T> {
     /**
      * 截取前n个
      */
-    public DataFrame<T> first(int n) {
+    public JDFrameImpl<T> first(int n) {
         DFList<T> first = new DFList<>(toLists()).first(n);
         data = first.build().stream();
         return this;
@@ -89,7 +85,7 @@ public class DataFrame<T> {
      * ===========================   筛选相关  =====================================
      **/
 
-    public <R> DataFrame<T> whereNotNull(Function<T, R> function) {
+    public <R> JDFrameImpl<T> whereNotNull(Function<T, R> function) {
         data = data.filter(item -> {
             R r = function.apply(item);
             if (r == null) {
@@ -105,7 +101,7 @@ public class DataFrame<T> {
         return this;
     }
 
-    public <R extends Comparable<R>> DataFrame<T> whereBetween(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereBetween(Function<T, R> function, R start, R end) {
         // 筛选条件都不存在默认不筛选
         if (start == null && end == null) {
             return this;
@@ -124,7 +120,7 @@ public class DataFrame<T> {
     /**
      * 区间筛选 （前开后闭）
      */
-    public <R extends Comparable<R>> DataFrame<T> whereBetweenR(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereBetweenR(Function<T, R> function, R start, R end) {
         // 筛选条件都不存在默认不筛选
         if (start == null && end == null) {
             return this;
@@ -142,7 +138,7 @@ public class DataFrame<T> {
         return this;
     }
 
-    public <R extends Comparable<R>> DataFrame<T> whereNotBetween(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereNotBetween(Function<T, R> function, R start, R end) {
         // 筛选条件不存在默认不筛选
         if (start == null || end == null) {
             return this;
@@ -152,7 +148,7 @@ public class DataFrame<T> {
         return this;
     }
 
-    public <R> DataFrame<T> whereIn(Function<T, R> function, List<R> list) {
+    public <R> JDFrameImpl<T> whereIn(Function<T, R> function, List<R> list) {
         if (list == null || list.isEmpty()) {
             return this;
         }
@@ -162,7 +158,7 @@ public class DataFrame<T> {
         return this;
     }
 
-    public <R> DataFrame<T> whereNotIn(Function<T, R> function, List<R> list) {
+    public <R> JDFrameImpl<T> whereNotIn(Function<T, R> function, List<R> list) {
         if (list == null || list.isEmpty()) {
             return this;
         }
@@ -172,17 +168,17 @@ public class DataFrame<T> {
         return this;
     }
 
-    public  DataFrame<T> whereTrue(Predicate<T> predicate) {
+    public JDFrameImpl<T> whereTrue(Predicate<T> predicate) {
         data = data.filter(predicate);
         return this;
     }
 
-    public  DataFrame<T> whereNotTrue(Predicate<T> predicate) {
+    public JDFrameImpl<T> whereNotTrue(Predicate<T> predicate) {
         data = data.filter(predicate.negate());
         return this;
     }
 
-    public <R> DataFrame<T> whereEq(Function<T, R> function, R value) {
+    public <R> JDFrameImpl<T> whereEq(Function<T, R> function, R value) {
         if (null == value) {
             return this;
         }
@@ -191,7 +187,7 @@ public class DataFrame<T> {
         return this;
     }
 
-    public <R> DataFrame<T> whereNotEq(Function<T, R> function, R value) {
+    public <R> JDFrameImpl<T> whereNotEq(Function<T, R> function, R value) {
         // 筛选条件不存在默认不筛选
         if (value == null) {
             return this;
@@ -202,7 +198,7 @@ public class DataFrame<T> {
     }
 
 
-    public <R extends Comparable<R>> DataFrame<T> whereGt(Function<T, R> function, R value) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereGt(Function<T, R> function, R value) {
         // 筛选条件不存在默认不筛选
         if (value == null) {
             return this;
@@ -212,7 +208,7 @@ public class DataFrame<T> {
         return this;
     }
 
-    public <R extends Comparable<R>> DataFrame<T> whereGe(Function<T, R> function, R value) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereGe(Function<T, R> function, R value) {
         // 筛选条件不存在默认不筛选
         if (value == null) {
             return this;
@@ -222,7 +218,7 @@ public class DataFrame<T> {
         return this;
     }
 
-    public <R extends Comparable<R>> DataFrame<T> whereLt(Function<T, R> function, R value) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereLt(Function<T, R> function, R value) {
         // 筛选条件不存在默认不筛选
         if (value == null) {
             return this;
@@ -232,7 +228,7 @@ public class DataFrame<T> {
         return this;
     }
 
-    public <R extends Comparable<R>> DataFrame<T> whereLe(Function<T, R> function, R value) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereLe(Function<T, R> function, R value) {
         // 筛选条件不存在默认不筛选
         if (value == null) {
             return this;
@@ -243,7 +239,7 @@ public class DataFrame<T> {
     }
 
 
-    public <R> DataFrame<T> whereLike(Function<T, R> function, R value) {
+    public <R> JDFrameImpl<T> whereLike(Function<T, R> function, R value) {
         // 筛选条件不存在默认不筛选
         if (value == null) {
             return this;
@@ -253,7 +249,7 @@ public class DataFrame<T> {
         return this;
     }
 
-    public <R> DataFrame<T> whereNotLike(Function<T, R> function, R value) {
+    public <R> JDFrameImpl<T> whereNotLike(Function<T, R> function, R value) {
         // 筛选条件不存在默认不筛选
         if (value == null) {
             return this;
@@ -263,7 +259,7 @@ public class DataFrame<T> {
         return this;
     }
 
-    public <R> DataFrame<T> whereLikeLeft(Function<T, R> function, R value) {
+    public <R> JDFrameImpl<T> whereLikeLeft(Function<T, R> function, R value) {
         // 筛选条件不存在默认不筛选
         if (value == null) {
             return this;
@@ -273,7 +269,7 @@ public class DataFrame<T> {
         return this;
     }
 
-    public <R> DataFrame<T> whereLikeRight(Function<T, R> function, R value) {
+    public <R> JDFrameImpl<T> whereLikeRight(Function<T, R> function, R value) {
         // 筛选条件不存在默认不筛选
         if (value == null) {
             return this;
