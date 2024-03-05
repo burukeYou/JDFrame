@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class FItem2<T1, T2> {
+public class FT2<T1, T2> {
 
     private T1 c1;
     private T2 c2;

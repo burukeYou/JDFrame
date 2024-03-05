@@ -1,1 +1,8 @@
-待排期
+
+
+# JDFrame
+一个jvm层级的简单DataFrame，语意化和简化java8的stream流式处理
+
+目前市面上其实也存在一些java的DataFrame框架比如 tablesaw，
+但是他们得硬编码去指定字段名，这对于有代码洁癖的实在难以忍受
+而JDFrame就是使用匿名函数去指定的
