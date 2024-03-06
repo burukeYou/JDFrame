@@ -36,7 +36,6 @@ public interface IFrame<T> {
 
     <R extends Comparable<R>> IFrame<T> sortAsc(Function<T, R> function);
 
-
     /** ===========================   截取相关  ===================================== **/
 
     /**
