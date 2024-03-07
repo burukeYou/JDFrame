@@ -22,10 +22,6 @@ public class DFList<T> {
 
     private List<T> data;
 
-    public static <T> DFList<T> read(List<T> data){
-        return new DFList<>(data);
-    }
-
     /**
      * 取前N个
      * @param n
@@ -48,39 +44,40 @@ public class DFList<T> {
         return this;
     }
 
-    /**
-     * 取前N个，如果由于大小相同存在不止N个，则全部返回
-     * @param n
-     * @param comparator
-     * @return
-     */
-    public DFList<T> firstWithSame(int n,Comparator<T> comparator){
+    public DFList<T> rankingDesc(Comparator<T> comparator, int n) {
+        return rankingAsc(comparator.reversed(),n);
+    }
+
+    public DFList<T> rankingAsc(Comparator<T> comparator, int n) {
         if (data.isEmpty()){
             return this;
         }
-
         if (n <= 0){
             throw new IllegalArgumentException("first N should greater than zero");
         }
 
-        if (n >= data.size()){
-            return this;
-        }
+        sortAsc(comparator);
 
-        List<T> tempData = new ArrayList<>(data.subList(0, n));
-        // 后面再加上和第N个大小相同的对象
-        T t = data.get(n - 1);
-        for(int i = n;i<data.size();i++){
-            int compare = comparator.compare(t, data.get(i));
-            if(compare == 0){
-                tempData.add(data.get(i));
-            }else{
+        int rank = 1;
+        List<T> tmpDataList = new ArrayList<>();
+        tmpDataList.add(data.get(0));
+        for (int i = 1; i < data.size(); i++) {
+            T pre = data.get(i-1);
+            T cur = data.get(i);
+            if (comparator.compare(pre,cur) != 0){
+                rank += 1;
+            }
+            if (rank <= n){
+                tmpDataList.add(cur);
+            }else {
                 break;
             }
         }
-        data = tempData;
+        data = tmpDataList;
         return this;
     }
+
+
 
     public T first() {
         if (data.isEmpty()){
@@ -148,4 +145,6 @@ public class DFList<T> {
     public <K,V> Map<K,V> toMap(Function<T,K> function,Function<T,V> function2){
         return data.stream().collect(Collectors.toMap(function, function2));
     }
+
+
 }

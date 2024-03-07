@@ -1,6 +1,7 @@
 package io.github.burukeyou.dataframe.dataframe;
 
 
+import io.github.burukeyou.dataframe.IFrame;
 import io.github.burukeyou.dataframe.SDFrame;
 import io.github.burukeyou.dataframe.dataframe.item.FT2;
 import io.github.burukeyou.dataframe.dataframe.item.FT3;
@@ -34,6 +35,21 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
     }
 
     @Override
+    public <R> SDFrame<R> map(Function<T, R> map) {
+        return returnDF(stream().map(map).collect(toList()));
+    }
+
+    @Override
+    public SDFrameImpl<T> union(IFrame<T> other) {
+        if (other.count() <= 0){
+            return this;
+        }
+        List<T> ts = toLists();
+        ts.addAll(other.toLists());
+        return returnDF(ts);
+    }
+
+    @Override
     public List<T> toLists() {
         return data.collect(toList());
     }
@@ -42,6 +58,8 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
     public  Stream<T> stream(){
         return data;
     }
+
+
 
     /**
      * ===========================   排序相关  =====================================
@@ -71,25 +89,91 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
         return this;
     }
 
+    @Override
+    public SDFrame<T> rankingAsc(Comparator<T> comparator, int n) {
+        DFList<T> first = new DFList<>(toLists()).rankingAsc(comparator,n);
+        data = first.build().stream();
+        return this;
+    }
+
+    @Override
+    public <R extends Comparable<R>> SDFrame<T> rankingAsc(Function<T, R> function, int n) {
+        return rankingAsc(Comparator.comparing(function),n);
+    }
+
+    @Override
+    public SDFrame<T> rankingDesc(Comparator<T> comparator, int n) {
+        DFList<T> first = new DFList<>(toLists()).rankingDesc(comparator,n);
+        data = first.build().stream();
+        return this;
+    }
+
+    @Override
+    public <R extends Comparable<R>> SDFrame<T> rankingDesc(Function<T, R> function, int n) {
+        return rankingDesc(Comparator.comparing(function),n);
+    }
+
 
     /** ===========================   截取相关  ===================================== **/
 
     /**
      * 截取前n个
      */
+    @Override
     public SDFrameImpl<T> first(int n) {
         DFList<T> first = new DFList<>(toLists()).first(n);
         data = first.build().stream();
         return this;
     }
 
+    @Override
+    public SDFrameImpl<T> last(int n) {
+        DFList<T> first = new DFList<>(toLists()).last(n);
+        data = first.build().stream();
+        return this;
+    }
+
+    @Override
+    public SDFrame<T> distinct() {
+        data = stream().distinct();
+        return this;
+    }
+
+    @Override
+    public <R extends Comparable<R>> SDFrame<T> distinct(Function<T, R> function) {
+        return distinct(Comparator.comparing(function));
+    }
+
+    @Override
+    public <R extends Comparable<R>> SDFrame<T> distinct(Comparator<T> comparator) {
+        ArrayList<T> tmp = stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparator)), ArrayList::new));
+        data = tmp.stream();
+        return this;
+    }
+
+    @Override
+    public long countDistinct(Comparator<T> comparator) {
+        return distinct(comparator).count();
+    }
+
+    @Override
+    public <R extends Comparable<R>> long countDistinct(Function<T, R> function) {
+        return countDistinct(Comparator.comparing(function));
+    }
+
     /**
      * ===========================   筛选相关  =====================================
      **/
+    @Override
+    public <R> SDFrame<T> whereNull(Function<T, R> function) {
+        return returnThis(whereNotNullStream(function));
+    }
+
     public <R> SDFrame<T> whereNotNull(Function<T, R> function) {
         return returnThis(whereNotNullStream(function));
     }
 
+    @Override
     public <R extends Comparable<R>> SDFrame<T> whereBetween(Function<T, R> function, R start, R end) {
         if (start == null && end == null) {
             return this;
@@ -97,7 +181,15 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
         return returnThis(whereBetweenStream(function,start,end));
     }
 
+    @Override
+    public <R extends Comparable<R>> SDFrame<T> whereBetweenN(Function<T, R> function, R start, R end) {
+        if (start == null && end == null) {
+            return this;
+        }
+        return returnThis(whereBetweenNStream(function,start,end));
+    }
 
+    @Override
     public <R extends Comparable<R>> SDFrame<T> whereBetweenR(Function<T, R> function, R start, R end) {
         // 筛选条件都不存在默认不筛选
         if (start == null && end == null) {
@@ -106,12 +198,27 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
         return returnThis(whereBetweenRStream(function,start,end));
     }
 
+    @Override
+    public <R extends Comparable<R>> SDFrame<T> whereBetweenL(Function<T, R> function, R start, R end) {
+        if (start == null && end == null) {
+            return this;
+        }
+        return returnThis(whereBetweenLStream(function,start,end));
+    }
 
+    @Override
     public <R extends Comparable<R>> SDFrame<T> whereNotBetween(Function<T, R> function, R start, R end) {
         if (start == null || end == null) {
             return this;
         }
         return returnThis(whereNotBetweenStream(function,start,end));
+    }
+    @Override
+    public <R extends Comparable<R>> SDFrame<T> whereNotBetweenN(Function<T, R> function, R start, R end) {
+        if (start == null || end == null) {
+            return this;
+        }
+        return returnThis(whereNotBetweenNStream(function,start,end));
     }
 
 
@@ -227,76 +334,76 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
 
 
 
-    public <K> SDFrame<FT2<K, BigDecimal>> groupBySum(Function<T, K> K,
+    public <K> SDFrame<FT2<K, BigDecimal>> groupBySum(Function<T, K> key,
                                                      ToBigDecimalFunction<T> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
-        List<FT2<K, BigDecimal>> collect = group(K, tBigDecimalCollector);
+        List<FT2<K, BigDecimal>> collect = group(key, tBigDecimalCollector);
         return returnDF(collect);
     }
 
 
-    public <K, J> SDFrame<FT3<K, J, BigDecimal>> groupBySum(Function<T, K> K,
-                                                           Function<T, J> K2,
+    public <K, J> SDFrame<FT3<K, J, BigDecimal>> groupBySum(Function<T, K> key,
+                                                           Function<T, J> key2,
                                                            ToBigDecimalFunction<T> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
-        List<FT3<K, J, BigDecimal>> collect = group(K, K2, tBigDecimalCollector);
+        List<FT3<K, J, BigDecimal>> collect = group(key, key2, tBigDecimalCollector);
         return returnDF(collect);
     }
 
 
 
-    public <K, J, H> SDFrame<FT4<K, J, H, BigDecimal>> groupBySum(Function<T, K> K,
-                                                                 Function<T, J> J,
-                                                                 Function<T, H> H,
+    public <K, J, H> SDFrame<FT4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
+                                                                 Function<T, J> key2,
+                                                                 Function<T, H> key3,
                                                                  ToBigDecimalFunction<T> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
-        List<FT4<K, J, H, BigDecimal>> collect = group(K, J, H, tBigDecimalCollector);
+        List<FT4<K, J, H, BigDecimal>> collect = group(key, key2, key3, tBigDecimalCollector);
         return returnDF(collect);
     }
 
 
-    public <K> SDFrame<FT2<K, Long>> groupByCount(Function<T, K> K) {
+    public <K> SDFrame<FT2<K, Long>> groupByCount(Function<T, K> key) {
         Collector<Object, ?, Long> counting = counting();
-        Map<K, Long> collect = stream().collect(groupingBy(K, counting));
+        Map<K, Long> collect = stream().collect(groupingBy(key, counting));
         return returnDF(convertToDataFrameItem2(collect));
     }
 
 
-    public <K, J> SDFrame<FT3<K, J, Long>> groupByCount(Function<T, K> K,
-                                                       Function<T, J> J) {
+    public <K, J> SDFrame<FT3<K, J, Long>> groupByCount(Function<T, K> key,
+                                                       Function<T, J> key2) {
         Collector<Object, ?, Long> counting = counting();
-        Map<K, Map<J, Long>> collect = stream().collect(groupingBy(K, groupingBy(J, counting)));
+        Map<K, Map<J, Long>> collect = stream().collect(groupingBy(key, groupingBy(key2, counting)));
         return returnDF(convertToDataFrameItem3(collect));
     }
 
 
-    public <K, J, H> SDFrame<FT4<K, J, H, Long>> groupByCount(Function<T, K> K,
-                                                             Function<T, J> J,
-                                                             Function<T, H> H) {
+    public <K, J, H> SDFrame<FT4<K, J, H, Long>> groupByCount(Function<T, K> key,
+                                                             Function<T, J> key2,
+                                                             Function<T, H> key3) {
         Collector<Object, ?, Long> counting = counting();
-        Map<K, Map<J, Map<H, Long>>> collect = stream().collect(groupingBy(K, groupingBy(J, groupingBy(H, counting))));
+        Map<K, Map<J, Map<H, Long>>> collect = stream().collect(groupingBy(key, groupingBy(key2, groupingBy(key3, counting))));
         return returnDF(convertToDataFrameItem4(collect));
     }
 
 
-    public <K> SDFrame<FT3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> K, ToBigDecimalFunction<T> value) {
+    public <K> SDFrame<FT3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, ToBigDecimalFunction<T> value) {
         List<T> dataList = toLists();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
-        List<FT2<K, BigDecimal>> sumList = returnDF(dataList).group(K, tBigDecimalCollector);
-        List<FT2<K, Long>> countList =  read(dataList).groupByCount(K).toLists();
+        List<FT2<K, BigDecimal>> sumList = returnDF(dataList).group(key, tBigDecimalCollector);
+        List<FT2<K, Long>> countList =  read(dataList).groupByCount(key).toLists();
         Map<K, Long> countMap = countList.stream().collect(toMap(FT2::getC1, FT2::getC2));
         List<FT3<K, BigDecimal, Long>> collect = sumList.stream().map(e -> new FT3<>(e.getC1(), e.getC2(), countMap.get(e.getC1()))).collect(Collectors.toList());
         return returnDF(collect);
     }
 
 
-    public <K, J> SDFrame<FT4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> K,
-                                                                      Function<T, J> J,
+    public <K, J> SDFrame<FT4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key,
+                                                                      Function<T, J> key2,
                                                                       ToBigDecimalFunction<T> value) {
         List<T> dataList = toLists();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
-        List<FT3<K, J, BigDecimal>> sumList = returnDF(dataList).group(K, J, tBigDecimalCollector);
-        List<FT3<K, J, Long>> countList =  read(dataList).groupByCount(K, J).toLists();
+        List<FT3<K, J, BigDecimal>> sumList = returnDF(dataList).group(key, key2, tBigDecimalCollector);
+        List<FT3<K, J, Long>> countList =  read(dataList).groupByCount(key, key2).toLists();
         // 合并sum和count字段
         Map<String, FT3<K, J, Long>> countMap = countList.stream().collect(toMap(e -> e.getC1() + "_" + e.getC2(), Function.identity()));
         List<FT4<K, J, BigDecimal, Long>> collect = sumList.stream().map(e -> {
@@ -307,75 +414,75 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
     }
 
 
-    public <K> SDFrame<FT2<K, BigDecimal>> groupByAvg(Function<T, K> K,
+    public <K> SDFrame<FT2<K, BigDecimal>> groupByAvg(Function<T, K> key,
                                                      ToBigDecimalFunction<T> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
-        List<FT2<K, BigDecimal>> collect = group(K, tBigDecimalCollector);
+        List<FT2<K, BigDecimal>> collect = group(key, tBigDecimalCollector);
         return returnDF(collect);
     }
 
 
-    public <K, J> SDFrame<FT3<K, J, BigDecimal>> groupByAvg(Function<T, K> K,
-                                                           Function<T, J> J,
+    public <K, J> SDFrame<FT3<K, J, BigDecimal>> groupByAvg(Function<T, K> key,
+                                                           Function<T, J> key2,
                                                            ToBigDecimalFunction<T> value) {
 
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
-        List<FT3<K, J, BigDecimal>> collect = group(K, J, tBigDecimalCollector);
+        List<FT3<K, J, BigDecimal>> collect = group(key, key2, tBigDecimalCollector);
         return returnDF(collect);
     }
 
 
-    public <K, J, H> SDFrame<FT4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> K,
-                                                                 Function<T, J> J,
-                                                                 Function<T, H> H,
+    public <K, J, H> SDFrame<FT4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
+                                                                 Function<T, J> key2,
+                                                                 Function<T, H> key3,
                                                                  ToBigDecimalFunction<T> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
-        List<FT4<K, J, H, BigDecimal>> collect = group(K, J, H, tBigDecimalCollector);
+        List<FT4<K, J, H, BigDecimal>> collect = group(key, key2, key3, tBigDecimalCollector);
         return returnDF(collect);
     }
 
 
 
-    public <K, V extends Comparable<V>> SDFrame<FT2<K, T>> groupByMax(Function<T, K> K,
+    public <K, V extends Comparable<V>> SDFrame<FT2<K, T>> groupByMax(Function<T, K> key,
                                                                      Function<T, V> value) {
-        Map<K, T> collect = stream().collect(groupingBy(K, collectingAndThen(toList(), e -> e.stream().min(Comparator.comparing(value)).orElse(null))));
+        Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), e -> e.stream().min(Comparator.comparing(value)).orElse(null))));
         return returnDF(convertToDataFrameItem2(collect));
     }
 
 
-    public <K, V extends Comparable<V>> SDFrame<FT2<K, T>> groupByMin(Function<T, K> K,
+    public <K, V extends Comparable<V>> SDFrame<FT2<K, T>> groupByMin(Function<T, K> key,
                                                                      Function<T, V> value) {
-        Map<K, T> collect = stream().collect(groupingBy(K, collectingAndThen(toList(), e -> e.stream().min(Comparator.comparing(value)).orElse(null))));
+        Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), e -> e.stream().min(Comparator.comparing(value)).orElse(null))));
         return returnDF(convertToDataFrameItem2(collect));
     }
 
 
-    public <K, V extends Comparable<V>> SDFrame<FT2<K, MaxMin<V>>> groupByMaxAndMinValue(Function<T, K> K,
-                                                                                        Function<T, V> value) {
-        Map<K, MaxMin<V>> map = stream().collect(groupingBy(K, collectingAndThen(toList(), getListGroupMaxMinValueFunction(value))));
+    public <K, V extends Comparable<V>> SDFrame<FT2<K, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
+                                                                                      Function<T, V> value) {
+        Map<K, MaxMin<V>> map = stream().collect(groupingBy(key, collectingAndThen(toList(), getListGroupMaxMinValueFunction(value))));
         return returnDF(convertToDataFrameItem2(map));
     }
 
 
-    public <K, J, V extends Comparable<V>> SDFrame<FT3<K, J, MaxMin<V>>> groupByMaxAndMinValue(Function<T, K> K,
-                                                                                              Function<T, J> J,
-                                                                                              Function<T, V> value) {
-        Map<K, Map<J, MaxMin<V>>> map = stream().collect(groupingBy(K, groupingBy(J, collectingAndThen(toList(), getListGroupMaxMinValueFunction(value)))));
+    public <K, J, V extends Comparable<V>> SDFrame<FT3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
+                                                                                            Function<T, J> key2,
+                                                                                            Function<T, V> value) {
+        Map<K, Map<J, MaxMin<V>>> map = stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListGroupMaxMinValueFunction(value)))));
         return returnDF(convertToDataFrameItem3(map));
     }
 
 
-    public <K, V extends Comparable<V>> SDFrame<FT2<K, MaxMin<T>>> groupByMaxAndMin(Function<T, K> K,
-                                                                                   Function<T, V> value) {
-        Map<K, MaxMin<T>> map = stream().collect(groupingBy(K, collectingAndThen(toList(), getListGroupMaxMinFunction(value))));
+    public <K, V extends Comparable<V>> SDFrame<FT2<K, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
+                                                                                 Function<T, V> value) {
+        Map<K, MaxMin<T>> map = stream().collect(groupingBy(key, collectingAndThen(toList(), getListGroupMaxMinFunction(value))));
         return returnDF(convertToDataFrameItem2(map));
     }
 
 
-    public <K, J, V extends Comparable<V>> SDFrame<FT3<K, J, MaxMin<T>>> groupByMaxAndMin(Function<T, K> K,
-                                                                                         Function<T, J> J,
-                                                                                         Function<T, V> value) {
-        Map<K, Map<J, MaxMin<T>>> map = stream().collect(groupingBy(K, groupingBy(J, collectingAndThen(toList(), getListGroupMaxMinFunction(value)))));
+    public <K, J, V extends Comparable<V>> SDFrame<FT3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
+                                                                                       Function<T, J> key2,
+                                                                                       Function<T, V> value) {
+        Map<K, Map<J, MaxMin<T>>> map = stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListGroupMaxMinFunction(value)))));
         return returnDF(convertToDataFrameItem3(map));
     }
 

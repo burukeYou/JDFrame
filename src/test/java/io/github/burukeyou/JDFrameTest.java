@@ -3,6 +3,7 @@ package io.github.burukeyou;
 import io.github.burukeyou.data.Student;
 import io.github.burukeyou.dataframe.JDFrame;
 import io.github.burukeyou.dataframe.SDFrame;
+import io.github.burukeyou.dataframe.dataframe.MaxMin;
 import io.github.burukeyou.dataframe.dataframe.item.FT2;
 import org.junit.Test;
 
@@ -16,26 +17,46 @@ public class JDFrameTest {
     static List<Student> studentList = new ArrayList<>();
 
     static {
-        studentList.add(new Student("a","一中","一年级",11, new BigDecimal(1)));
-        studentList.add(new Student("b","一中","一年级",12, new BigDecimal(2)));
-        studentList.add(new Student("c","二中","一年级",13, new BigDecimal(3)));
-        studentList.add(new Student("d","二中","一年级",null, new BigDecimal(4)));
-        studentList.add(new Student("e","三中","一年级",null, new BigDecimal(5)));
+        studentList.add(new Student(1,"a","一中","一年级",11, new BigDecimal(1)));
+        studentList.add(new Student(2,"a","一中","一年级",11, new BigDecimal(1)));
+        studentList.add(new Student(3,"b","一中","一年级",12, new BigDecimal(2)));
+        studentList.add(new Student(4,"c","二中","一年级",13, new BigDecimal(3)));
+        studentList.add(new Student(5,"d","二中","一年级",14, new BigDecimal(4)));
+        studentList.add(new Student(6,"e","三中","二年级",null, new BigDecimal(5)));
     }
 
+    /**
+     *
+     */
+    @Test
+    public void testDistinct(){
+        List<Student> students = SDFrame.read(studentList).distinct().toLists();
+        List<Student> students1 = SDFrame.read(studentList).distinct(Student::getSchool).toLists();
+        List<Student> students15 = SDFrame.read(studentList).distinct(Student::getSchool).distinct(Student::getLevel).toLists();
+        List<Student> students2 = SDFrame.read(studentList).distinct(e -> e.getSchool() + e.getLevel()).toLists();
+        System.out.println();
+    }
 
 
     @Test
     public void test1() {
         BigDecimal sum = SDFrame.read(studentList)
                 .whereBetween(Student::getAge, 13, 16)
-                .sum(Student::getScore);
-
+                .sum(Student::getAge);
+        MaxMin<Student> studentMaxMin = SDFrame.read(studentList).maxMin(Student::getAge);
+        MaxMin<Integer> integerMaxMin = SDFrame.read(studentList).maxMinValue(Student::getAge);
+        System.out.println();
 
         System.out.println(sum);
 
         List<FT2<String, BigDecimal>> d2 = SDFrame.read(studentList)
                 .groupBySum(Student::getSchool, Student::getScore).toLists();
+
+        SDFrame<FT2<String, BigDecimal>> ft2SDFrame = SDFrame.read(studentList)
+                .groupBySum(Student::getSchool, Student::getScore);
+
+        SDFrame<Student> map = ft2SDFrame.map(e -> new Student(e.getC1(), e.getC2()));
+        List<Student> students = map.toLists();
 
         System.out.println();
     }

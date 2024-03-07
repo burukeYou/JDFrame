@@ -1,3 +1,4 @@
+/*
 package io.github.burukeyou.dataframe.dataframe;
 
 
@@ -19,14 +20,16 @@ public class DataFrameUtil {
 
 
 
-    /**
+    */
+/**
      * 根据列表的某一个列计算占比，并把占比赋值给其他一列
      * @param dataList          列表数据
      * @param function          计算的列
      * @param setFunction       占比赋值的列
      * @param <T>               列表类型
      * @param <R>               计算的列的类型
-     */
+     *//*
+
     public static <T,R> void calcOccupyForList(List<T> dataList,
                                                Function<T,R> function,
                                                SetFunction<T,BigDecimal> setFunction){
@@ -49,11 +52,13 @@ public class DataFrameUtil {
         }
     }
 
-    /**
+    */
+/**
      * 对DataFrame的某一列进行计算占比，并把结果作为新的一列
      * @param dataList              数据列表
      * @param function              计算的列
-     */
+     *//*
+
     public static <T,E> List<FT3<T,E, BigDecimal>> calcOccupyForItem2(List<FT2<T,E>> dataList,
                                                                       Function<FT2<T,E>,E> function){
         // 汇总该列的和
@@ -61,12 +66,14 @@ public class DataFrameUtil {
         return calcOccupyForItem2(dataList,function,sum);
     }
 
-    /**
+    */
+/**
      * 对DataFrame的某一列进行计算占比，并把结果作为新的一列
      * @param dataList              数据列表
      * @param function              计算的列
      * @param sum                   手动指定计算占比的分母
-     */
+     *//*
+
     public static <T,E> List<FT3<T,E, BigDecimal>> calcOccupyForItem2(List<FT2<T,E>> dataList,
                                                                       Function<FT2<T,E>,E> function,
                                                                       BigDecimal sum){
@@ -108,3 +115,4 @@ public class DataFrameUtil {
         System.out.println();
     }
 }
+*/

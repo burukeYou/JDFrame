@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class Student {
 
+    private int id;
     private String name;
     private String school;
     private String level;
@@ -18,5 +19,8 @@ public class Student {
     private BigDecimal score;
 
 
-
+    public Student(String level, BigDecimal score) {
+        this.level = level;
+        this.score = score;
+    }
 }

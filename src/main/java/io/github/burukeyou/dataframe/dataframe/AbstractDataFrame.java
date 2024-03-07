@@ -8,7 +8,6 @@ import io.github.burukeyou.dataframe.dataframe.item.FT4;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collector;
@@ -22,6 +21,20 @@ import static java.util.stream.Collectors.toList;
  * @param <T>
  */
 public abstract class AbstractDataFrame<T> implements IFrame<T> {
+
+    protected  <R> Stream<T> whereNullStream(Function<T, R> function) {
+        return stream().filter(item -> {
+            R r = function.apply(item);
+            if (r == null) {
+                return true;
+            }
+            if (r instanceof String) {
+                return "".equals(r);
+            } else {
+                return false;
+            }
+        });
+    }
 
     protected  <R> Stream<T> whereNotNullStream(Function<T, R> function) {
         return stream().filter(item -> {
@@ -49,21 +62,49 @@ public abstract class AbstractDataFrame<T> implements IFrame<T> {
         return stream;
     }
 
+    public <R extends Comparable<R>> Stream<T> whereBetweenNStream(Function<T, R> function, R start, R end) {
+        Stream<T> stream = streamFilterNull(function);
+        if (start == null) {
+            stream = stream.filter(e -> function.apply(e).compareTo(end) < 0);
+        } else if (end == null) {
+            stream = stream.filter(e -> function.apply(e).compareTo(start) > 0);
+        } else {
+            stream = stream.filter(e -> function.apply(e).compareTo(start) > 0 && function.apply(e).compareTo(end) < 0);
+        }
+        return stream;
+    }
+
     public <R extends Comparable<R>> Stream<T> whereBetweenRStream(Function<T, R> function, R start, R end) {
+        // 前开后闭
         Stream<T> stream = streamFilterNull(function);
         if (start == null) {
             stream = stream.filter(e -> function.apply(e).compareTo(end) <= 0);
         } else if (end == null) {
-            // 前开后闭
             stream = stream.filter(e -> function.apply(e).compareTo(start) > 0);
         } else {
-            // 前开后闭
             stream = stream.filter(e -> function.apply(e).compareTo(start) > 0 && function.apply(e).compareTo(end) <= 0);
         }
         return stream;
     }
 
+    public <R extends Comparable<R>> Stream<T> whereBetweenLStream(Function<T, R> function, R start, R end) {
+        // 前闭后开
+        Stream<T> stream = streamFilterNull(function);
+        if (start == null) {
+            stream = stream.filter(e -> function.apply(e).compareTo(end) < 0);
+        } else if (end == null) {
+            stream = stream.filter(e -> function.apply(e).compareTo(start) >= 0);
+        } else {
+            stream = stream.filter(e -> function.apply(e).compareTo(start) >= 0 && function.apply(e).compareTo(end) < 0);
+        }
+        return stream;
+    }
+
     public <R extends Comparable<R>> Stream<T> whereNotBetweenStream(Function<T, R> function, R start, R end) {
+        return streamFilterNull(function).filter(e -> function.apply(e).compareTo(start) <= 0 || function.apply(e).compareTo(end) >= 0);
+    }
+
+    public <R extends Comparable<R>> Stream<T> whereNotBetweenNStream(Function<T, R> function, R start, R end) {
         return streamFilterNull(function).filter(e -> function.apply(e).compareTo(start) < 0 || function.apply(e).compareTo(end) > 0);
     }
 
@@ -133,15 +174,28 @@ public abstract class AbstractDataFrame<T> implements IFrame<T> {
         }));
     }
 
-
-    public <R> Integer sumInt(Function<T, R> function){
-        return stream().map(function).filter(Objects::nonNull).mapToInt(e -> {
-            if (e instanceof Integer) {
-                return (Integer) e;
-            } else {
-                return new Integer(String.valueOf(e));
-            }
-        }).sum();
+    private static <R extends Number> R bigDecimalToClassValue(BigDecimal value, Class<R> valueClass) {
+        if (value == null) {
+           return null;
+        }
+        if (BigDecimal.class.equals(valueClass)){
+            return (R)value;
+        }
+        else if (Byte.class.equals(valueClass)) {
+            return valueClass.cast(value.byteValue());
+        } else if (Short.class.equals(valueClass)) {
+            return valueClass.cast(value.shortValue());
+        } else if (Integer.class.equals(valueClass) || int.class.equals(valueClass)) {
+            return (R)Integer.valueOf(value.intValue());
+        } else if (Long.class.equals(valueClass) || long.class.equals(valueClass)) {
+            return (R)Long.valueOf(value.longValue());
+        } else if (Float.class.equals(valueClass)) {
+            return(R)Float.valueOf(value.floatValue());
+        } else if (Double.class.equals(valueClass)) {
+            return (R)Double.valueOf(value.doubleValue());
+        } else {
+            throw new IllegalArgumentException("Unsupported Number class: " + valueClass.getName());
+        }
     }
 
 
@@ -159,31 +213,33 @@ public abstract class AbstractDataFrame<T> implements IFrame<T> {
         }
         return bigDecimalList.stream()
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .divide(BigDecimal.valueOf(bigDecimalList.size()), 2, RoundingMode.HALF_UP);
+                .divide(BigDecimal.valueOf(bigDecimalList.size()));
     }
 
-    public <R extends Comparable<R>> MaxMin<R> maxAndMinValue(Function<T, R> function) {
-        List<R> valueList = stream().map(function).filter(Objects::nonNull).collect(toList());
-        if (valueList.isEmpty()) {
-            return new MaxMin<>(null, null);
+    public <R extends Comparable<R>> MaxMin<R> maxMinValue(Function<T, R> function) {
+        MaxMin<T> maxAndMin = maxMin(function);
+        return new MaxMin<>(function.apply(maxAndMin.getMax()), function.apply(maxAndMin.getMin()));
+    }
+
+    public <R extends Comparable<R>> MaxMin<T> maxMin(Function<T, R> function) {
+        List<T> itemList = stream().filter(e -> function.apply(e) != null).collect(toList());
+        if (itemList.isEmpty()){
+            return new MaxMin<>(null,null);
         }
-        R max = valueList.get(0);
-        R min = valueList.get(0);
-        for (int i = 1; i < valueList.size(); i++) {
-            R cur = valueList.get(i);
-            if (cur.compareTo(max) >= 0) {
+        T max = itemList.get(0);
+        T min = itemList.get(0);
+        for (int i = 1; i < itemList.size(); i++) {
+            T cur = itemList.get(i);
+            R curValue = function.apply(cur);
+            R maxValue = function.apply(max);
+            R minValue = function.apply(min);
+            if (curValue.compareTo(maxValue) >= 0) {
                 max = cur;
             }
-            if (cur.compareTo(min) <= 0) {
+            if (curValue.compareTo(minValue) <= 0) {
                 min = cur;
             }
         }
-        return new MaxMin<>(max, min);
-    }
-
-    public <R extends Comparable<R>> MaxMin<T> maxAndMin(Function<T, R> function) {
-        T max = max(function);
-        T min = min(function);
         return new MaxMin<>(max, min);
     }
 
@@ -210,8 +266,8 @@ public abstract class AbstractDataFrame<T> implements IFrame<T> {
         return min.orElse(null);
     }
 
-    public int count() {
-        return (int) stream().count();
+    public long count() {
+        return stream().count();
     }
 
 
