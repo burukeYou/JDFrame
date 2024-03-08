@@ -23,7 +23,8 @@ public class JDFrameTest {
         studentList.add(new Student(3,"b","一中","一年级",12, new BigDecimal(2)));
         studentList.add(new Student(4,"c","二中","一年级",13, new BigDecimal(3)));
         studentList.add(new Student(5,"d","二中","一年级",14, new BigDecimal(4)));
-        studentList.add(new Student(6,"e","三中","二年级",15, new BigDecimal(5)));
+        studentList.add(new Student(6,"e","三中","二年级",14, new BigDecimal(5)));
+        studentList.add(new Student(7,"e","三中","二年级",15, new BigDecimal(5)));
     }
 
     /**
@@ -40,8 +41,8 @@ public class JDFrameTest {
 
     @Test
     public void testRank(){
-        SDFrame<Student> sdf = SDFrame.read(studentList).rankingAsc(Student::getAge, 3);
-        JDFrame<Student> df = JDFrame.read(studentList).rankingAsc(Student::getAge, 3);
+        SDFrame<Student> sdf = SDFrame.read(studentList).subRankingSameAsc(Student::getAge, 3);
+        JDFrame<Student> df = JDFrame.read(studentList).subRankingSameAsc(Student::getAge, 3);
         SDFrame<Student> union = sdf.union(df);
         //
         List<Student> students = union.toLists();
@@ -106,7 +107,35 @@ public class JDFrameTest {
 
     @Test
     public void testComun(){
-        List<String> columns = SDFrame.read(studentList).columns();
+       // SDFrame<Student> students = SDFrame.read(studentList).mapPercent(Student::getScore,Student::setScore,2);
+
+        SDFrame<Student> df = SDFrame.read(studentList);
+        Student head = df.head();
+        Student tail = df.tail();
+
+        List<Student> head1 = df.head(3);
+        List<Student> tail1 = df.tail(4);
+
+
+        SDFrame<List<Student>> sdFrame = df.partition(5);
+        List<List<Student>> lists = sdFrame.toLists();
+        System.out.println();
+
+        System.out.println();
+    }
+
+    @Test
+    public void testAddCol(){
+        SDFrame<Student> df = SDFrame.read(studentList);
+
+        //List<FT2<Student, Integer>> ft2s = df.addRankingSameCol(Comparator.comparing(Student::getAge)).toLists();
+
+        List<Student> students2 = df.addRankingSameCol(Student::getAge, Student::setRank).toLists();
+
+        //SDFrame<Student> students = df.addSortNoCol(Student::setRank);
+        //List<Student> students1 = students.toLists();
+
+        List<Student> head = df.head(3);
         System.out.println();
     }
 }

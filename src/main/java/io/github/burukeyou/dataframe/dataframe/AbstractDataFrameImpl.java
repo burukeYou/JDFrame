@@ -11,7 +11,6 @@ import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
@@ -27,13 +26,10 @@ import static java.util.stream.Collectors.toList;
  */
 @Slf4j
 @Getter
-public abstract class AbstractDataFrame<T> implements IFrame<T> {
+public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
 
-    private static final String MSG = "****";
 
-    protected List<String> fieldList = new ArrayList<>();
-
-    protected AbstractDataFrame() {
+    protected AbstractDataFrameImpl() {
 
     }
 
@@ -189,31 +185,6 @@ public abstract class AbstractDataFrame<T> implements IFrame<T> {
         }));
     }
 
-    private static <R extends Number> R bigDecimalToClassValue(BigDecimal value, Class<R> valueClass) {
-        if (value == null) {
-           return null;
-        }
-        if (BigDecimal.class.equals(valueClass)){
-            return (R)value;
-        }
-        else if (Byte.class.equals(valueClass)) {
-            return valueClass.cast(value.byteValue());
-        } else if (Short.class.equals(valueClass)) {
-            return valueClass.cast(value.shortValue());
-        } else if (Integer.class.equals(valueClass) || int.class.equals(valueClass)) {
-            return (R)Integer.valueOf(value.intValue());
-        } else if (Long.class.equals(valueClass) || long.class.equals(valueClass)) {
-            return (R)Long.valueOf(value.longValue());
-        } else if (Float.class.equals(valueClass)) {
-            return(R)Float.valueOf(value.floatValue());
-        } else if (Double.class.equals(valueClass)) {
-            return (R)Double.valueOf(value.doubleValue());
-        } else {
-            throw new IllegalArgumentException("Unsupported Number class: " + valueClass.getName());
-        }
-    }
-
-
     public <R> BigDecimal avg(Function<T, R> function) {
         List<BigDecimal> bigDecimalList = stream().map(function).filter(Objects::nonNull).map(e -> {
             if (e instanceof BigDecimal) {
@@ -339,7 +310,7 @@ public abstract class AbstractDataFrame<T> implements IFrame<T> {
     }
 
     protected <K, J, H, V> List<FT4<K, J, H, V>> convertToDataFrameItem4(Map<K, Map<J, Map<H, V>>> map) {
-        List<FT4<K, J, H, V>> collect = map.entrySet().stream()
+        return map.entrySet().stream()
                 .flatMap(et ->
                         et.getValue().entrySet().stream()
                                 .flatMap(subEt -> subEt.getValue().entrySet().stream().map(sub2Et -> new FT4<>(et.getKey(), subEt.getKey(), sub2Et.getKey(), sub2Et.getValue())).collect(toList()).stream())
@@ -347,7 +318,6 @@ public abstract class AbstractDataFrame<T> implements IFrame<T> {
                                 .stream()
                 )
                 .collect(toList());
-        return collect;
     }
 
     public <R> Stream<T> streamFilterNull(Function<T,R> function){
@@ -373,6 +343,12 @@ public abstract class AbstractDataFrame<T> implements IFrame<T> {
         return fieldList;
     }
 
+
+    @Override
+    public <R> List<R> col(Function<T, R> function) {
+        return toLists().stream().map(function).collect(toList());
+    }
+
     @Override
     public void print(){
         String[][] dataArr = buildPrintDataArr(-1);
@@ -388,82 +364,7 @@ public abstract class AbstractDataFrame<T> implements IFrame<T> {
         log.info("\n{}",sb);
     }
 
-    private String[][] buildPrintDataArr(int limit) {
-        List<T> dataList = toLists();
-        if (dataList.isEmpty()){
-            return null;
-        }
 
-        List<String> filedList = getFieldList();
-        int rowLen = dataList.size() + 1;
-        int colLen = filedList.size() * 2 + 1;
-
-        String[][] dataArr = new String[rowLen][colLen];
-
-
-        int index1 = 0;
-        for (String field : filedList) {
-            dataArr[0][index1++] = field;
-            dataArr[0][index1++] = MSG;
-        }
-        dataArr[0][index1] = "\n";
-
-        index1 = 0;
-        if (dataList.isEmpty()) {
-            for (String field : filedList) {
-                dataArr[1][index1++] = "";
-                dataArr[1][index1++] = MSG;
-            }
-        }
-
-        int row = 1;
-        for (T t : dataList) {
-            int tmpIndex = 0;
-            for (String fieldName : filedList) {
-                try {
-                    Field field = t.getClass().getDeclaredField(fieldName);
-                    field.setAccessible(true);
-                    Object o = field.get(t);
-                    dataArr[row][tmpIndex++] = o == null ? "" : o.toString();
-                    dataArr[row][tmpIndex++] = MSG;
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                   throw new RuntimeException(e);
-                }
-            }
-            dataArr[row][tmpIndex] = "\n";
-            row++;
-        }
-
-        // 格式对齐
-        for (int i = 0; i < colLen -1; i++) {
-            int maxStrLen = -1;
-            for (int j = 0; j < rowLen; j++) {
-                if (Objects.equals(dataArr[j][i], MSG)) {
-                    continue;
-                }
-                if (dataArr[j][i].length() > maxStrLen) {
-                    maxStrLen = dataArr[j][i].length();
-                }
-            }
-            if (maxStrLen != -1) {
-                for (int j = 0; j < rowLen; j++) {
-                    int need = maxStrLen - dataArr[j][i].length();
-                    if (need > 0 ) {
-                        dataArr[j][i] = dataArr[j][i] + getSpace(need);
-                    }
-                }
-            }
-        }
-        return dataArr;
-    }
-
-    private String getSpace(int need) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < need; i++) {
-            sb.append(" ");
-        }
-        return sb.toString();
-    }
 
     protected  <R, K> List<R> joinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         List<R> resultList = new ArrayList<>();
@@ -503,5 +404,44 @@ public abstract class AbstractDataFrame<T> implements IFrame<T> {
             }
         }
         return resultList;
+    }
+
+    @Override
+    public List<T> head(int n) {
+        List<T> tsList = toLists();
+        if (tsList.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        if (n >= tsList.size()){
+            return tsList;
+        }
+        return tsList.subList(0,n);
+    }
+
+    @Override
+    public List<T> tail(int n) {
+        List<T> tsList = toLists();
+        if (tsList.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        if (n >= tsList.size()){
+            return tsList;
+        }
+        return tsList.subList(tsList.size()-1-n+1,tsList.size());
+    }
+
+
+    @Override
+    public T head() {
+        List<T> ts = toLists();
+        return ts.isEmpty() ? null : ts.get(0);
+    }
+
+    @Override
+    public T tail() {
+        List<T> ts = toLists();
+        return ts.isEmpty() ? null : ts.get(ts.size()-1);
     }
 }

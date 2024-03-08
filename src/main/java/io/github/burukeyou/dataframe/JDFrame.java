@@ -2,6 +2,7 @@ package io.github.burukeyou.dataframe;
 
 import io.github.burukeyou.dataframe.dataframe.JDFrameImpl;
 import io.github.burukeyou.dataframe.dataframe.MaxMin;
+import io.github.burukeyou.dataframe.dataframe.SetFunction;
 import io.github.burukeyou.dataframe.dataframe.ToBigDecimalFunction;
 import io.github.burukeyou.dataframe.dataframe.item.FT2;
 import io.github.burukeyou.dataframe.dataframe.item.FT3;
@@ -28,7 +29,18 @@ public interface JDFrame<T> extends IFrame<T> {
     }
 
 
+    /**
+     * ===========================   矩阵变换  =====================================
+     **/
+
     <R> JDFrame<R> map(Function<T,R> map);
+
+    <R extends Number> JDFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set);
+
+
+    <R extends Number> JDFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set, int scale);
+
+    JDFrame<List<T>> partition(int n);
 
     JDFrame<T> append(T t);
 
@@ -47,6 +59,24 @@ public interface JDFrame<T> extends IFrame<T> {
     <R,K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on);
 
 
+    JDFrame<FT2<T,Integer>> addSortNoCol();
+
+    JDFrame<FT2<T,Integer>> addSortNoCol(Comparator<T> comparator);
+
+    <R extends Comparable<R>>  JDFrame<FT2<T,Integer>> addSortNoCol(Function<T, R> function);
+
+    JDFrame<T> addSortNoCol(SetFunction<T,Integer> set);
+
+    JDFrame<FT2<T,Integer>> addRankingSameCol(Comparator<T> comparator);
+
+    <R extends Comparable<R>> JDFrame<FT2<T,Integer>> addRankingSameCol(Function<T, R> function);
+
+
+    JDFrame<T> addRankingSameCol(Comparator<T> comparator,SetFunction<T,Integer> set);
+
+    <R extends Comparable<R>>  JDFrame<T> addRankingSameCol(Function<T, R> function,SetFunction<T,Integer> set);
+
+
     /**
      * ===========================   排序相关  =====================================
      **/
@@ -60,23 +90,23 @@ public interface JDFrame<T> extends IFrame<T> {
     <R extends Comparable<R>> JDFrame<T> sortAsc(Function<T, R> function);
 
 
-    JDFrame<T> rankingAsc(Comparator<T> comparator,int n);
+    JDFrame<T> subRankingSameAsc(Comparator<T> comparator, int n);
 
-    <R extends Comparable<R>> JDFrame<T> rankingAsc(Function<T, R> function,int n);
+    <R extends Comparable<R>> JDFrame<T> subRankingSameAsc(Function<T, R> function, int n);
 
-    JDFrame<T> rankingDesc(Comparator<T> comparator,int n);
+    JDFrame<T> subRankingSameDesc(Comparator<T> comparator, int n);
 
-    <R extends Comparable<R>> JDFrame<T> rankingDesc(Function<T, R> function,int n);
+    <R extends Comparable<R>> JDFrame<T> subRankingSameDesc(Function<T, R> function, int n);
 
     /** ===========================   截取相关  ===================================== **/
 
     /**
      * 截取前n个
      */
-    JDFrame<T> first(int n);
+    JDFrame<T> subFirst(int n);
 
-    JDFrame<T> last(int n);
 
+    JDFrame<T> subLast(int n);
 
     /** ===========================   去重相关  ===================================== **/
 

@@ -9,7 +9,9 @@ import io.github.burukeyou.dataframe.dataframe.item.FT4;
 import io.github.burukeyou.dataframe.dataframe.support.DefaultJoin;
 import io.github.burukeyou.dataframe.dataframe.support.Join;
 import io.github.burukeyou.dataframe.dataframe.support.JoinOn;
+import io.github.burukeyou.dataframe.util.PartitionList;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
+import io.github.burukeyou.dataframe.util.MathUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -25,7 +27,7 @@ import static java.util.stream.Collectors.*;
 /**
  * @author caizhihao
  */
-public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> {
+public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame<T> {
 
     protected Stream<T> data;
 
@@ -46,6 +48,27 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
     }
 
     @Override
+    public <R extends Number> SDFrame<T> mapPercent(Function<T, R> get, SetFunction<T, BigDecimal> set) {
+        return mapPercent(get,set,2);
+    }
+
+    @Override
+    public <R extends Number> SDFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set, int scale){
+        toLists().forEach(e -> {
+            R value = get.apply(e);
+            BigDecimal percentageValue = MathUtils.percentage(MathUtils.toBigDecimal(value), scale);
+            set.accept(e,percentageValue);
+        });
+        return this;
+    }
+
+    @Override
+    public SDFrame<List<T>> partition(int n) {
+        return returnDF(new PartitionList<>(toLists(), n));
+    }
+
+
+    @Override
     public SDFrame<T> append(T t) {
         List<T> ts = toLists();
         ts.add(t);
@@ -54,7 +77,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
     }
 
     @Override
-    public SDFrameImpl<T> union(IFrame<T> other) {
+    public SDFrame<T> union(IFrame<T> other) {
         if (other.count() <= 0){
             return this;
         }
@@ -65,7 +88,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
 
     @Override
     public <R, K> SDFrame<R> join(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
-        return read(joinList(other,on,join));
+        return returnDF(joinList(other,on,join));
     }
 
     @Override
@@ -75,7 +98,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
 
     @Override
     public <R, K> SDFrame<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
-        return read(joinList(other,on,join));
+        return returnDF(joinList(other,on,join));
     }
 
     @Override
@@ -85,12 +108,66 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
 
     @Override
     public <R, K> SDFrame<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
-        return read(rightJoinList(other,on,join));
+        return returnDF(rightJoinList(other,on,join));
     }
 
     @Override
     public <R, K> SDFrame<R> rightJoin(IFrame<K> other, JoinOn<T, K> on) {
         return rightJoin(other,on,new DefaultJoin<>());
+    }
+
+    @Override
+    public SDFrame<FT2<T, Integer>> addSortNoCol() {
+        List<FT2<T, Integer>> result = new ArrayList<>();
+        int index = 1;
+        for (T t : this) {
+            result.add(new FT2<>(t,index++));
+        }
+        return returnDF(result);
+    }
+
+    @Override
+    public SDFrame<FT2<T, Integer>> addSortNoCol(Comparator<T> comparator) {
+        return sortAsc(comparator).addSortNoCol();
+    }
+
+    @Override
+    public <R extends Comparable<R>> SDFrame<FT2<T, Integer>> addSortNoCol(Function<T, R> function) {
+        return addSortNoCol(Comparator.comparing(function));
+    }
+
+
+    @Override
+    public SDFrame<T> addSortNoCol(SetFunction<T, Integer> set) {
+        int index = 0;
+        for (T t : this) {
+           set.accept(t,index++);
+        }
+        return this;
+    }
+
+    @Override
+    public SDFrame<FT2<T, Integer>> addRankingSameCol(Comparator<T> comparator) {
+        return returnDF(rankingSameAsc(toLists(),comparator));
+    }
+
+    @Override
+    public <R extends Comparable<R>> SDFrame<FT2<T, Integer>> addRankingSameCol(Function<T, R> function) {
+        return addRankingSameCol(Comparator.comparing(function));
+    }
+
+    @Override
+    public SDFrame<T> addRankingSameCol(Comparator<T> comparator, SetFunction<T, Integer> set) {
+        List<FT2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator);
+        for (FT2<T, Integer> p : tmpList) {
+            set.accept(p.getC1(),p.getC2());
+        }
+        return this;
+    }
+
+    @Override
+    public <R extends Comparable<R>> SDFrame<T> addRankingSameCol(Function<T, R> function, SetFunction<T, Integer> set) {
+        return addRankingSameCol(Comparator.comparing(function),set);
     }
 
     @Override
@@ -118,51 +195,48 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
      **/
 
     @Override
-    public SDFrameImpl<T> sortDesc(Comparator<T> comparator) {
+    public SDFrame<T> sortDesc(Comparator<T> comparator) {
         data = stream().sorted(comparator.reversed());
         return this;
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrameImpl<T> sortDesc(Function<T, R> function) {
+    public <R extends Comparable<R>> SDFrame<T> sortDesc(Function<T, R> function) {
         sortDesc(Comparator.comparing(function));
         return this;
     }
 
     @Override
-    public SDFrameImpl<T> sortAsc(Comparator<T> comparator) {
+    public SDFrame<T> sortAsc(Comparator<T> comparator) {
         data = stream().sorted(comparator);
         return this;
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrameImpl<T> sortAsc(Function<T, R> function) {
+    public <R extends Comparable<R>> SDFrame<T> sortAsc(Function<T, R> function) {
         sortAsc(Comparator.comparing(function));
         return this;
     }
 
     @Override
-    public SDFrame<T> rankingAsc(Comparator<T> comparator, int n) {
-        DFList<T> first = new DFList<>(toLists()).rankingAsc(comparator,n);
-        data = first.build().stream();
-        return this;
+    public SDFrame<T> subRankingSameAsc(Comparator<T> comparator, int n) {
+        List<FT2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator, n);
+        return returnThis(tmpList.stream().map(FT2::getC1).collect(toList()).stream());
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> rankingAsc(Function<T, R> function, int n) {
-        return rankingAsc(Comparator.comparing(function),n);
+    public <R extends Comparable<R>> SDFrame<T> subRankingSameAsc(Function<T, R> function, int n) {
+        return subRankingSameAsc(Comparator.comparing(function),n);
     }
 
     @Override
-    public SDFrame<T> rankingDesc(Comparator<T> comparator, int n) {
-        DFList<T> first = new DFList<>(toLists()).rankingDesc(comparator,n);
-        data = first.build().stream();
-        return this;
+    public SDFrame<T> subRankingSameDesc(Comparator<T> comparator, int n) {
+        return subRankingSameAsc(comparator.reversed(),n);
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> rankingDesc(Function<T, R> function, int n) {
-        return rankingDesc(Comparator.comparing(function),n);
+    public <R extends Comparable<R>> SDFrame<T> subRankingSameDesc(Function<T, R> function, int n) {
+        return this.subRankingSameDesc(Comparator.comparing(function),n);
     }
 
 
@@ -172,14 +246,14 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
      * 截取前n个
      */
     @Override
-    public SDFrameImpl<T> first(int n) {
+    public SDFrame<T> subFirst(int n) {
         DFList<T> first = new DFList<>(toLists()).first(n);
-        data = first.build().stream();
-        return this;
+        List<T> build = first.build();
+        return returnThis(build);
     }
 
     @Override
-    public SDFrameImpl<T> last(int n) {
+    public SDFrame<T> subLast(int n) {
         DFList<T> first = new DFList<>(toLists()).last(n);
         data = first.build().stream();
         return this;
@@ -442,7 +516,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
         List<T> dataList = toLists();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
         List<FT2<K, BigDecimal>> sumList = returnDF(dataList).group(key, tBigDecimalCollector);
-        List<FT2<K, Long>> countList =  read(dataList).groupByCount(key).toLists();
+        List<FT2<K, Long>> countList =  returnDF(dataList).groupByCount(key).toLists();
         Map<K, Long> countMap = countList.stream().collect(toMap(FT2::getC1, FT2::getC2));
         List<FT3<K, BigDecimal, Long>> collect = sumList.stream().map(e -> new FT3<>(e.getC1(), e.getC2(), countMap.get(e.getC1()))).collect(Collectors.toList());
         return returnDF(collect);
@@ -455,7 +529,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
         List<T> dataList = toLists();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
         List<FT3<K, J, BigDecimal>> sumList = returnDF(dataList).group(key, key2, tBigDecimalCollector);
-        List<FT3<K, J, Long>> countList =  read(dataList).groupByCount(key, key2).toLists();
+        List<FT3<K, J, Long>> countList =  returnDF(dataList).groupByCount(key, key2).toLists();
         // 合并sum和count字段
         Map<String, FT3<K, J, Long>> countMap = countList.stream().collect(toMap(e -> e.getC1() + "_" + e.getC2(), Function.identity()));
         List<FT4<K, J, BigDecimal, Long>> collect = sumList.stream().map(e -> {
@@ -567,7 +641,14 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
         return this;
     }
 
+    protected SDFrame<T> returnThis(List<T> dataList) {
+        this.data = dataList.stream();
+        return this;
+    }
+
     protected <R> SDFrameImpl<R> returnDF(List<R> dataList) {
         return new SDFrameImpl<>(dataList);
     }
+    
+    
 }

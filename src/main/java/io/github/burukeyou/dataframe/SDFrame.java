@@ -2,6 +2,7 @@ package io.github.burukeyou.dataframe;
 
 import io.github.burukeyou.dataframe.dataframe.MaxMin;
 import io.github.burukeyou.dataframe.dataframe.SDFrameImpl;
+import io.github.burukeyou.dataframe.dataframe.SetFunction;
 import io.github.burukeyou.dataframe.dataframe.ToBigDecimalFunction;
 import io.github.burukeyou.dataframe.dataframe.item.FT2;
 import io.github.burukeyou.dataframe.dataframe.item.FT3;
@@ -17,7 +18,7 @@ import java.util.function.Predicate;
 
 /**
  * Stream DataFrame
- *      前后的操作是连续的, 与stream流一致，并且执行终止操作后不可再用，得重新read生成流, 适合串行使用
+ *      前后的操作是连续的, 与stream流一致，并且某些操作是终止操作执行后流不可再用，得重新read生成流, 适合串行使用
  *
  * @author caizhihao
  */
@@ -28,6 +29,12 @@ public interface SDFrame<T> extends IFrame<T>  {
     }
 
     <R> SDFrame<R> map(Function<T,R> map);
+
+    <R extends Number> SDFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set);
+
+    <R extends Number> SDFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set, int scale);
+
+    SDFrame<List<T>> partition(int n);
 
     SDFrame<T> append(T t);
 
@@ -47,6 +54,24 @@ public interface SDFrame<T> extends IFrame<T>  {
 
     <R,K> SDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on);
 
+    SDFrame<FT2<T,Integer>> addSortNoCol();
+
+    SDFrame<FT2<T,Integer>> addSortNoCol(Comparator<T> comparator);
+
+    <R extends Comparable<R>>  SDFrame<FT2<T,Integer>> addSortNoCol(Function<T, R> function);
+
+
+    SDFrame<T> addSortNoCol(SetFunction<T,Integer> set);
+
+    SDFrame<FT2<T,Integer>> addRankingSameCol(Comparator<T> comparator);
+
+
+    <R extends Comparable<R>> SDFrame<FT2<T,Integer>> addRankingSameCol(Function<T, R> function);
+
+    SDFrame<T> addRankingSameCol(Comparator<T> comparator,SetFunction<T,Integer> set);
+
+    <R extends Comparable<R>>  SDFrame<T> addRankingSameCol(Function<T, R> function,SetFunction<T,Integer> set);
+
     /**
      * ===========================   排序相关  =====================================
      **/
@@ -59,20 +84,21 @@ public interface SDFrame<T> extends IFrame<T>  {
 
     <R extends Comparable<R>> SDFrame<T> sortAsc(Function<T, R> function);
 
-    SDFrame<T> rankingAsc(Comparator<T> comparator,int n);
+    SDFrame<T> subRankingSameAsc(Comparator<T> comparator, int n);
 
-    <R extends Comparable<R>> SDFrame<T> rankingAsc(Function<T, R> function,int n);
+    <R extends Comparable<R>> SDFrame<T> subRankingSameAsc(Function<T, R> function, int n);
 
-    SDFrame<T> rankingDesc(Comparator<T> comparator,int n);
+    SDFrame<T> subRankingSameDesc(Comparator<T> comparator, int n);
 
-    <R extends Comparable<R>> SDFrame<T> rankingDesc(Function<T, R> function,int n);
+    <R extends Comparable<R>> SDFrame<T> subRankingSameDesc(Function<T, R> function, int n);
 
 
     /** ===========================   截取相关  ===================================== **/
 
-    SDFrame<T> first(int n);
+    SDFrame<T> subFirst(int n);
 
-    SDFrame<T> last(int n);
+    SDFrame<T> subLast(int n);
+
 
     /** ===========================   去重相关  ===================================== **/
 

@@ -1,6 +1,7 @@
 package io.github.burukeyou.dataframe;
 
 import io.github.burukeyou.dataframe.dataframe.MaxMin;
+import io.github.burukeyou.dataframe.dataframe.SetFunction;
 import io.github.burukeyou.dataframe.dataframe.ToBigDecimalFunction;
 import io.github.burukeyou.dataframe.dataframe.item.FT2;
 import io.github.burukeyou.dataframe.dataframe.item.FT3;
@@ -38,6 +39,16 @@ public interface IFrame<T> extends Iterable<T>{
     List<String> columns();
 
     /**
+     *  获取某一列信息
+     */
+    <R> List<R> col(Function<T, R> function);
+
+    /**
+     * ===========================   数据清洗 =====================================
+     **/
+
+
+    /**
      * ===========================   连接矩阵  =====================================
      **/
     IFrame<T> append(T t);
@@ -57,10 +68,42 @@ public interface IFrame<T> extends Iterable<T>{
     <R,K> IFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on);
 
     /**
-     * ===========================   矩阵转换  =====================================
+     * ===========================   矩阵变换  =====================================
      **/
 
     <R> IFrame<R> map(Function<T,R> map);
+
+    <R extends Number> IFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set, int scale);
+
+    <R extends Number> IFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set);
+
+    /**
+     * 分区
+     * @param           n 每个区大小
+     * @return
+     */
+    IFrame<List<T>> partition(int n);
+
+    /**
+     * 添加序号列
+     * @return
+     */
+    IFrame<FT2<T,Integer>> addSortNoCol();
+
+    IFrame<FT2<T,Integer>> addSortNoCol(Comparator<T> comparator);
+
+    <R extends Comparable<R>>  IFrame<FT2<T,Integer>> addSortNoCol(Function<T, R> function);
+
+    IFrame<T> addSortNoCol(SetFunction<T,Integer> set);
+
+    IFrame<FT2<T,Integer>> addRankingSameCol(Comparator<T> comparator);
+
+    <R extends Comparable<R>> IFrame<FT2<T,Integer>> addRankingSameCol(Function<T, R> function);
+
+    IFrame<T> addRankingSameCol(Comparator<T> comparator,SetFunction<T,Integer> set);
+
+    <R extends Comparable<R>>  IFrame<T> addRankingSameCol(Function<T, R> function,SetFunction<T,Integer> set);
+
 
     /**
      * ===========================   排序相关  =====================================
@@ -74,25 +117,49 @@ public interface IFrame<T> extends Iterable<T>{
 
     <R extends Comparable<R>> IFrame<T> sortAsc(Function<T, R> function);
 
-    IFrame<T> rankingAsc(Comparator<T> comparator,int n);
-
-    <R extends Comparable<R>> IFrame<T> rankingAsc(Function<T, R> function,int n);
-
-    IFrame<T> rankingDesc(Comparator<T> comparator,int n);
-
-    <R extends Comparable<R>> IFrame<T> rankingDesc(Function<T, R> function,int n);
 
     /** ===========================   截取相关  ===================================== **/
 
+
     /**
-     * 截取前n个
+     *  截取前n个
+     * @param n
+     * @return
      */
-    IFrame<T> first(int n);
+    IFrame<T> subFirst(int n);
 
     /**
      * 截取后n个
+     * @param n
+     * @return
      */
-    IFrame<T> last(int n);
+    IFrame<T> subLast(int n);
+
+    /**
+     * 按照排名截取前n个
+     *          相同值认为排名一样
+     * @param comparator
+     * @param n
+     * @return
+     */
+    IFrame<T> subRankingSameAsc(Comparator<T> comparator, int n);
+
+    <R extends Comparable<R>> IFrame<T> subRankingSameAsc(Function<T, R> function, int n);
+
+    IFrame<T> subRankingSameDesc(Comparator<T> comparator, int n);
+
+    <R extends Comparable<R>> IFrame<T> subRankingSameDesc(Function<T, R> function, int n);
+
+
+    /** ===========================   查看相关  ===================================== **/
+
+    T head();
+
+    List<T> head(int n);
+
+    T tail();
+
+    List<T> tail(int n);
 
     /** ===========================   去重相关  ===================================== **/
 
@@ -195,6 +262,11 @@ public interface IFrame<T> extends Iterable<T>{
     <R extends Comparable<R>> T min(Function<T, R> function);
 
     long count();
+
+    // todo
+    // 中位数
+
+    // 众数
 
     /** ===========================   分组相关  ===================================== **/
     /**

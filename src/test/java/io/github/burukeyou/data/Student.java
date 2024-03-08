@@ -18,9 +18,19 @@ public class Student {
     private Integer age;
     private BigDecimal score;
 
+    private Integer rank;
 
     public Student(String level, BigDecimal score) {
         this.level = level;
+        this.score = score;
+    }
+
+    public Student(int id, String name, String school, String level, Integer age, BigDecimal score) {
+        this.id = id;
+        this.name = name;
+        this.school = school;
+        this.level = level;
+        this.age = age;
         this.score = score;
     }
 }

@@ -10,6 +10,8 @@ import io.github.burukeyou.dataframe.dataframe.support.DefaultJoin;
 import io.github.burukeyou.dataframe.dataframe.support.Join;
 import io.github.burukeyou.dataframe.dataframe.support.JoinOn;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
+import io.github.burukeyou.dataframe.util.MathUtils;
+import io.github.burukeyou.dataframe.util.PartitionList;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -25,7 +27,7 @@ import static java.util.stream.Collectors.*;
 /**
  * @author caizhihao
  */
-public class JDFrameImpl<T> extends AbstractDataFrame<T> implements JDFrame<T> {
+public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<T> {
 
     public List<T> dataList;
 
@@ -53,6 +55,27 @@ public class JDFrameImpl<T> extends AbstractDataFrame<T> implements JDFrame<T> {
     public <R> JDFrame<R> map(Function<T, R> map) {
         return read(stream().map(map));
     }
+
+    @Override
+    public <R extends Number> JDFrame<T> mapPercent(Function<T, R> get, SetFunction<T, BigDecimal> set) {
+        return mapPercent(get,set,2);
+    }
+
+    @Override
+    public <R extends Number> JDFrame<T> mapPercent(Function<T, R> get, SetFunction<T, BigDecimal> set, int scale) {
+        toLists().forEach(e -> {
+            R value = get.apply(e);
+            BigDecimal percentageValue = MathUtils.percentage(MathUtils.toBigDecimal(value), scale);
+            set.accept(e,percentageValue);
+        });
+        return this;
+    }
+
+    @Override
+    public JDFrame<List<T>> partition(int n) {
+        return read(new PartitionList<>(toLists(), n));
+    }
+
 
     @Override
     public JDFrame<T> append(T t) {
@@ -99,6 +122,59 @@ public class JDFrameImpl<T> extends AbstractDataFrame<T> implements JDFrame<T> {
         return rightJoin(other,on,new DefaultJoin<>());
     }
 
+    @Override
+    public JDFrame<FT2<T, Integer>> addSortNoCol() {
+        List<FT2<T, Integer>> result = new ArrayList<>();
+        int index = 1;
+        for (T t : this) {
+            result.add(new FT2<>(t,index++));
+        }
+        return read(result);
+    }
+
+    @Override
+    public JDFrame<FT2<T, Integer>> addSortNoCol(Comparator<T> comparator) {
+        return sortAsc(comparator).addSortNoCol();
+    }
+
+    @Override
+    public <R extends Comparable<R>> JDFrame<FT2<T, Integer>> addSortNoCol(Function<T, R> function) {
+        return addSortNoCol(Comparator.comparing(function));
+    }
+
+    @Override
+    public JDFrame<T> addSortNoCol(SetFunction<T, Integer> set) {
+        int index = 0;
+        for (T t : this) {
+            set.accept(t,index++);
+        }
+        return this;
+    }
+
+    @Override
+    public JDFrame<FT2<T, Integer>> addRankingSameCol(Comparator<T> comparator) {
+        return read(rankingSameAsc(toLists(),comparator));
+    }
+
+    @Override
+    public <R extends Comparable<R>> JDFrame<FT2<T, Integer>> addRankingSameCol(Function<T, R> function) {
+        return addRankingSameCol(Comparator.comparing(function));
+    }
+
+    @Override
+    public JDFrame<T> addRankingSameCol(Comparator<T> comparator, SetFunction<T, Integer> set) {
+        List<FT2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator);
+        for (FT2<T, Integer> p : tmpList) {
+            set.accept(p.getC1(),p.getC2());
+        }
+        return this;
+    }
+
+    @Override
+    public <R extends Comparable<R>> JDFrame<T> addRankingSameCol(Function<T, R> function, SetFunction<T, Integer> set) {
+        return addRankingSameCol(Comparator.comparing(function),set);
+    }
+
     /**
      * ===========================    =====================================
      **/
@@ -132,25 +208,24 @@ public class JDFrameImpl<T> extends AbstractDataFrame<T> implements JDFrame<T> {
     }
 
     @Override
-    public JDFrame<T> rankingAsc(Comparator<T> comparator, int n) {
-        DFList<T> first = new DFList<>(toLists()).rankingAsc(comparator,n);
-        return read(first.build());
+    public JDFrame<T> subRankingSameAsc(Comparator<T> comparator, int n) {
+        List<FT2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator, n);
+        return read(tmpList.stream().map(FT2::getC1).collect(toList()));
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> rankingAsc(Function<T, R> function, int n) {
-        return rankingAsc(Comparator.comparing(function),n);
+    public <R extends Comparable<R>> JDFrame<T> subRankingSameAsc(Function<T, R> function, int n) {
+        return this.subRankingSameAsc(Comparator.comparing(function),n);
     }
 
     @Override
-    public JDFrame<T> rankingDesc(Comparator<T> comparator, int n) {
-        DFList<T> first = new DFList<>(toLists()).rankingDesc(comparator,n);
-        return read(first.build());
+    public JDFrame<T> subRankingSameDesc(Comparator<T> comparator, int n) {
+        return subRankingSameAsc(comparator.reversed(), n);
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> rankingDesc(Function<T, R> function, int n) {
-        return rankingDesc(Comparator.comparing(function),n);
+    public <R extends Comparable<R>> JDFrame<T> subRankingSameDesc(Function<T, R> function, int n) {
+        return subRankingSameDesc(Comparator.comparing(function),n);
     }
 
     /** ===========================   截取相关  ===================================== **/
@@ -159,16 +234,19 @@ public class JDFrameImpl<T> extends AbstractDataFrame<T> implements JDFrame<T> {
      * 截取前n个
      */
     @Override
-    public JDFrameImpl<T> first(int n) {
+    public JDFrameImpl<T> subFirst(int n) {
         DFList<T> first = new DFList<>(toLists()).first(n);
         return read(first.build());
     }
 
+
     @Override
-    public JDFrameImpl<T> last(int n) {
+    public JDFrameImpl<T> subLast(int n) {
         DFList<T> first = new DFList<>(toLists()).last(n);
         return read(first.build());
     }
+
+
 
     @Override
     public JDFrame<T> distinct() {
