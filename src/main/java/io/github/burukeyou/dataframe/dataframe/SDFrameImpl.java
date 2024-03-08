@@ -6,6 +6,9 @@ import io.github.burukeyou.dataframe.SDFrame;
 import io.github.burukeyou.dataframe.dataframe.item.FT2;
 import io.github.burukeyou.dataframe.dataframe.item.FT3;
 import io.github.burukeyou.dataframe.dataframe.item.FT4;
+import io.github.burukeyou.dataframe.dataframe.support.DefaultJoin;
+import io.github.burukeyou.dataframe.dataframe.support.Join;
+import io.github.burukeyou.dataframe.dataframe.support.JoinOn;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 
 import java.math.BigDecimal;
@@ -28,6 +31,9 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
 
     public SDFrameImpl(List<T> list) {
         this.data = list.stream();
+        if (!list.isEmpty()){
+            fieldList = buildFieldList(list.get(0));
+        }
     }
 
     public <R> SDFrameImpl<R> read(List<R> list) {
@@ -37,6 +43,14 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
     @Override
     public <R> SDFrame<R> map(Function<T, R> map) {
         return returnDF(stream().map(map).collect(toList()));
+    }
+
+    @Override
+    public SDFrame<T> append(T t) {
+        List<T> ts = toLists();
+        ts.add(t);
+        data = ts.stream();
+        return this;
     }
 
     @Override
@@ -50,8 +64,40 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
     }
 
     @Override
+    public <R, K> SDFrame<R> join(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return read(joinList(other,on,join));
+    }
+
+    @Override
+    public <R, K> SDFrame<R> join(IFrame<K> other, JoinOn<T, K> on) {
+        return join(other,on,new DefaultJoin<>());
+    }
+
+    @Override
+    public <R, K> SDFrame<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return read(joinList(other,on,join));
+    }
+
+    @Override
+    public <R, K> SDFrame<R> leftJoin(IFrame<K> other, JoinOn<T, K> on) {
+        return leftJoin(other,on,new DefaultJoin<>());
+    }
+
+    @Override
+    public <R, K> SDFrame<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return read(rightJoinList(other,on,join));
+    }
+
+    @Override
+    public <R, K> SDFrame<R> rightJoin(IFrame<K> other, JoinOn<T, K> on) {
+        return rightJoin(other,on,new DefaultJoin<>());
+    }
+
+    @Override
     public List<T> toLists() {
-        return data.collect(toList());
+        List<T> tmp = data.collect(toList());
+        data = tmp.stream();
+        return tmp;
     }
 
     @Override
@@ -59,6 +105,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrame<T> implements SDFrame<T> 
         return data;
     }
 
+    @Override
+    public long count() {
+        List<T> tmp = stream().collect(toList());
+        data = tmp.stream();
+        return tmp.size();
+    }
 
 
     /**

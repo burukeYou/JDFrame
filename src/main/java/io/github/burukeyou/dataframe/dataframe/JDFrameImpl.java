@@ -6,6 +6,9 @@ import io.github.burukeyou.dataframe.JDFrame;
 import io.github.burukeyou.dataframe.dataframe.item.FT2;
 import io.github.burukeyou.dataframe.dataframe.item.FT3;
 import io.github.burukeyou.dataframe.dataframe.item.FT4;
+import io.github.burukeyou.dataframe.dataframe.support.DefaultJoin;
+import io.github.burukeyou.dataframe.dataframe.support.Join;
+import io.github.burukeyou.dataframe.dataframe.support.JoinOn;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 
 import java.math.BigDecimal;
@@ -28,6 +31,9 @@ public class JDFrameImpl<T> extends AbstractDataFrame<T> implements JDFrame<T> {
 
     public JDFrameImpl(List<T> list) {
         dataList = list;
+        if (dataList != null && !dataList.isEmpty()){
+            fieldList = buildFieldList(dataList.get(0));
+        }
     }
 
     @Override
@@ -49,12 +55,48 @@ public class JDFrameImpl<T> extends AbstractDataFrame<T> implements JDFrame<T> {
     }
 
     @Override
+    public JDFrame<T> append(T t) {
+        toLists().add(t);
+        return this;
+    }
+
+    @Override
     public JDFrame<T> union(IFrame<T> other) {
         if (other.count() <= 0){
             return this;
         }
         toLists().addAll(other.toLists());
         return this;
+    }
+
+    @Override
+    public <R, K> JDFrame<R> join(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return read(joinList(other,on,join));
+    }
+
+    @Override
+    public <R, K> JDFrame<R> join(IFrame<K> other, JoinOn<T, K> on) {
+        return join(other,on,new DefaultJoin<>());
+    }
+
+    @Override
+    public <R, K> JDFrame<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return read(leftJoinList(other,on,join));
+    }
+
+    @Override
+    public <R, K> JDFrame<R> leftJoin(IFrame<K> other, JoinOn<T, K> on) {
+        return leftJoin(other,on,new DefaultJoin<>());
+    }
+
+    @Override
+    public <R, K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return read(rightJoinList(other,on,join));
+    }
+
+    @Override
+    public <R, K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T, K> on) {
+        return rightJoin(other,on,new DefaultJoin<>());
     }
 
     /**

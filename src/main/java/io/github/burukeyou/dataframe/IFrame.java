@@ -5,6 +5,8 @@ import io.github.burukeyou.dataframe.dataframe.ToBigDecimalFunction;
 import io.github.burukeyou.dataframe.dataframe.item.FT2;
 import io.github.burukeyou.dataframe.dataframe.item.FT3;
 import io.github.burukeyou.dataframe.dataframe.item.FT4;
+import io.github.burukeyou.dataframe.dataframe.support.Join;
+import io.github.burukeyou.dataframe.dataframe.support.JoinOn;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -17,22 +19,45 @@ import java.util.stream.Stream;
  * 
  * @author caizhihao
  */
-public interface IFrame<T> {
+public interface IFrame<T> extends Iterable<T>{
 
 
     List<T> toLists();
 
     Stream<T> stream();
 
+    void print();
 
     /**
-     * ===========================   连结  =====================================
+     * ===========================   矩阵信息 =====================================
      **/
+
+    /**
+     *  列头
+     */
+    List<String> columns();
+
+    /**
+     * ===========================   连接矩阵  =====================================
+     **/
+    IFrame<T> append(T t);
+
     IFrame<T> union(IFrame<T> other);
 
+    <R,K> IFrame<R> join(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    <R,K> IFrame<R> join(IFrame<K> other, JoinOn<T,K> on);
+
+    <R,K> IFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    <R,K> IFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on);
+
+    <R,K> IFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    <R,K> IFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on);
 
     /**
-     * ===========================   转换  =====================================
+     * ===========================   矩阵转换  =====================================
      **/
 
     <R> IFrame<R> map(Function<T,R> map);

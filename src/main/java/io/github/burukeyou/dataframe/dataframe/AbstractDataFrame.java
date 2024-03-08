@@ -5,8 +5,13 @@ import io.github.burukeyou.dataframe.IFrame;
 import io.github.burukeyou.dataframe.dataframe.item.FT2;
 import io.github.burukeyou.dataframe.dataframe.item.FT3;
 import io.github.burukeyou.dataframe.dataframe.item.FT4;
+import io.github.burukeyou.dataframe.dataframe.support.Join;
+import io.github.burukeyou.dataframe.dataframe.support.JoinOn;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
@@ -20,7 +25,17 @@ import static java.util.stream.Collectors.toList;
  * @author caizhihao
  * @param <T>
  */
+@Slf4j
+@Getter
 public abstract class AbstractDataFrame<T> implements IFrame<T> {
+
+    private static final String MSG = "****";
+
+    protected List<String> fieldList = new ArrayList<>();
+
+    protected AbstractDataFrame() {
+
+    }
 
     protected  <R> Stream<T> whereNullStream(Function<T, R> function) {
         return stream().filter(item -> {
@@ -339,7 +354,154 @@ public abstract class AbstractDataFrame<T> implements IFrame<T> {
         return stream().filter(e -> function.apply(e) != null);
     }
 
-//    protected abstract IFrame<T> returnThis(Stream<T> stream);
-//
-//    protected abstract <R> AbstractDataFrame<R> readDF(List<R> dataList);
+    @Override
+    public Iterator<T> iterator() {
+        return toLists().iterator();
+    }
+
+    protected  <F> List<String> buildFieldList(F f){
+        List<String> filedList = new ArrayList<>();
+        Arrays.stream(f.getClass().getDeclaredFields()).forEach(field -> {
+            field.setAccessible(true);
+            filedList.add(field.getName());
+        });
+        return filedList;
+    }
+
+    @Override
+    public List<String> columns() {
+        return fieldList;
+    }
+
+    @Override
+    public void print(){
+        String[][] dataArr = buildPrintDataArr(-1);
+        if (dataArr == null){
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < dataArr.length; i++) {
+            for (int j = 0; j < dataArr[0].length; j++) {
+                sb.append(dataArr[i][j].replace(MSG, "\t"));
+            }
+        }
+        log.info("\n{}",sb);
+    }
+
+    private String[][] buildPrintDataArr(int limit) {
+        List<T> dataList = toLists();
+        if (dataList.isEmpty()){
+            return null;
+        }
+
+        List<String> filedList = getFieldList();
+        int rowLen = dataList.size() + 1;
+        int colLen = filedList.size() * 2 + 1;
+
+        String[][] dataArr = new String[rowLen][colLen];
+
+
+        int index1 = 0;
+        for (String field : filedList) {
+            dataArr[0][index1++] = field;
+            dataArr[0][index1++] = MSG;
+        }
+        dataArr[0][index1] = "\n";
+
+        index1 = 0;
+        if (dataList.isEmpty()) {
+            for (String field : filedList) {
+                dataArr[1][index1++] = "";
+                dataArr[1][index1++] = MSG;
+            }
+        }
+
+        int row = 1;
+        for (T t : dataList) {
+            int tmpIndex = 0;
+            for (String fieldName : filedList) {
+                try {
+                    Field field = t.getClass().getDeclaredField(fieldName);
+                    field.setAccessible(true);
+                    Object o = field.get(t);
+                    dataArr[row][tmpIndex++] = o == null ? "" : o.toString();
+                    dataArr[row][tmpIndex++] = MSG;
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                   throw new RuntimeException(e);
+                }
+            }
+            dataArr[row][tmpIndex] = "\n";
+            row++;
+        }
+
+        // 格式对齐
+        for (int i = 0; i < colLen -1; i++) {
+            int maxStrLen = -1;
+            for (int j = 0; j < rowLen; j++) {
+                if (Objects.equals(dataArr[j][i], MSG)) {
+                    continue;
+                }
+                if (dataArr[j][i].length() > maxStrLen) {
+                    maxStrLen = dataArr[j][i].length();
+                }
+            }
+            if (maxStrLen != -1) {
+                for (int j = 0; j < rowLen; j++) {
+                    int need = maxStrLen - dataArr[j][i].length();
+                    if (need > 0 ) {
+                        dataArr[j][i] = dataArr[j][i] + getSpace(need);
+                    }
+                }
+            }
+        }
+        return dataArr;
+    }
+
+    private String getSpace(int need) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < need; i++) {
+            sb.append(" ");
+        }
+        return sb.toString();
+    }
+
+    protected  <R, K> List<R> joinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        List<R> resultList = new ArrayList<>();
+        for (T cur :this){
+            for (K k : other) {
+                if(on.on(cur,k)){
+                    resultList.add(join.join(cur,k));
+                }
+            }
+        }
+        return resultList;
+    }
+
+    protected  <R, K> List<R> leftJoinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        List<R> resultList = new ArrayList<>();
+        for (T cur :this){
+            for (K k : other) {
+                if(on.on(cur,k)){
+                    resultList.add(join.join(cur,k));
+                }else {
+                    resultList.add(join.join(cur,null));
+                }
+            }
+        }
+        return resultList;
+    }
+
+    protected  <R, K> List<R> rightJoinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        List<R> resultList = new ArrayList<>();
+        for (K k : other) {
+            for (T cur :this){
+                if(on.on(cur,k)){
+                    resultList.add(join.join(cur,k));
+                }else {
+                    resultList.add(join.join(null,k));
+                }
+            }
+        }
+        return resultList;
+    }
 }

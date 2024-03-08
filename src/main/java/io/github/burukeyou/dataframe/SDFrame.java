@@ -6,6 +6,8 @@ import io.github.burukeyou.dataframe.dataframe.ToBigDecimalFunction;
 import io.github.burukeyou.dataframe.dataframe.item.FT2;
 import io.github.burukeyou.dataframe.dataframe.item.FT3;
 import io.github.burukeyou.dataframe.dataframe.item.FT4;
+import io.github.burukeyou.dataframe.dataframe.support.Join;
+import io.github.burukeyou.dataframe.dataframe.support.JoinOn;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -19,15 +21,31 @@ import java.util.function.Predicate;
  *
  * @author caizhihao
  */
-public interface SDFrame<T> extends IFrame<T> {
+public interface SDFrame<T> extends IFrame<T>  {
 
-    static <T> SDFrameImpl<T> read(List<T> list) {
+    static <T> SDFrame<T> read(List<T> list) {
         return new SDFrameImpl<>(list);
     }
 
     <R> SDFrame<R> map(Function<T,R> map);
 
+    SDFrame<T> append(T t);
+
     SDFrame<T> union(IFrame<T> other);
+
+
+    <R,K> SDFrame<R> join(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    <R,K> SDFrame<R> join(IFrame<K> other, JoinOn<T,K> on);
+
+
+    <R,K> SDFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    <R,K> SDFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on);
+
+    <R,K> SDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    <R,K> SDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on);
 
     /**
      * ===========================   排序相关  =====================================

@@ -6,6 +6,8 @@ import io.github.burukeyou.dataframe.dataframe.ToBigDecimalFunction;
 import io.github.burukeyou.dataframe.dataframe.item.FT2;
 import io.github.burukeyou.dataframe.dataframe.item.FT3;
 import io.github.burukeyou.dataframe.dataframe.item.FT4;
+import io.github.burukeyou.dataframe.dataframe.support.Join;
+import io.github.burukeyou.dataframe.dataframe.support.JoinOn;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -28,7 +30,22 @@ public interface JDFrame<T> extends IFrame<T> {
 
     <R> JDFrame<R> map(Function<T,R> map);
 
+    JDFrame<T> append(T t);
+
     JDFrame<T> union(IFrame<T> other);
+
+    <R,K> JDFrame<R> join(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    <R,K> JDFrame<R> join(IFrame<K> other, JoinOn<T,K> on);
+
+    <R,K> JDFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    <R,K> JDFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on);
+
+    <R,K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    <R,K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on);
+
 
     /**
      * ===========================   排序相关  =====================================
