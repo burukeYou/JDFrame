@@ -1,6 +1,6 @@
 package io.github.burukeyou.dataframe.util;
 
-import io.github.burukeyou.dataframe.iframe.ToBigDecimalFunction;
+import io.github.burukeyou.dataframe.iframe.BigDecimalFunction;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -11,10 +11,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-/**
- *  对 java.util.stream.Collectors 聚合汇总的扩展实现， 支持BigDecimal 的 max、min、avg、sum
- *
- */
+
 public class CollectorsPlusUtil {
 	static final Set<Collector.Characteristics> CH_NOID = Collections.emptySet();
 
@@ -26,14 +23,7 @@ public class CollectorsPlusUtil {
 		return i -> (R) i;
 	}
 
-	/**
-	 * Simple implementation class for {@code Collector}.
-	 *
-	 * @param <T>
-	 *            the type of elements to be collected
-	 * @param <R>
-	 *            the type of the result
-	 */
+
 	static class CollectorImpl<T, A, R> implements Collector<T, A, R> {
 		private final Supplier<A> supplier;
 		private final BiConsumer<A, T> accumulator;
@@ -81,13 +71,8 @@ public class CollectorsPlusUtil {
 		}
 	}
 
-	/**
-	 * 求和
-	 * @param mapper
-	 * @param <T>
-	 * @return
-	 */
-	public static <T> Collector<T, ?, BigDecimal> summingBigDecimal(ToBigDecimalFunction<? super T> mapper) {
+
+	public static <T> Collector<T, ?, BigDecimal> summingBigDecimal(BigDecimalFunction<? super T> mapper) {
 		return new CollectorImpl<>(() -> new BigDecimal[1], (a, t) -> {
 			if (a[0] == null) {
 				a[0] = BigDecimal.ZERO;
@@ -99,11 +84,7 @@ public class CollectorsPlusUtil {
 		}, a -> a[0], CH_NOID);
 	}
 
-	/**
-	 * 根据value对集合进行逆序排序
-	 * @param unorderedList
-	 * @return
-	 */
+
 	public static List<Map.Entry<String, BigDecimal>> sortByValueAndReverse(List<Map.Entry<String, BigDecimal>> unorderedList) {
 		Collections.sort(unorderedList, new Comparator<Map.Entry<String, BigDecimal>>() {
 		@Override
@@ -121,11 +102,6 @@ public class CollectorsPlusUtil {
 		return unorderedList;
 	}
 
-	/**
-	 * 根据value对集合进行逆序排序 (Long 类型)
-	 * @param unorderedList
-	 * @return
-	 */
 	public static List<Map.Entry<String, Long>> sortByValueAndReverseForLong(List<Map.Entry<String, Long>> unorderedList) {
 		Collections.sort(unorderedList, new Comparator<Map.Entry<String, Long>>() {
 			@Override
@@ -143,13 +119,7 @@ public class CollectorsPlusUtil {
 		return unorderedList;
 	}
 
-	/**
-	 * 求最大,这里的最小MIN值，作为初始条件判断值，如果某些数据范围超过百亿以后，可以根据需求换成Long.MIN_VALUE或者Double.MIN_VALUE
-	 * @param mapper
-	 * @param <T>
-	 * @return
-	 */
-	public static <T> Collector<T, ?, BigDecimal> maxBy(ToBigDecimalFunction<? super T> mapper) {
+	public static <T> Collector<T, ?, BigDecimal> maxBy(BigDecimalFunction<? super T> mapper) {
 		return new CollectorImpl<>(
 				() -> new BigDecimal[]{new BigDecimal(Integer.MIN_VALUE)},
 				(a, t) -> {
@@ -162,14 +132,7 @@ public class CollectorsPlusUtil {
 				a -> a[0], CH_NOID);
 	}
 
-	/**
-	 * 求最小，这里的最大MAX值，作为初始条件判断值，如果某些数据范围超过百亿以后
-	 * ，可以根据需求换成Long.MAX_VALUE或者Double.MAX_VALUE
-	 * @param mapper
-	 * @param <T>
-	 * @return
-	 */
-	public static <T> Collector<T, ?, BigDecimal> minBy(ToBigDecimalFunction<? super T> mapper) {
+	public static <T> Collector<T, ?, BigDecimal> minBy(BigDecimalFunction<? super T> mapper) {
 		return new CollectorImpl<>(
 				() -> new BigDecimal[]{new BigDecimal(Integer.MAX_VALUE)},
 				(a, t) -> {
@@ -182,21 +145,8 @@ public class CollectorsPlusUtil {
 				a -> a[0], CH_NOID);
 	}
 
-	/**
-	 * 返回一个平均值
-	 *
-	 * @param newScale     保留小数位数
-	 * @param roundingMode 小数处理方式
-	 *                     #ROUND_UP 进1
-	 *                     #ROUND_DOWN 退1
-	 *                     #ROUND_CEILING  进1截取：正数则ROUND_UP，负数则ROUND_DOWN
-	 *                     #ROUND_FLOOR  退1截取：正数则ROUND_DOWN，负数则ROUND_UP
-	 *                     #ROUND_HALF_UP >=0.5进1
-	 *                     #ROUND_HALF_DOWN >0.5进1
-	 *                     #ROUND_HALF_EVEN
-	 *                     #ROUND_UNNECESSARY
-	 */
-	public static <T> Collector<T, ?, BigDecimal> averagingBigDecimal(ToBigDecimalFunction<? super T> mapper, int newScale,
+
+	public static <T> Collector<T, ?, BigDecimal> averagingBigDecimal(BigDecimalFunction<? super T> mapper, int newScale,
 																	  int roundingMode) {
 		return new CollectorImpl<>(
 				() -> new BigDecimal[]{new BigDecimal(0), new BigDecimal(0)},

@@ -41,8 +41,8 @@ public class JDFrameTest {
 
     @Test
     public void testRank(){
-        SDFrame<Student> sdf = SDFrame.read(studentList).subRankingSameAsc(Student::getAge, 3);
-        JDFrame<Student> df = JDFrame.read(studentList).subRankingSameAsc(Student::getAge, 3);
+        SDFrame<Student> sdf = SDFrame.read(studentList).catRankingSameAsc(Student::getAge, 3);
+        JDFrame<Student> df = JDFrame.read(studentList).catRankingSameAsc(Student::getAge, 3);
         SDFrame<Student> union = sdf.union(df);
         //
         List<Student> students = union.toLists();
@@ -94,7 +94,7 @@ public class JDFrameTest {
                 .whereBetween(Student::getAge,9,16)
                 .groupBySum(Student::getSchool, Student::getScore)
                 .sortDesc(FI2::getC2)
-                .subFirst(10);
+                .cutFirst(10);
 
 
         sdf2.show();

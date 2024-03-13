@@ -3,6 +3,7 @@ package io.github.burukeyou.dataframe.iframe;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
+import io.github.burukeyou.dataframe.iframe.support.DefaultJoin;
 import io.github.burukeyou.dataframe.iframe.support.Join;
 import io.github.burukeyou.dataframe.iframe.support.JoinOn;
 
@@ -14,480 +15,717 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
- * 
+ * A Simple DataFrame Stream API Interface define
+ *
+ *
  * @author caizhihao
  */
 public interface IFrame<T> extends Iterable<T>{
 
-
+    /**
+     * Convert to list
+     * @return      the list
+     */
     List<T> toLists();
 
+    /**
+     * get stream
+     * @return      the stream
+     */
     Stream<T> stream();
 
 
     /**
-     * ===========================   矩阵信息 =====================================
+     * ===========================   Frame Info =====================================
      **/
     /**
-     * 打印
+     * print the 10 row to the console
+     *
      */
     void show();
 
     /**
-     * 打印前N行
-     * @param n
+     * print the n row to the console
      */
     void show(int n);
 
     /**
-     *  获取列头
+     *  Get column headers
      */
     List<String> columns();
 
     /**
-     *  获取某一列信息
+     *  Get a column value
      */
     <R> List<R> col(Function<T, R> function);
 
 
     /**
-     * ===========================   连接矩阵  =====================================
+     * ===========================   Frame Join  =====================================
      **/
+    /**
+     * add element to Frame
+     * @param t         element
+     */
     IFrame<T> append(T t);
 
+    /**
+     * add other Frame to this
+     * @param other         other Frame
+     */
     IFrame<T> union(IFrame<T> other);
 
     /**
-     * 内连接
+     * inner join Frame
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
      */
     <R,K> IFrame<R> join(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
+    /**
+     * inner join Frame
+     *      such as {@link IFrame#join(IFrame, JoinOn, Join)}, but the default Join is {@link DefaultJoin},
+     *      it will automatically map to a new Frame based on the same name
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
+     */
     <R,K> IFrame<R> join(IFrame<K> other, JoinOn<T,K> on);
 
     /**
-     * 左连接
-     * @param other         连接的矩阵
-     * @param on            连接条件
-     * @param join          连接逻辑
+     * left join Frame
+     *      if connection conditions false, The callback value K for Join will be null， always keep T
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
      */
     <R,K> IFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
+    /**
+     * left join Frame
+     *        such as {@link IFrame#leftJoin(IFrame, JoinOn, Join)}, but the default Join is {@link DefaultJoin},
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
+     */
     <R,K> IFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on);
 
+    /**
+     * right join Frame
+     *      if connection conditions false, The callback value T for Join will be null， always keep K
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
+     */
     <R,K> IFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
+    /**
+     * right join Frame
+     *        such as {@link IFrame#rightJoin(IFrame, JoinOn, Join)}, but the default Join is {@link DefaultJoin},
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
+     */
     <R,K> IFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on);
 
     /**
-     * ===========================   矩阵变换  =====================================
-     **/
-
+     * ===========================   Frame Convert  =====================================
+     */
+    /**
+     * convert to the new Frame
+     * @param map           convert operation
+     * @return              the new Frame
+     * @param <R>           the new Frame type
+     */
     <R> IFrame<R> map(Function<T,R> map);
 
     /**
-     * 百分比转换
+     * Percentage convert
+     *          you can convert the value of a certain field to a percentage,
+     *          Then assign a value to a certain column through SetFunction
+     * @param get           need percentage convert field
+     * @param set           field for storing percentage values
+     * @param scale         percentage retain decimal places
+     * @param <R>           the percentage field type
      */
     <R extends Number> IFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set, int scale);
 
+    /**
+     * Percentage convert
+     *    such as {@link IFrame#mapPercent(Function, SetFunction, int)}, but default scale is 2
+     * @param get           need percentage convert field
+     * @param set           field for storing percentage values
+     */
     <R extends Number> IFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set);
 
     /**
-     * 分区
+     * partition
+     *      cut the matrix into multiple small matrices, with each matrix size n
+     *
+     * @param n         size of each zone
      */
     IFrame<List<T>> partition(int n);
 
     /**
-     * 添加序号列
+     * ddd ordinal column
+     * @return                      FI2<T,Number>
      */
     IFrame<FI2<T,Integer>> addSortNoCol();
 
     /**
-     * 添加序号列，按照比较器
+     * Sort by comparator first, then add ordinal columns
+     * @param comparator    the sort comparator
      */
     IFrame<FI2<T,Integer>> addSortNoCol(Comparator<T> comparator);
 
     /**
-     * 添加序号列，按照字段
+     * Sort by Field value first, then add ordinal columns
+     * @param function    the sort field
+     *
      */
     <R extends Comparable<R>>  IFrame<FI2<T,Integer>> addSortNoCol(Function<T, R> function);
 
     /**
-     * 添加序号列，到某一列
+     * Add a numbered column to a specific column
+     * @param set           specific column
      */
     IFrame<T> addSortNoCol(SetFunction<T,Integer> set);
 
     /**
-     * 添加排名列，按照比较器
-     *      排名逻辑，相同值认为名字一样
+     * Add ranking columns by comparator
+     *      Ranking logic, the same value means the Ranking is the same. This is different from {@link #addSortNoCol}
+     * @param comparator    the ranking  comparator
      */
     IFrame<FI2<T,Integer>> addRankingSameCol(Comparator<T> comparator);
 
     /**
-     * 添加排名列，按照字段
+     * Add ranking columns by field
+     * @param function          the sort field
      */
     <R extends Comparable<R>> IFrame<FI2<T,Integer>> addRankingSameCol(Function<T, R> function);
 
+
     /**
-     * 添加排名列，到某一列
+     * Add ranking column to a certain column by Comparator
+     * @param comparator            the ranking  comparator
+     * @param set                   certain column
      */
     IFrame<T> addRankingSameCol(Comparator<T> comparator,SetFunction<T,Integer> set);
 
+    /**
+     *  Add ranking column to a certain column by field
+     */
     <R extends Comparable<R>>  IFrame<T> addRankingSameCol(Function<T, R> function,SetFunction<T,Integer> set);
 
 
     /**
-     * ===========================   排序相关  =====================================
+     * ===========================   Sort Frame  =====================================
      **/
 
     /**
-     * 降序
+     * Descending order
+     * @param comparator         comparator
      */
     IFrame<T> sortDesc(Comparator<T> comparator);
 
+    /**
+     * Descending order by field
+     * @param function      sort field
+     * @param <R>           the  sort field type
+     */
     <R extends Comparable<R>> IFrame<T> sortDesc(Function<T, R> function);
 
     /**
-     * 升序
+     * Ascending order
+     * @param comparator         comparator
      */
     IFrame<T> sortAsc(Comparator<T> comparator);
 
+    /**
+     * Ascending order
+     * @param function      sort field
+     */
     <R extends Comparable<R>> IFrame<T> sortAsc(Function<T, R> function);
 
 
     /** ===========================   截取相关  ===================================== **/
 
-
     /**
-     *  截取前n个
+     *  Cut the top n element
+     * @param n    the top n
      */
-    IFrame<T> subFirst(int n);
+    IFrame<T> cutFirst(int n);
 
     /**
-     * 截取后n个
+     * Cut the last n element
+     * @param n    the last n
      */
-    IFrame<T> subLast(int n);
+    IFrame<T> catLast(int n);
 
     /**
-     * 按照排名截取前n个
-     *          相同值认为排名一样
-     * @param comparator
-     * @param n
-     * @return
+     * Cut the top n by ranking value, by comparator to ranking asc
+     *          The same value is considered to have the same ranking
+     * @param comparator            the ranking comparator
+     * @param n                     the top n
      */
-    IFrame<T> subRankingSameAsc(Comparator<T> comparator, int n);
-
-    <R extends Comparable<R>> IFrame<T> subRankingSameAsc(Function<T, R> function, int n);
-
-    IFrame<T> subRankingSameDesc(Comparator<T> comparator, int n);
-
-    <R extends Comparable<R>> IFrame<T> subRankingSameDesc(Function<T, R> function, int n);
-
-
-    /** ===========================   查看相关  ===================================== **/
+    IFrame<T> catRankingSameAsc(Comparator<T> comparator, int n);
 
     /**
-     * 获取第一个元素
+     * Cut the top n by ranking value, by field  to ranking asc
+     *          The same value is considered to have the same ranking
+     * @param function              the ranking field
+     * @param n                     the top n
+     */
+    <R extends Comparable<R>> IFrame<T> catRankingSameAsc(Function<T, R> function, int n);
+
+    /**
+     * Cut the top n by ranking value, by comparator to ranking desc
+     *          The same value is considered to have the same ranking
+     * @param comparator            the ranking comparator
+     * @param n                     the top n
+     */
+    IFrame<T> catRankingSameDesc(Comparator<T> comparator, int n);
+
+    /**
+     * Cut the top n by ranking value, by field  to ranking desc
+     *          The same value is considered to have the same ranking
+     * @param function              the ranking field
+     * @param n                     the top n
+     */
+    <R extends Comparable<R>> IFrame<T> catRankingSameDesc(Function<T, R> function, int n);
+
+
+    /** ===========================   View Frame  ===================================== **/
+
+    /**
+     * Get the first element
      */
     T head();
 
     /**
-     * 获取前n个元素
+     * Get the first n elements
      */
     List<T> head(int n);
 
     /**
-     * 获取最后一个元素
+     * Get the last element
      */
     T tail();
 
     /**
-     * 获取后n个元素
+     * Get the last n elements
      */
     List<T> tail(int n);
 
-    /** ===========================   去重相关  ===================================== **/
+    /** ===========================   Distinct Frame  ===================================== **/
 
     /**
-     * 去重
+     * distinct by  T value
      */
     IFrame<T> distinct();
 
 
     /**
-     * 去重，按照字段
+     * distinct by field value
+     * @param function          the field
+     * @param <R>               field value type
      */
     <R extends Comparable<R>> IFrame<T> distinct(Function<T, R> function);
 
+
     /**
-     * 去重，按照比较器
+     * distinct by  comparator
+     * @param comparator        the comparator
      */
     <R extends Comparable<R>> IFrame<T> distinct(Comparator<T> comparator);
 
     /**
-     * 去重后数量，按照字段
+     * Calculate the quantity after deduplication
      */
     <R extends Comparable<R>> long countDistinct(Function<T, R> function);
 
+    /**
+     * Calculate the quantity after deduplication
+     */
     long countDistinct(Comparator<T> comparator);
 
-
     /**
-     * ===========================   筛选相关  =====================================
+     * ===========================   Where Frame  =====================================
      **/
 
+    /**
+     * filter by predicate
+     * @param predicate         the predicate
+     */
     IFrame<T> where(Predicate<? super T> predicate);
 
     /**
-     * 筛选值为空的
-     *      如果是字符串兼容了，null 和 ''情况
+     * Filter field values that are null, If it is string compatible, null and '' situations
+     * @param function      the filter field
+     * @param <R>           the filter field type
      */
     <R> IFrame<T> whereNull(Function<T, R> function);
 
     /**
-     * 筛选值不为空的
+     * Filter field values that are not null,If it is string compatible, null and '' situations
+     * @param function      the filter field
+     * @param <R>           the filter field type
      */
     <R> IFrame<T> whereNotNull(Function<T, R> function);
 
     /**
-     * 区间内筛选 （前闭后闭）
+     * Screening within the interval,front closed and back closed.  [start,end]
+     *             [start,end]
+     * @param function          the filter field
+     * @param start             start value
+     * @param end               end value
      */
     <R extends Comparable<R>> IFrame<T> whereBetween(Function<T, R> function, R start, R end);
 
     /**
-     * 区间内筛选 （前开后开）
+     * Screening within the interval , front open and back open => (start,end)
+     * @param function          the filter field
+     * @param start             start value
+     * @param end               end value
      */
     <R extends Comparable<R>> IFrame<T> whereBetweenN(Function<T, R> function, R start, R end);
 
     /**
-     * 区间内筛选 （前开后闭）
+     * Screening within the interval , front open and back close => (start,end]
+     * @param function          the filter field
+     * @param start             start value
+     * @param end               end value
      */
     <R extends Comparable<R>> IFrame<T> whereBetweenR(Function<T, R> function, R start, R end);
 
     /**
-     * 区间内筛选 （前闭后开）
+     * Screening within the interval , front close and back open => [start,end)
+     * @param function          the filter field
+     * @param start             start value
+     * @param end               end value
      */
     <R extends Comparable<R>> IFrame<T> whereBetweenL(Function<T, R> function, R start, R end);
 
+
     /**
-     * 区间外筛选 （前闭后闭）
+     * Out of range screening, (front closed and back closed) => [start,end]
+     * @param function          the filter field
+     * @param start             start value
+     * @param end               end value
      */
     <R extends Comparable<R>> IFrame<T> whereNotBetween(Function<T, R> function, R start, R end);
 
     /**
-     * 区间外筛选 （前开后开）
+     * Out of range screening, (front open and back open) => (start,end)
+     * @param function          the filter field
+     * @param start             start value
+     * @param end               end value
      */
     <R extends Comparable<R>> IFrame<T> whereNotBetweenN(Function<T, R> function, R start, R end);
 
     /**
-     *
+     * The query value is within the specified range
+     * @param function          the filter field
+     * @param list              specified range
      */
     <R> IFrame<T> whereIn(Function<T, R> function, List<R> list);
 
+    /**
+     * The query value is outside the specified range
+     * @param function          the filter field
+     * @param list              specified range
+     */
     <R> IFrame<T> whereNotIn(Function<T, R> function, List<R> list);
 
+    /**
+     * filter true by predicate
+     */
     IFrame<T> whereTrue(Predicate<T> predicate);
 
+    /**
+     * filter not true by predicate
+     */
     IFrame<T> whereNotTrue(Predicate<T> predicate);
 
+    /**
+     * Filter equals
+     * @param function      the field
+     * @param value         need value
+     */
     <R> IFrame<T> whereEq(Function<T, R> function, R value);
 
+    /**
+     * Filter not equals
+     * @param function      the field
+     * @param value         not need value
+     */
     <R> IFrame<T> whereNotEq(Function<T, R> function, R value);
 
-
+    /**
+     * Filter Greater than value
+     * @param function      the field
+     * @param value         not need value
+     */
     <R extends Comparable<R>> IFrame<T> whereGt(Function<T, R> function, R value);
 
+    /**
+     * Filter Greater than or equal to
+     * @param function      the field
+     * @param value         not need value
+     */
     <R extends Comparable<R>> IFrame<T> whereGe(Function<T, R> function, R value);
 
+    /**
+     * Filter LESS than value
+     * @param function      the field
+     * @param value         not need value
+     */
     <R extends Comparable<R>> IFrame<T> whereLt(Function<T, R> function, R value);
 
+    /**
+     * Filter less than or equal to
+     * @param function      the field
+     * @param value         not need value
+     */
     <R extends Comparable<R>> IFrame<T> whereLe(Function<T, R> function, R value);
 
+    /**
+     * Fuzzy query contains specified values
+     * @param function              the field
+     * @param value                 query value
+     */
     <R> IFrame<T> whereLike(Function<T, R> function, R value);
 
+    /**
+     * Fuzzy query not contains specified values
+     * @param function              the field
+     * @param value                 query value
+     */
     <R> IFrame<T> whereNotLike(Function<T, R> function, R value);
 
+    /**
+     * prefix fuzzy query  contains specified values
+     * @param function              the field
+     * @param value                 query value
+     */
     <R> IFrame<T> whereLikeLeft(Function<T, R> function, R value);
 
+    /**
+     * suffix fuzzy query  contains specified values
+     * @param function              the field
+     * @param value                 query value
+     */
     <R> IFrame<T> whereLikeRight(Function<T, R> function, R value);
 
     /**
-     * ===========================   汇总相关  =====================================
+     * ===========================   Summary Frame  =====================================
      **/
-
+    /**
+     * Sum the values of the field
+     * @param function      the  field
+     */
     <R> BigDecimal sum(Function<T, R> function);
 
+    /**
+     * average the values of the field
+     * @param function      the  field
+     */
     <R> BigDecimal avg(Function<T, R> function);
 
+    /**
+     * Finding the maximum and minimum element
+     * @param function      the  field
+     */
     <R extends Comparable<R>> MaxMin<T> maxMin(Function<T, R> function);
 
+    /**
+     * Finding the maximum and minimum value
+     * @param function      the  field
+     */
     <R extends Comparable<R>> MaxMin<R> maxMinValue(Function<T, R> function);
 
+    /**
+     * Finding the maximum  element
+     * @param function      the  field
+     */
     <R extends Comparable<R>> T max(Function<T, R> function) ;
 
+    /**
+     * Finding the maximum  value
+     * @param function      the  field
+     */
     <R extends Comparable<R>> R maxValue(Function<T, R> function);
 
+    /**
+     * Finding the minimum  value
+     * @param function      the  field
+     */
     <R extends Comparable<R>> R minValue(Function<T, R> function);
 
+    /**
+     * Finding the minimum  element
+     * @param function      the  field
+     */
     <R extends Comparable<R>> T min(Function<T, R> function);
 
+    /**
+     * get row count
+     */
     long count();
 
 
-    /** ===========================   分组相关  ===================================== **/
+    /** ===========================   Group Frame  ===================================== **/
     /**
-     * 分组求和
-     *
-     * @param key       分组的字段
-     * @param value     聚合的字段
+     * Group summation
+     * @param key       group field
+     * @param value     Aggregated field
      */
-    <K> IFrame<FI2<K, BigDecimal>> groupBySum(Function<T, K> key, ToBigDecimalFunction<T> value);
+    <K> IFrame<FI2<K, BigDecimal>> groupBySum(Function<T, K> key, BigDecimalFunction<T> value);
 
     /**
-     * 分组求和
-     *
-     * @param key       分组K
-     * @param key2      二级分组K
-     * @param value     聚合字段
+     * Group summation
+     * @param key       group field
+     * @param key2      secondary level group field
+     * @param value     Aggregated field
      */
-    <K, J> IFrame<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key, Function<T, J> key2, ToBigDecimalFunction<T> value);
+    <K, J> IFrame<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key, Function<T, J> key2, BigDecimalFunction<T> value);
 
     /**
-     * 分组求和
+     * Group summation
      *
-     * @param key     分组K
-     * @param key2    二级分组K
-     * @param key3    三级分组K
-     * @param value   聚合字段
+     * @param key     group field
+     * @param key2    secondary level group field
+     * @param key3    third level group field
+     * @param value   Aggregated field
      */
     <K, J, H> IFrame<FI4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
                                                           Function<T, J> key2,
                                                           Function<T, H> key3,
-                                                          ToBigDecimalFunction<T> value);
+                                                          BigDecimalFunction<T> value);
 
     /**
-     * 分组求数量
-     *
-     * @param key   分组K
+     * Group count
+     * @param key       group field
      */
     <K> IFrame<FI2<K, Long>> groupByCount(Function<T, K> key);
 
     /**
-     * 分组求数量
-     *
-     * @param key   分组K
-     * @param key2  二级分组K
+     * Group count
+     * @param key       group field
+     * @param key2      secondary level group field
      */
     <K, J> IFrame<FI3<K, J, Long>> groupByCount(Function<T, K> key, Function<T, J> key2);
 
     /**
-     * 分组求数量
+     * Group count
      *
-     * @param key     分组K
-     * @param key2    二级分组K
-     * @param key3    三级分组K
+     * @param key     group field
+     * @param key2    secondary level group field
+     * @param key3    third level group field
      */
     <K, J, H> IFrame<FI4<K, J, H, Long>> groupByCount(Function<T, K> key, Function<T, J> key2, Function<T, H> key3);
 
-
     /**
-     * 分组求和及数量
+     * Group sum and count together
      *
-     * @param key           分组的字段
-     * @param value         求和的字段
-     * @return              FItem3<key, 和, 数量>
+     * @param key           group field
+     * @param value         Aggregated field
+     * @return              FItem3<key, Sum, Count>
      */
-    <K> IFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, ToBigDecimalFunction<T> value);
+    <K> IFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, BigDecimalFunction<T> value);
 
     /**
-     * 分组求和及数量
+     * Group sum and count together
      *
-     * @param key           分组K
-     * @param key2          二级分组K
-     * @param value         求和字段
-     * @return              FItem4<key,K2, 和, 数量>
+     * @param key           group field
+     * @param key2          secondary level group field
+     * @param value         Aggregated field
+     * @return              FItem4<key, ke2,Sum, Count>
      */
-    <K, J> IFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key, Function<T, J> key2, ToBigDecimalFunction<T> value);
+    <K, J> IFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key, Function<T, J> key2, BigDecimalFunction<T> value);
 
 
     /**
-     * 分组求平均值
-     *
-     * @param key     分组的字段
-     * @param value 聚合的字段
+     * Group average
+     * @param key       group field
+     * @param value     Aggregated field
      */
-    <K> IFrame<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key, ToBigDecimalFunction<T> value) ;
+    <K> IFrame<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key, BigDecimalFunction<T> value) ;
 
     /**
-     * 分组求平均
-     *
-     * @param key     分组K
-     * @param key2    二级分组K
-     * @param value 聚合字段
+     * Group average
+     * @param key       group field
+     * @param key2      secondary level group field
+     * @param value     Aggregated field
      */
-    <K, J> IFrame<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key, Function<T, J> key2, ToBigDecimalFunction<T> value);
+    <K, J> IFrame<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key, Function<T, J> key2, BigDecimalFunction<T> value);
 
     /**
-     * 分组求平均
-     *
-     * @param key     分组K
-     * @param key2    二级分组K
-     * @param key3    三级分组K
-     * @param value 聚合字段
+     * Group average
+     * @param key       group field
+     * @param key2      secondary level group field
+     * @param key3      third level group field
+     * @param value     Aggregated field
      */
     <K, J, H> IFrame<FI4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
                                                           Function<T, J> key2,
                                                           Function<T, H> key3,
-                                                          ToBigDecimalFunction<T> value) ;
+                                                          BigDecimalFunction<T> value) ;
 
     /**
-     * 分组求最大
-     *
-     * @param key     分组K
-     * @param value 聚合字段
+     * Group max
+     * @param key       group field
+     * @param value     Aggregated field
      */
     <K, V extends Comparable<V>> IFrame<FI2<K, T>> groupByMax(Function<T, K> key, Function<T, V> value) ;
+
     /**
-     * 分组求最小
-     *
-     * @param key     分组K
-     * @param value 聚合字段
+     * Group max
+     * @param key       group field
+     * @param value     Aggregated field
      */
     <K, V extends Comparable<V>> IFrame<FI2<K, T>> groupByMin(Function<T, K> key, Function<T, V> value);
 
     /**
-     * 分组求最大和最小值
-     *
-     * @param key     分组K
-     * @param value 聚合字段
+     * Group max and min value
+     * @param key       group field
+     * @param value     Aggregated field
      */
     <K, V extends Comparable<V>> IFrame<FI2<K, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key, Function<T, V> value);
 
     /**
-     * 分组求最大和最小值
-     *
-     * @param key     分组K
-     * @param key2    二级分组K
-     * @param value 聚合字段
+     * Group max and min value
+     * @param key       group field
+     * @param key2      secondary level group field
+     * @param value     Aggregated field
      */
     <K, J, V extends Comparable<V>> IFrame<FI3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
                                                                                     Function<T, J> key2,
                                                                                     Function<T, V> value);
 
     /**
-     * 分组求最大和最小
-     *
-     * @param key     分组K
-     * @param value 聚合字段
+     * Group max and min element
+     * @param key       group field
+     * @param value     Aggregated field
      */
     <K, V extends Comparable<V>> IFrame<FI2<K, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                          Function<T, V> value) ;
 
     /**
-     * 分组求最大和最小
-     *
-     * @param key     分组K
-     * @param key2   二级分组K
-     * @param value 聚合字段
+     * Group max and min element
+     * @param key       group field
+     * @param key2      secondary level group field
+     * @param value     Aggregated field
      */
     <K, J, V extends Comparable<V>> IFrame<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                Function<T, J> key2,

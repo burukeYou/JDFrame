@@ -96,7 +96,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <R, K> SDFrame<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
-        return returnDF(joinList(other,on,join));
+        return returnDF(leftJoinList(other,on,join));
     }
 
     @Override
@@ -217,41 +217,38 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrame<T> subRankingSameAsc(Comparator<T> comparator, int n) {
+    public SDFrame<T> catRankingSameAsc(Comparator<T> comparator, int n) {
         List<FI2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator, n);
         return returnThis(tmpList.stream().map(FI2::getC1).collect(toList()).stream());
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> subRankingSameAsc(Function<T, R> function, int n) {
-        return subRankingSameAsc(Comparator.comparing(function),n);
+    public <R extends Comparable<R>> SDFrame<T> catRankingSameAsc(Function<T, R> function, int n) {
+        return this.catRankingSameAsc(Comparator.comparing(function),n);
     }
 
     @Override
-    public SDFrame<T> subRankingSameDesc(Comparator<T> comparator, int n) {
-        return subRankingSameAsc(comparator.reversed(),n);
+    public SDFrame<T> catRankingSameDesc(Comparator<T> comparator, int n) {
+        return this.catRankingSameAsc(comparator.reversed(),n);
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> subRankingSameDesc(Function<T, R> function, int n) {
-        return this.subRankingSameDesc(Comparator.comparing(function),n);
+    public <R extends Comparable<R>> SDFrame<T> catRankingSameDesc(Function<T, R> function, int n) {
+        return this.catRankingSameDesc(Comparator.comparing(function),n);
     }
 
 
     /** ===========================   截取相关  ===================================== **/
 
-    /**
-     * 截取前n个
-     */
     @Override
-    public SDFrame<T> subFirst(int n) {
+    public SDFrame<T> cutFirst(int n) {
         DFList<T> first = new DFList<>(toLists()).first(n);
         List<T> build = first.build();
         return returnThis(build);
     }
 
     @Override
-    public SDFrame<T> subLast(int n) {
+    public SDFrame<T> catLast(int n) {
         DFList<T> first = new DFList<>(toLists()).last(n);
         data = first.build().stream();
         return this;
@@ -464,7 +461,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
 
     public <K> SDFrame<FI2<K, BigDecimal>> groupBySum(Function<T, K> key,
-                                                      ToBigDecimalFunction<T> value) {
+                                                      BigDecimalFunction<T> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
         List<FI2<K, BigDecimal>> collect = group(key, tBigDecimalCollector);
         return returnDF(collect);
@@ -473,7 +470,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     public <K, J> SDFrame<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key,
                                                             Function<T, J> key2,
-                                                            ToBigDecimalFunction<T> value) {
+                                                            BigDecimalFunction<T> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
         List<FI3<K, J, BigDecimal>> collect = group(key, key2, tBigDecimalCollector);
         return returnDF(collect);
@@ -484,7 +481,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     public <K, J, H> SDFrame<FI4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
                                                                   Function<T, J> key2,
                                                                   Function<T, H> key3,
-                                                                  ToBigDecimalFunction<T> value) {
+                                                                  BigDecimalFunction<T> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
         List<FI4<K, J, H, BigDecimal>> collect = group(key, key2, key3, tBigDecimalCollector);
         return returnDF(collect);
@@ -515,7 +512,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
 
-    public <K> SDFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, ToBigDecimalFunction<T> value) {
+    public <K> SDFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, BigDecimalFunction<T> value) {
         List<T> dataList = toLists();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
         List<FI2<K, BigDecimal>> sumList = returnDF(dataList).group(key, tBigDecimalCollector);
@@ -528,7 +525,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     public <K, J> SDFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key,
                                                                        Function<T, J> key2,
-                                                                       ToBigDecimalFunction<T> value) {
+                                                                       BigDecimalFunction<T> value) {
         List<T> dataList = toLists();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
         List<FI3<K, J, BigDecimal>> sumList = returnDF(dataList).group(key, key2, tBigDecimalCollector);
@@ -544,7 +541,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
 
     public <K> SDFrame<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key,
-                                                      ToBigDecimalFunction<T> value) {
+                                                      BigDecimalFunction<T> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
         List<FI2<K, BigDecimal>> collect = group(key, tBigDecimalCollector);
         return returnDF(collect);
@@ -553,7 +550,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     public <K, J> SDFrame<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key,
                                                             Function<T, J> key2,
-                                                            ToBigDecimalFunction<T> value) {
+                                                            BigDecimalFunction<T> value) {
 
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
         List<FI3<K, J, BigDecimal>> collect = group(key, key2, tBigDecimalCollector);
@@ -564,7 +561,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     public <K, J, H> SDFrame<FI4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
                                                                   Function<T, J> key2,
                                                                   Function<T, H> key3,
-                                                                  ToBigDecimalFunction<T> value) {
+                                                                  BigDecimalFunction<T> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
         List<FI4<K, J, H, BigDecimal>> collect = group(key, key2, key3, tBigDecimalCollector);
         return returnDF(collect);

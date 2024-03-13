@@ -365,7 +365,8 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
                 sb.append(dataArr[i][j].replace(MSG, "\t"));
             }
         }
-        log.info("\n{}",sb);
+        //log.info("\n{}",sb);
+        System.out.println(sb);
     }
 
 

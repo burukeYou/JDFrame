@@ -198,24 +198,4 @@ public class MathUtils {
                 .divide(BigDecimal.valueOf(valuesList.size()), 8, RoundingMode.HALF_UP);
     }
 
-    public static String smartScale(BigDecimal olBValue) {
-        if (olBValue == null){
-            return "";
-        }
-
-        if (olBValue.compareTo(BigDecimal.ZERO) == 0){
-            return "0";
-        }
-
-        BigDecimal bValue = olBValue.setScale(2, RoundingMode.HALF_UP);
-        if (bValue.compareTo(BigDecimal.ZERO) == 0){
-            // 尝试保留4位小数
-            bValue = olBValue.setScale(4, RoundingMode.HALF_UP);
-            if (bValue.compareTo(BigDecimal.ZERO) == 0){
-                // 尝试保留5位小数
-                bValue = olBValue.setScale(5, RoundingMode.HALF_UP);
-            }
-        }
-        return bValue.toString();
-    }
 }

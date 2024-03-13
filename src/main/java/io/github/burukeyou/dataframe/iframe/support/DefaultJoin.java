@@ -3,6 +3,12 @@ package io.github.burukeyou.dataframe.iframe.support;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 
+/**
+ * @author caizhihao
+ * @param <T>
+ * @param <K>
+ * @param <R>
+ */
 public class DefaultJoin<T,K,R> implements Join<T,K,R> {
 
     @Override
