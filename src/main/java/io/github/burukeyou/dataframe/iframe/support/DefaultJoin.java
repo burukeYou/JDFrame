@@ -1,4 +1,4 @@
-package io.github.burukeyou.dataframe.dataframe.support;
+package io.github.burukeyou.dataframe.iframe.support;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;

@@ -1,4 +1,4 @@
-package io.github.burukeyou.dataframe.dataframe;
+package io.github.burukeyou.dataframe.iframe;
 
 import java.math.BigDecimal;
 

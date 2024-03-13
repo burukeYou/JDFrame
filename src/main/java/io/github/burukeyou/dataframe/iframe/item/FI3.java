@@ -1,4 +1,4 @@
-package io.github.burukeyou.dataframe.dataframe.item;
+package io.github.burukeyou.dataframe.iframe.item;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,11 +6,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
- * DataFrame （2 x 2 矩阵）
- *
- *
+ * DataFrame （3 x 3 矩阵）
  * @param <T1>
  * @param <T2>
+ * @param <T3>
  *
  * @author caizhihao
  */
@@ -18,9 +17,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class FT2<T1, T2> {
+public class FI3<T1,T2,T3> {
 
     private T1 c1;
     private T2 c2;
+    private T3 c3;
 
 }

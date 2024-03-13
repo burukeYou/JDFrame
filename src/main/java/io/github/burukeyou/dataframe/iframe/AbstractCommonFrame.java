@@ -1,7 +1,6 @@
-package io.github.burukeyou.dataframe.dataframe;
+package io.github.burukeyou.dataframe.iframe;
 
-import io.github.burukeyou.dataframe.IFrame;
-import io.github.burukeyou.dataframe.dataframe.item.FT2;
+import io.github.burukeyou.dataframe.iframe.item.FI2;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
@@ -16,7 +15,6 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
     protected static final String MSG = "****";
 
     protected List<String> fieldList = new ArrayList<>();
-
 
     protected String[][] buildPrintDataArr(int limit) {
         List<T> dataList = toLists();
@@ -138,11 +136,11 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
         }
     }
 
-    protected List<FT2<T,Integer>> rankingSameAsc(List<T> data, Comparator<T> comparator){
+    protected List<FI2<T,Integer>> rankingSameAsc(List<T> data, Comparator<T> comparator){
         return rankingSameAsc(data,comparator,data.size());
     }
 
-    protected List<FT2<T,Integer>> rankingSameAsc(List<T> data, Comparator<T> comparator, int n) {
+    protected List<FI2<T,Integer>> rankingSameAsc(List<T> data, Comparator<T> comparator, int n) {
         if (data.isEmpty()){
             return Collections.emptyList();
         }
@@ -152,8 +150,8 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
 
         data.sort(comparator);
         int rank = 1;
-        List<FT2<T,Integer>> tmpDataList = new ArrayList<>();
-        tmpDataList.add(new FT2<>(data.get(0),1));
+        List<FI2<T,Integer>> tmpDataList = new ArrayList<>();
+        tmpDataList.add(new FI2<>(data.get(0),1));
         for (int i = 1; i < data.size(); i++) {
             T pre = data.get(i-1);
             T cur = data.get(i);
@@ -161,7 +159,7 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
                 rank += 1;
             }
             if (rank <= n){
-                tmpDataList.add(new FT2<>(cur,rank));
+                tmpDataList.add(new FI2<>(cur,rank));
             }else {
                 break;
             }

@@ -1,6 +1,6 @@
 package io.github.burukeyou.dataframe.util;
 
-import io.github.burukeyou.dataframe.dataframe.ToBigDecimalFunction;
+import io.github.burukeyou.dataframe.iframe.ToBigDecimalFunction;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

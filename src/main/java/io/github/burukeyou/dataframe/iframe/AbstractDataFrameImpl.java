@@ -1,12 +1,11 @@
-package io.github.burukeyou.dataframe.dataframe;
+package io.github.burukeyou.dataframe.iframe;
 
 
-import io.github.burukeyou.dataframe.IFrame;
-import io.github.burukeyou.dataframe.dataframe.item.FT2;
-import io.github.burukeyou.dataframe.dataframe.item.FT3;
-import io.github.burukeyou.dataframe.dataframe.item.FT4;
-import io.github.burukeyou.dataframe.dataframe.support.Join;
-import io.github.burukeyou.dataframe.dataframe.support.JoinOn;
+import io.github.burukeyou.dataframe.iframe.item.FI2;
+import io.github.burukeyou.dataframe.iframe.item.FI3;
+import io.github.burukeyou.dataframe.iframe.item.FI4;
+import io.github.burukeyou.dataframe.iframe.support.Join;
+import io.github.burukeyou.dataframe.iframe.support.JoinOn;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -263,7 +262,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
      * @param K                    一级分组K
      * @param tBigDecimalCollector 聚合方式
      */
-    protected  <K, V> List<FT2<K, V>> group(Function<T, K> K, Collector<T, ?, V> tBigDecimalCollector) {
+    protected  <K, V> List<FI2<K, V>> group(Function<T, K> K, Collector<T, ?, V> tBigDecimalCollector) {
         Map<K, V> resultMap = stream().collect(groupingBy(K, tBigDecimalCollector));
         return convertToDataFrameItem2(resultMap);
     }
@@ -275,7 +274,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
      * @param J                   二级分组K
      * @param tBigDecimalCollector 聚合方式
      */
-    protected <K, J, V> List<FT3<K, J, V>> group(Function<T, K> K, Function<T, J> J, Collector<T, ?, V> tBigDecimalCollector) {
+    protected <K, J, V> List<FI3<K, J, V>> group(Function<T, K> K, Function<T, J> J, Collector<T, ?, V> tBigDecimalCollector) {
         Map<K, Map<J, V>> map = stream().collect(groupingBy(K, groupingBy(J, tBigDecimalCollector)));
         return convertToDataFrameItem3(map);
     }
@@ -288,32 +287,32 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
      * @param H            三级分组K
      * @param collectorType 聚合方式
      */
-    protected <K, J, H, V> List<FT4<K, J, H, V>> group(Function<T, K> K, Function<T, J> J, Function<T, H> H, Collector<T, ?, V> collectorType) {
+    protected <K, J, H, V> List<FI4<K, J, H, V>> group(Function<T, K> K, Function<T, J> J, Function<T, H> H, Collector<T, ?, V> collectorType) {
         Map<K, Map<J, Map<H, V>>> map = stream().collect(groupingBy(K, groupingBy(J, groupingBy(H, collectorType))));
         return convertToDataFrameItem4(map);
     }
 
 
-    protected <K, V> List<FT2<K, V>> convertToDataFrameItem2(Map<K, V> resultMap) {
-        return resultMap.entrySet().stream().map(e -> new FT2<>(e.getKey(), e.getValue())).collect(toList());
+    protected <K, V> List<FI2<K, V>> convertToDataFrameItem2(Map<K, V> resultMap) {
+        return resultMap.entrySet().stream().map(e -> new FI2<>(e.getKey(), e.getValue())).collect(toList());
     }
 
-    protected <K, J, V> List<FT3<K, J, V>> convertToDataFrameItem3(Map<K, Map<J, V>> map) {
+    protected <K, J, V> List<FI3<K, J, V>> convertToDataFrameItem3(Map<K, Map<J, V>> map) {
         return map.entrySet().stream()
                 .flatMap(et ->
                         et.getValue().entrySet().stream()
-                                .map(subEt -> new FT3<>(et.getKey(), subEt.getKey(), subEt.getValue()))
+                                .map(subEt -> new FI3<>(et.getKey(), subEt.getKey(), subEt.getValue()))
                                 .collect(toList())
                                 .stream()
                 )
                 .collect(toList());
     }
 
-    protected <K, J, H, V> List<FT4<K, J, H, V>> convertToDataFrameItem4(Map<K, Map<J, Map<H, V>>> map) {
+    protected <K, J, H, V> List<FI4<K, J, H, V>> convertToDataFrameItem4(Map<K, Map<J, Map<H, V>>> map) {
         return map.entrySet().stream()
                 .flatMap(et ->
                         et.getValue().entrySet().stream()
-                                .flatMap(subEt -> subEt.getValue().entrySet().stream().map(sub2Et -> new FT4<>(et.getKey(), subEt.getKey(), sub2Et.getKey(), sub2Et.getValue())).collect(toList()).stream())
+                                .flatMap(subEt -> subEt.getValue().entrySet().stream().map(sub2Et -> new FI4<>(et.getKey(), subEt.getKey(), sub2Et.getKey(), sub2Et.getValue())).collect(toList()).stream())
                                 .collect(toList())
                                 .stream()
                 )

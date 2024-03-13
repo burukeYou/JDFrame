@@ -1,4 +1,4 @@
-package io.github.burukeyou.dataframe.dataframe;
+package io.github.burukeyou.dataframe.iframe;
 
 public interface SetFunction<T,V> {
     void accept(T t, V v);

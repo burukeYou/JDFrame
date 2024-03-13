@@ -2,10 +2,10 @@ package io.github.burukeyou;
 
 import io.github.burukeyou.data.Student;
 import io.github.burukeyou.data.UserInfo;
-import io.github.burukeyou.dataframe.JDFrame;
-import io.github.burukeyou.dataframe.SDFrame;
-import io.github.burukeyou.dataframe.dataframe.MaxMin;
-import io.github.burukeyou.dataframe.dataframe.item.FT2;
+import io.github.burukeyou.dataframe.iframe.JDFrame;
+import io.github.burukeyou.dataframe.iframe.SDFrame;
+import io.github.burukeyou.dataframe.iframe.MaxMin;
+import io.github.burukeyou.dataframe.iframe.item.FI2;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -60,10 +60,10 @@ public class JDFrameTest {
 
         System.out.println(sum);
 
-        List<FT2<String, BigDecimal>> d2 = SDFrame.read(studentList)
+        List<FI2<String, BigDecimal>> d2 = SDFrame.read(studentList)
                 .groupBySum(Student::getSchool, Student::getScore).toLists();
 
-        SDFrame<FT2<String, BigDecimal>> ft2SDFrame = SDFrame.read(studentList)
+        SDFrame<FI2<String, BigDecimal>> ft2SDFrame = SDFrame.read(studentList)
                 .groupBySum(Student::getSchool, Student::getScore);
 
         SDFrame<Student> map = ft2SDFrame.map(e -> new Student(e.getC1(), e.getC2()));
@@ -75,8 +75,8 @@ public class JDFrameTest {
     @Test
     public void test2() {
         JDFrame<Student> df = JDFrame.read(studentList);
-        List<FT2<String, Long>> ft2s = df.whereGe(Student::getAge, 12).groupByCount(Student::getLevel).toLists();
-        JDFrame<FT2<String, Long>> sdFrame = df.whereLe(Student::getAge, 13).groupByCount(Student::getLevel);
+        List<FI2<String, Long>> ft2s = df.whereGe(Student::getAge, 12).groupByCount(Student::getLevel).toLists();
+        JDFrame<FI2<String, Long>> sdFrame = df.whereLe(Student::getAge, 13).groupByCount(Student::getLevel);
 
         System.out.println();
     }
@@ -88,7 +88,7 @@ public class JDFrameTest {
         sdf.show(2);
         System.out.println("======== 1 =======");
 
-        SDFrame<FT2<String, BigDecimal>> sdf2 = SDFrame.read(studentList).groupBySum(Student::getSchool, Student::getScore);
+        SDFrame<FI2<String, BigDecimal>> sdf2 = SDFrame.read(studentList).groupBySum(Student::getSchool, Student::getScore);
 
         sdf2.show();
         System.out.println("======== 2 =======");

@@ -1,4 +1,4 @@
-package io.github.burukeyou.dataframe.dataframe.support;
+package io.github.burukeyou.dataframe.iframe.support;
 
 public interface JoinOn<T,K> {
 
