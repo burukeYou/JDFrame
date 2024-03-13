@@ -28,11 +28,19 @@ public interface IFrame<T> extends Iterable<T>{
     /**
      * ===========================   矩阵信息 =====================================
      **/
+    /**
+     * 打印
+     */
     void show();
+
+    /**
+     * 打印前N行
+     * @param n
+     */
     void show(int n);
 
     /**
-     *  列头
+     *  获取列头
      */
     List<String> columns();
 
@@ -49,10 +57,19 @@ public interface IFrame<T> extends Iterable<T>{
 
     IFrame<T> union(IFrame<T> other);
 
+    /**
+     * 内连接
+     */
     <R,K> IFrame<R> join(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
     <R,K> IFrame<R> join(IFrame<K> other, JoinOn<T,K> on);
 
+    /**
+     * 左连接
+     * @param other         连接的矩阵
+     * @param on            连接条件
+     * @param join          连接逻辑
+     */
     <R,K> IFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
     <R,K> IFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on);
@@ -67,33 +84,52 @@ public interface IFrame<T> extends Iterable<T>{
 
     <R> IFrame<R> map(Function<T,R> map);
 
+    /**
+     * 百分比转换
+     */
     <R extends Number> IFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set, int scale);
 
     <R extends Number> IFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set);
 
     /**
      * 分区
-     * @param           n 每个区大小
-     * @return
      */
     IFrame<List<T>> partition(int n);
 
     /**
      * 添加序号列
-     * @return
      */
     IFrame<FI2<T,Integer>> addSortNoCol();
 
+    /**
+     * 添加序号列，按照比较器
+     */
     IFrame<FI2<T,Integer>> addSortNoCol(Comparator<T> comparator);
 
+    /**
+     * 添加序号列，按照字段
+     */
     <R extends Comparable<R>>  IFrame<FI2<T,Integer>> addSortNoCol(Function<T, R> function);
 
+    /**
+     * 添加序号列，到某一列
+     */
     IFrame<T> addSortNoCol(SetFunction<T,Integer> set);
 
+    /**
+     * 添加排名列，按照比较器
+     *      排名逻辑，相同值认为名字一样
+     */
     IFrame<FI2<T,Integer>> addRankingSameCol(Comparator<T> comparator);
 
+    /**
+     * 添加排名列，按照字段
+     */
     <R extends Comparable<R>> IFrame<FI2<T,Integer>> addRankingSameCol(Function<T, R> function);
 
+    /**
+     * 添加排名列，到某一列
+     */
     IFrame<T> addRankingSameCol(Comparator<T> comparator,SetFunction<T,Integer> set);
 
     <R extends Comparable<R>>  IFrame<T> addRankingSameCol(Function<T, R> function,SetFunction<T,Integer> set);
@@ -103,10 +139,16 @@ public interface IFrame<T> extends Iterable<T>{
      * ===========================   排序相关  =====================================
      **/
 
+    /**
+     * 降序
+     */
     IFrame<T> sortDesc(Comparator<T> comparator);
 
     <R extends Comparable<R>> IFrame<T> sortDesc(Function<T, R> function);
 
+    /**
+     * 升序
+     */
     IFrame<T> sortAsc(Comparator<T> comparator);
 
     <R extends Comparable<R>> IFrame<T> sortAsc(Function<T, R> function);
@@ -117,15 +159,11 @@ public interface IFrame<T> extends Iterable<T>{
 
     /**
      *  截取前n个
-     * @param n
-     * @return
      */
     IFrame<T> subFirst(int n);
 
     /**
      * 截取后n个
-     * @param n
-     * @return
      */
     IFrame<T> subLast(int n);
 
@@ -147,25 +185,51 @@ public interface IFrame<T> extends Iterable<T>{
 
     /** ===========================   查看相关  ===================================== **/
 
+    /**
+     * 获取第一个元素
+     */
     T head();
 
+    /**
+     * 获取前n个元素
+     */
     List<T> head(int n);
 
+    /**
+     * 获取最后一个元素
+     */
     T tail();
 
+    /**
+     * 获取后n个元素
+     */
     List<T> tail(int n);
 
     /** ===========================   去重相关  ===================================== **/
 
+    /**
+     * 去重
+     */
     IFrame<T> distinct();
 
+
+    /**
+     * 去重，按照字段
+     */
     <R extends Comparable<R>> IFrame<T> distinct(Function<T, R> function);
 
+    /**
+     * 去重，按照比较器
+     */
     <R extends Comparable<R>> IFrame<T> distinct(Comparator<T> comparator);
+
+    /**
+     * 去重后数量，按照字段
+     */
+    <R extends Comparable<R>> long countDistinct(Function<T, R> function);
 
     long countDistinct(Comparator<T> comparator);
 
-    <R extends Comparable<R>> long countDistinct(Function<T, R> function);
 
     /**
      * ===========================   筛选相关  =====================================
@@ -173,9 +237,15 @@ public interface IFrame<T> extends Iterable<T>{
 
     IFrame<T> where(Predicate<? super T> predicate);
 
+    /**
+     * 筛选值为空的
+     *      如果是字符串兼容了，null 和 ''情况
+     */
     <R> IFrame<T> whereNull(Function<T, R> function);
 
-
+    /**
+     * 筛选值不为空的
+     */
     <R> IFrame<T> whereNotNull(Function<T, R> function);
 
     /**
@@ -208,6 +278,9 @@ public interface IFrame<T> extends Iterable<T>{
      */
     <R extends Comparable<R>> IFrame<T> whereNotBetweenN(Function<T, R> function, R start, R end);
 
+    /**
+     *
+     */
     <R> IFrame<T> whereIn(Function<T, R> function, List<R> list);
 
     <R> IFrame<T> whereNotIn(Function<T, R> function, List<R> list);
@@ -259,10 +332,6 @@ public interface IFrame<T> extends Iterable<T>{
 
     long count();
 
-    // todo
-    // 中位数
-
-    // 众数
 
     /** ===========================   分组相关  ===================================== **/
     /**
