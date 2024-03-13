@@ -350,8 +350,13 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
     }
 
     @Override
-    public void print(){
-        String[][] dataArr = buildPrintDataArr(-1);
+    public void show(){
+        show(10);
+    }
+
+    @Override
+    public void show(int n){
+        String[][] dataArr = buildPrintDataArr(n);
         if (dataArr == null){
             return;
         }
@@ -363,7 +368,6 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
         }
         log.info("\n{}",sb);
     }
-
 
 
     protected  <R, K> List<R> joinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {

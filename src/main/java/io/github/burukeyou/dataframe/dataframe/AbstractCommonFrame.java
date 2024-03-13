@@ -24,7 +24,7 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
             return null;
         }
         List<String> filedList = getFieldList();
-        int rowLen = dataList.size() + 1;
+        int rowLen =  (Math.min(limit, dataList.size())) + 1;
         int colLen = filedList.size() * 2 + 1;
 
         String[][] dataArr = new String[rowLen][colLen];
@@ -47,6 +47,10 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
 
         int row = 1;
         for (T t : dataList) {
+            if (row > limit){
+                break;
+            }
+
             int tmpIndex = 0;
             for (String fieldName : filedList) {
                 try {

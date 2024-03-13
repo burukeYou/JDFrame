@@ -85,12 +85,12 @@ public class JDFrameTest {
     public void testJoin(){
         SDFrame<Student> sdf = SDFrame.read(studentList);
 
-        sdf.print();
+        sdf.show(2);
         System.out.println("======== 1 =======");
 
         SDFrame<FT2<String, BigDecimal>> sdf2 = SDFrame.read(studentList).groupBySum(Student::getSchool, Student::getScore);
 
-        sdf2.print();
+        sdf2.show();
         System.out.println("======== 2 =======");
 
         SDFrame<UserInfo> frame = sdf.join(sdf2, (a, b) -> a.getSchool().equals(b.getC1()), (a, b) -> {
@@ -101,7 +101,7 @@ public class JDFrameTest {
             return userInfo;
         });
 
-        frame.print();
+        frame.show(5);
         System.out.println();
     }
 
@@ -137,5 +137,19 @@ public class JDFrameTest {
 
         List<Student> head = df.head(3);
         System.out.println();
+    }
+
+    @Test
+    public void testRead() {
+        // 枚举
+        String  a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        char[] chars = a.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            for (int j = 0; j < chars.length; j++) {
+                String s = chars[i] + String.valueOf(chars[j]);
+                System.out.println(  "SDFrame<"  + s + "<String,Integer>>");
+            }
+        }
+
     }
 }

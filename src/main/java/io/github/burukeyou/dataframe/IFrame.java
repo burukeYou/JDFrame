@@ -27,11 +27,12 @@ public interface IFrame<T> extends Iterable<T>{
 
     Stream<T> stream();
 
-    void print();
 
     /**
      * ===========================   矩阵信息 =====================================
      **/
+    void show();
+    void show(int n);
 
     /**
      *  列头
@@ -42,10 +43,6 @@ public interface IFrame<T> extends Iterable<T>{
      *  获取某一列信息
      */
     <R> List<R> col(Function<T, R> function);
-
-    /**
-     * ===========================   数据清洗 =====================================
-     **/
 
 
     /**
