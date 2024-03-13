@@ -289,6 +289,11 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
      * ===========================   筛选相关  =====================================
      **/
     @Override
+    public SDFrame<T> where(Predicate<? super T> predicate) {
+        return returnThis(stream().filter(predicate));
+    }
+
+    @Override
     public <R> SDFrame<T> whereNull(Function<T, R> function) {
         return returnThis(whereNotNullStream(function));
     }

@@ -88,7 +88,14 @@ public class JDFrameTest {
         sdf.show(2);
         System.out.println("======== 1 =======");
 
-        SDFrame<FI2<String, BigDecimal>> sdf2 = SDFrame.read(studentList).groupBySum(Student::getSchool, Student::getScore);
+        // 获取学生年龄在9到16岁的学学校合计分数最高的前10名
+        SDFrame<FI2<String, BigDecimal>> sdf2 = SDFrame.read(studentList)
+                .whereNotNull(Student::getAge)
+                .whereBetween(Student::getAge,9,16)
+                .groupBySum(Student::getSchool, Student::getScore)
+                .sortDesc(FI2::getC2)
+                .subFirst(10);
+
 
         sdf2.show();
         System.out.println("======== 2 =======");

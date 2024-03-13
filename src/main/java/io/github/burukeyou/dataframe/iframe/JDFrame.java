@@ -116,6 +116,7 @@ public interface JDFrame<T> extends IFrame<T> {
     /**
      * ===========================   筛选相关  =====================================
      **/
+    JDFrame<T> where(Predicate<? super T> predicate);
 
     <R> JDFrame<T> whereNull(Function<T, R> function);
 

@@ -35,12 +35,9 @@ public interface SDFrame<T> extends IFrame<T>  {
     SDFrame<T> append(T t);
 
     SDFrame<T> union(IFrame<T> other);
-
-
     <R,K> SDFrame<R> join(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
     <R,K> SDFrame<R> join(IFrame<K> other, JoinOn<T,K> on);
-
 
     <R,K> SDFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
@@ -108,7 +105,7 @@ public interface SDFrame<T> extends IFrame<T>  {
     /**
      * ===========================   筛选相关  =====================================
      **/
-
+    SDFrame<T> where(Predicate<? super T> predicate);
     <R> SDFrame<T> whereNull(Function<T, R> function);
 
     <R> SDFrame<T> whereNotNull(Function<T, R> function);

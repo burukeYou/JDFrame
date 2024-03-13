@@ -263,6 +263,11 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public JDFrame<T> where(Predicate<? super T> predicate) {
+        return read(stream().filter(predicate));
+    }
+
+    @Override
     public long countDistinct(Comparator<T> comparator) {
         return distinct(comparator).count();
     }

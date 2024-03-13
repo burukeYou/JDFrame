@@ -171,6 +171,8 @@ public interface IFrame<T> extends Iterable<T>{
      * ===========================   筛选相关  =====================================
      **/
 
+    IFrame<T> where(Predicate<? super T> predicate);
+
     <R> IFrame<T> whereNull(Function<T, R> function);
 
 
