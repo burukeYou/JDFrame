@@ -4,10 +4,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 
 /**
+ * Merge attributes based on the same field names
+ *
  * @author caizhihao
  * @param <T>
  * @param <K>
  * @param <R>
+ *
  */
 public class DefaultJoin<T,K,R> implements Join<T,K,R> {
 

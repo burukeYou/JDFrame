@@ -1,9 +1,7 @@
 package io.github.burukeyou.dataframe.iframe;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -17,10 +15,13 @@ import java.util.stream.Collectors;
  * @author caizhihao
  */
 @Data
-@AllArgsConstructor
 public class DFList<T> {
 
     private List<T> data;
+
+    public DFList(List<T> data) {
+        this.data = data;
+    }
 
     /**
      * 取前N个
@@ -43,41 +44,6 @@ public class DFList<T> {
         data = data.subList(0,n);
         return this;
     }
-
-    public DFList<T> rankingDesc(Comparator<T> comparator, int n) {
-        return rankingAsc(comparator.reversed(),n);
-    }
-
-    public DFList<T> rankingAsc(Comparator<T> comparator, int n) {
-        if (data.isEmpty()){
-            return this;
-        }
-        if (n <= 0){
-            throw new IllegalArgumentException("first N should greater than zero");
-        }
-
-        sortAsc(comparator);
-
-        int rank = 1;
-        List<T> tmpDataList = new ArrayList<>();
-        tmpDataList.add(data.get(0));
-        for (int i = 1; i < data.size(); i++) {
-            T pre = data.get(i-1);
-            T cur = data.get(i);
-            if (comparator.compare(pre,cur) != 0){
-                rank += 1;
-            }
-            if (rank <= n){
-                tmpDataList.add(cur);
-            }else {
-                break;
-            }
-        }
-        data = tmpDataList;
-        return this;
-    }
-
-
 
     public T first() {
         if (data.isEmpty()){
@@ -106,27 +72,12 @@ public class DFList<T> {
         return this;
     }
 
-    /**
-     * 降序
-     */
-   /* public DataFrameList<T> sortDesc(){
-        data.sort(Comparator.reverseOrder());
-        return this;
-    }*/
-
     public DFList<T> sortDesc(Comparator<T> comparator){
         data = data.stream().sorted(comparator.reversed()).collect(Collectors.toList());
         return this;
     }
 
 
-    /**
-     * 升序
-     */
-/*    public DataFrameList<T> sortAsc(){
-        Collections.sort(data);
-        return this;
-    }*/
 
     public DFList<T> sortAsc(Comparator<T> comparator){
         data = data.stream().sorted(comparator).collect(Collectors.toList());
@@ -146,5 +97,12 @@ public class DFList<T> {
         return data.stream().collect(Collectors.toMap(function, function2));
     }
 
+    public SDFrame<T> toSDFrame(){
+        return SDFrame.read(this.data);
+    }
+
+    public JDFrame<T> toJDFrame(){
+        return JDFrame.read(this.data);
+    }
 
 }
