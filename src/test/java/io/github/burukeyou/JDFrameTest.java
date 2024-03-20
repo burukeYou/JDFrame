@@ -41,8 +41,8 @@ public class JDFrameTest {
 
     @Test
     public void testRank(){
-        SDFrame<Student> sdf = SDFrame.read(studentList).catRankingSameAsc(Student::getAge, 3);
-        JDFrame<Student> df = JDFrame.read(studentList).catRankingSameAsc(Student::getAge, 3);
+        SDFrame<Student> sdf = SDFrame.read(studentList).cutRankingSameAsc(Student::getAge, 3);
+        JDFrame<Student> df = JDFrame.read(studentList).cutRankingSameAsc(Student::getAge, 3);
         SDFrame<Student> union = sdf.union(df);
         //
         List<Student> students = union.toLists();

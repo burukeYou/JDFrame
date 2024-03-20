@@ -177,8 +177,8 @@ public interface IFrame<T> extends Iterable<T>{
     IFrame<List<T>> partition(int n);
 
     /**
-     * ddd ordinal column
-     * @return                      FI2<T,Number>
+     * add sort number to the {@link FI2#c2} field
+     *      Default sequence number from 1 to frame.length
      */
     IFrame<FI2<T,Integer>> addSortNoCol();
 
@@ -258,7 +258,7 @@ public interface IFrame<T> extends Iterable<T>{
     <R extends Comparable<R>> IFrame<T> sortAsc(Function<T, R> function);
 
 
-    /** ===========================   截取相关  ===================================== **/
+    /** ===========================   Cut Frame  ===================================== **/
 
     /**
      *  Cut the top n element
@@ -270,7 +270,7 @@ public interface IFrame<T> extends Iterable<T>{
      * Cut the last n element
      * @param n    the last n
      */
-    IFrame<T> catLast(int n);
+    IFrame<T> cutLast(int n);
 
     /**
      * Cut the top n by ranking value, by comparator to ranking asc
@@ -278,7 +278,7 @@ public interface IFrame<T> extends Iterable<T>{
      * @param comparator            the ranking comparator
      * @param n                     the top n
      */
-    IFrame<T> catRankingSameAsc(Comparator<T> comparator, int n);
+    IFrame<T> cutRankingSameAsc(Comparator<T> comparator, int n);
 
     /**
      * Cut the top n by ranking value, by field  to ranking asc
@@ -286,7 +286,7 @@ public interface IFrame<T> extends Iterable<T>{
      * @param function              the ranking field
      * @param n                     the top n
      */
-    <R extends Comparable<R>> IFrame<T> catRankingSameAsc(Function<T, R> function, int n);
+    <R extends Comparable<R>> IFrame<T> cutRankingSameAsc(Function<T, R> function, int n);
 
     /**
      * Cut the top n by ranking value, by comparator to ranking desc
@@ -294,7 +294,7 @@ public interface IFrame<T> extends Iterable<T>{
      * @param comparator            the ranking comparator
      * @param n                     the top n
      */
-    IFrame<T> catRankingSameDesc(Comparator<T> comparator, int n);
+    IFrame<T> cutRankingSameDesc(Comparator<T> comparator, int n);
 
     /**
      * Cut the top n by ranking value, by field  to ranking desc
@@ -302,7 +302,7 @@ public interface IFrame<T> extends Iterable<T>{
      * @param function              the ranking field
      * @param n                     the top n
      */
-    <R extends Comparable<R>> IFrame<T> catRankingSameDesc(Function<T, R> function, int n);
+    <R extends Comparable<R>> IFrame<T> cutRankingSameDesc(Function<T, R> function, int n);
 
 
     /** ===========================   View Frame  ===================================== **/
@@ -393,7 +393,7 @@ public interface IFrame<T> extends Iterable<T>{
     <R extends Comparable<R>> IFrame<T> whereBetween(Function<T, R> function, R start, R end);
 
     /**
-     * Screening within the interval , front open and back open => (start,end)
+     * Screening within the interval , front open and back open (start,end)
      * @param function          the filter field
      * @param start             start value
      * @param end               end value
@@ -401,7 +401,7 @@ public interface IFrame<T> extends Iterable<T>{
     <R extends Comparable<R>> IFrame<T> whereBetweenN(Function<T, R> function, R start, R end);
 
     /**
-     * Screening within the interval , front open and back close => (start,end]
+     * Screening within the interval , front open and back close (start,end]
      * @param function          the filter field
      * @param start             start value
      * @param end               end value
@@ -409,7 +409,7 @@ public interface IFrame<T> extends Iterable<T>{
     <R extends Comparable<R>> IFrame<T> whereBetweenR(Function<T, R> function, R start, R end);
 
     /**
-     * Screening within the interval , front close and back open => [start,end)
+     * Screening within the interval , front close and back open  [start,end)
      * @param function          the filter field
      * @param start             start value
      * @param end               end value
@@ -418,7 +418,7 @@ public interface IFrame<T> extends Iterable<T>{
 
 
     /**
-     * Out of range screening, (front closed and back closed) => [start,end]
+     * Out of range screening, (front closed and back closed) [start,end]
      * @param function          the filter field
      * @param start             start value
      * @param end               end value
@@ -426,7 +426,7 @@ public interface IFrame<T> extends Iterable<T>{
     <R extends Comparable<R>> IFrame<T> whereNotBetween(Function<T, R> function, R start, R end);
 
     /**
-     * Out of range screening, (front open and back open) => (start,end)
+     * Out of range screening, (front open and back open)  (start,end)
      * @param function          the filter field
      * @param start             start value
      * @param end               end value
@@ -640,7 +640,7 @@ public interface IFrame<T> extends Iterable<T>{
      *
      * @param key           group field
      * @param value         Aggregated field
-     * @return              FItem3<key, Sum, Count>
+     * @return              FItem3(key, Sum, Count)
      */
     <K> IFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, BigDecimalFunction<T> value);
 
@@ -650,7 +650,7 @@ public interface IFrame<T> extends Iterable<T>{
      * @param key           group field
      * @param key2          secondary level group field
      * @param value         Aggregated field
-     * @return              FItem4<key, ke2,Sum, Count>
+     * @return              FItem4(key, ke2,Sum, Count)
      */
     <K, J> IFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key, Function<T, J> key2, BigDecimalFunction<T> value);
 

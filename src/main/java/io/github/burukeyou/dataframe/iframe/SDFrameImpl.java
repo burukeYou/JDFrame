@@ -217,24 +217,24 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrame<T> catRankingSameAsc(Comparator<T> comparator, int n) {
+    public SDFrame<T> cutRankingSameAsc(Comparator<T> comparator, int n) {
         List<FI2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator, n);
         return returnThis(tmpList.stream().map(FI2::getC1).collect(toList()).stream());
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> catRankingSameAsc(Function<T, R> function, int n) {
-        return this.catRankingSameAsc(Comparator.comparing(function),n);
+    public <R extends Comparable<R>> SDFrame<T> cutRankingSameAsc(Function<T, R> function, int n) {
+        return this.cutRankingSameAsc(Comparator.comparing(function),n);
     }
 
     @Override
-    public SDFrame<T> catRankingSameDesc(Comparator<T> comparator, int n) {
-        return this.catRankingSameAsc(comparator.reversed(),n);
+    public SDFrame<T> cutRankingSameDesc(Comparator<T> comparator, int n) {
+        return this.cutRankingSameAsc(comparator.reversed(),n);
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> catRankingSameDesc(Function<T, R> function, int n) {
-        return this.catRankingSameDesc(Comparator.comparing(function),n);
+    public <R extends Comparable<R>> SDFrame<T> cutRankingSameDesc(Function<T, R> function, int n) {
+        return this.cutRankingSameDesc(Comparator.comparing(function),n);
     }
 
 
@@ -248,7 +248,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrame<T> catLast(int n) {
+    public SDFrame<T> cutLast(int n) {
         DFList<T> first = new DFList<>(toLists()).last(n);
         data = first.build().stream();
         return this;

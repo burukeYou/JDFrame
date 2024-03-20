@@ -173,7 +173,7 @@ public interface JDFrame<T> extends IFrame<T> {
 
     /**
      * ddd ordinal column
-     * @return                      FI2<T,Number>
+     * @return                      FI2(T,Number)
      */
     JDFrame<FI2<T,Integer>> addSortNoCol();
 
@@ -253,7 +253,7 @@ public interface JDFrame<T> extends IFrame<T> {
     <R extends Comparable<R>> JDFrame<T> sortAsc(Function<T, R> function);
 
 
-    /** ===========================   截取相关  ===================================== **/
+    /** ===========================   Cut Frame  ===================================== **/
 
     /**
      *  Cut the top n element
@@ -265,7 +265,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * Cut the last n element
      * @param n    the last n
      */
-    JDFrame<T> catLast(int n);
+    JDFrame<T> cutLast(int n);
 
     /**
      * Cut the top n by ranking value, by comparator to ranking asc
@@ -273,7 +273,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param comparator            the ranking comparator
      * @param n                     the top n
      */
-    JDFrame<T> catRankingSameAsc(Comparator<T> comparator, int n);
+    JDFrame<T> cutRankingSameAsc(Comparator<T> comparator, int n);
 
     /**
      * Cut the top n by ranking value, by field  to ranking asc
@@ -281,7 +281,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param function              the ranking field
      * @param n                     the top n
      */
-    <R extends Comparable<R>> JDFrame<T> catRankingSameAsc(Function<T, R> function, int n);
+    <R extends Comparable<R>> JDFrame<T> cutRankingSameAsc(Function<T, R> function, int n);
 
     /**
      * Cut the top n by ranking value, by comparator to ranking desc
@@ -289,7 +289,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param comparator            the ranking comparator
      * @param n                     the top n
      */
-    JDFrame<T> catRankingSameDesc(Comparator<T> comparator, int n);
+    JDFrame<T> cutRankingSameDesc(Comparator<T> comparator, int n);
 
     /**
      * Cut the top n by ranking value, by field  to ranking desc
@@ -297,7 +297,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param function              the ranking field
      * @param n                     the top n
      */
-    <R extends Comparable<R>> JDFrame<T> catRankingSameDesc(Function<T, R> function, int n);
+    <R extends Comparable<R>> JDFrame<T> cutRankingSameDesc(Function<T, R> function, int n);
 
 
     /** ===========================   View Frame  ===================================== **/
@@ -388,7 +388,7 @@ public interface JDFrame<T> extends IFrame<T> {
     <R extends Comparable<R>> JDFrame<T> whereBetween(Function<T, R> function, R start, R end);
 
     /**
-     * Screening within the interval , front open and back open => (start,end)
+     * Screening within the interval , front open and back open  (start,end)
      * @param function          the filter field
      * @param start             start value
      * @param end               end value
@@ -396,7 +396,7 @@ public interface JDFrame<T> extends IFrame<T> {
     <R extends Comparable<R>> JDFrame<T> whereBetweenN(Function<T, R> function, R start, R end);
 
     /**
-     * Screening within the interval , front open and back close => (start,end]
+     * Screening within the interval , front open and back close  (start,end]
      * @param function          the filter field
      * @param start             start value
      * @param end               end value
@@ -404,7 +404,7 @@ public interface JDFrame<T> extends IFrame<T> {
     <R extends Comparable<R>> JDFrame<T> whereBetweenR(Function<T, R> function, R start, R end);
 
     /**
-     * Screening within the interval , front close and back open => [start,end)
+     * Screening within the interval , front close and back open  [start,end)
      * @param function          the filter field
      * @param start             start value
      * @param end               end value
@@ -413,7 +413,7 @@ public interface JDFrame<T> extends IFrame<T> {
 
 
     /**
-     * Out of range screening, (front closed and back closed) => [start,end]
+     * Out of range screening, (front closed and back closed)  [start,end]
      * @param function          the filter field
      * @param start             start value
      * @param end               end value
@@ -421,7 +421,7 @@ public interface JDFrame<T> extends IFrame<T> {
     <R extends Comparable<R>> JDFrame<T> whereNotBetween(Function<T, R> function, R start, R end);
 
     /**
-     * Out of range screening, (front open and back open) => (start,end)
+     * Out of range screening, (front open and back open)  (start,end)
      * @param function          the filter field
      * @param start             start value
      * @param end               end value
@@ -635,7 +635,7 @@ public interface JDFrame<T> extends IFrame<T> {
      *
      * @param key           group field
      * @param value         Aggregated field
-     * @return              FItem3<key, Sum, Count>
+     * @return              FItem3(key, Sum, Count)
      */
     <K> JDFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, BigDecimalFunction<T> value);
 
@@ -645,7 +645,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key           group field
      * @param key2          secondary level group field
      * @param value         Aggregated field
-     * @return              FItem4<key, ke2,Sum, Count>
+     * @return              FItem4(key, ke2,Sum, Count)
      */
     <K, J> JDFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key, Function<T, J> key2, BigDecimalFunction<T> value);
 

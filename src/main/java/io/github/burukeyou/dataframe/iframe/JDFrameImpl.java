@@ -204,24 +204,24 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrame<T> catRankingSameAsc(Comparator<T> comparator, int n) {
+    public JDFrame<T> cutRankingSameAsc(Comparator<T> comparator, int n) {
         List<FI2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator, n);
         return read(tmpList.stream().map(FI2::getC1).collect(toList()));
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> catRankingSameAsc(Function<T, R> function, int n) {
-        return this.catRankingSameAsc(Comparator.comparing(function),n);
+    public <R extends Comparable<R>> JDFrame<T> cutRankingSameAsc(Function<T, R> function, int n) {
+        return this.cutRankingSameAsc(Comparator.comparing(function),n);
     }
 
     @Override
-    public JDFrame<T> catRankingSameDesc(Comparator<T> comparator, int n) {
-        return catRankingSameAsc(comparator.reversed(), n);
+    public JDFrame<T> cutRankingSameDesc(Comparator<T> comparator, int n) {
+        return this.cutRankingSameAsc(comparator.reversed(), n);
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> catRankingSameDesc(Function<T, R> function, int n) {
-        return catRankingSameDesc(Comparator.comparing(function),n);
+    public <R extends Comparable<R>> JDFrame<T> cutRankingSameDesc(Function<T, R> function, int n) {
+        return this.cutRankingSameDesc(Comparator.comparing(function),n);
     }
 
     /** ===========================   截取相关  ===================================== **/
@@ -237,7 +237,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
 
     @Override
-    public JDFrameImpl<T> catLast(int n) {
+    public JDFrameImpl<T> cutLast(int n) {
         DFList<T> first = new DFList<>(toLists()).last(n);
         return read(first.build());
     }

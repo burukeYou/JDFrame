@@ -8,13 +8,36 @@
   <artifactId>jdframe</artifactId>
   <version>0.0.1</version>
 
+  <!-- info  -->
   <name>jdframe</name>
-  <url>http://www.example.com</url>
+  <url>https://github.com/burukeYou/JDFrame</url>
+  <description>a lightweight dataFrame model at the Java JVM level</description>
+
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>caizhihao</name>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/burukeYou/JDFrame.git</connection>
+    <developerConnection>scm:git:ssh://github.com:burukeYou/JDFrame.git</developerConnection>
+    <url>http://github.com/burukeYou/JDFrame.git/tree/main</url>
+  </scm>
+
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <sno.serviceId>central</sno.serviceId>
   </properties>
 
   <dependencies>
@@ -22,7 +45,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.32</version>
-      <!--        <scope>test</scope>-->
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -57,7 +79,97 @@
 
   </dependencies>
 
-  <build>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>${sno.serviceId}</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>${sno.serviceId}</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+      <!-- Deployment      -->
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.3.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>${sno.serviceId}</publishingServerId>
+          <tokenAuth>true</tokenAuth>
+          <deploymentName>${name}</deploymentName>
+        </configuration>
+      </plugin>
+
+      <!-- javaDoc、javaSource-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--    Nexus Staging Maven Plugin for Deployment and Release  -->
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>${sno.serviceId}</serverId>
+          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+
+      <!--   GPG Signed    -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
   </build>
 </project>
