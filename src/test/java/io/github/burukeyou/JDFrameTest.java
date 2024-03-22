@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -32,11 +33,30 @@ public class JDFrameTest {
      */
     @Test
     public void testDistinct(){
-        List<Student> students = SDFrame.read(studentList).distinct().toLists();
-        List<Student> students1 = SDFrame.read(studentList).distinct(Student::getSchool).toLists();
-        List<Student> students15 = SDFrame.read(studentList).distinct(Student::getSchool).distinct(Student::getLevel).toLists();
-        List<Student> students2 = SDFrame.read(studentList).distinct(e -> e.getSchool() + e.getLevel()).toLists();
+        List<Student> students = SDFrame.read(studentList).distinct().toLists(); // 根据对象hashCode去重
+        List<Student> students1 = SDFrame.read(studentList).distinct(Student::getSchool).toLists(); // 根据学校名去重
+        List<Student> students2 = SDFrame.read(studentList).distinct(e -> e.getSchool() + e.getLevel()).toLists(); // 根据学校名拼接级别去重复
+        List<Student> students3 = SDFrame.read(studentList).distinct(Student::getSchool).distinct(Student::getLevel).toLists(); // 先根据学校名去除重复再根据级别去除重复
         System.out.println();
+
+
+        SDFrame.read(studentList)
+                .whereBetween(Student::getAge,3,6) // 过滤年龄在[3，6]岁的
+                .whereBetweenR(Student::getAge,3,6) // 过滤年龄在(3，6]岁的, 不含3岁
+                .whereBetweenL(Student::getAge,3,6)      // 过滤年龄在[3，6)岁的, 不含6岁
+                .whereNotNull(Student::getName) // 过滤名字不为空的数据， 兼容了空字符串''的判断
+                .whereGt(Student::getAge,3)    // 过滤年龄大于3岁
+                .whereGe(Student::getAge,3)   // 过滤年龄大于等于3岁
+                .whereLt(Student::getAge,3)  // 过滤年龄小于3岁的
+                .whereIn(Student::getAge, Arrays.asList(3,7,8)) // 过滤年龄为3岁 或者7岁 或者 8岁的数据
+                .whereNotIn(Student::getAge, Arrays.asList(3,7,8)) // 过滤年龄不为为3岁 或者7岁 或者 8岁的数据
+                .whereEq(Student::getAge,3) // 过滤年龄等于3岁的数据
+                .whereNotEq(Student::getAge,3) // 过滤年龄不等于3岁的数据
+                .whereLike(Student::getName,"jay") // 模糊查询，等价于 like "%jay%"
+                .whereLikeLeft(Student::getName,"jay") // 模糊查询，等价于 like "jay%"
+                .whereLikeRight(Student::getName,"jay"); // 模糊查询，等价于 like "%jay"
+
+
     }
 
     @Test
@@ -158,5 +178,19 @@ public class JDFrameTest {
             }
         }
 
+    }
+
+    @Test
+    public void testSum() {
+        JDFrame<Student> frame = JDFrame.read(studentList);
+        Student s1 = frame.max(Student::getAge);// 获取年龄最大的学生
+        Integer s2  = frame.maxValue(Student::getAge);      // 获取学生里最大的年龄
+        Student s3 = frame.min(Student::getAge);// 获取年龄最小的学生
+        Integer s4  = frame.minValue(Student::getAge);      // 获取学生里最小的年龄
+        BigDecimal s5 = frame.avg(Student::getAge); // 获取所有学生的年龄的平均值
+        BigDecimal s6 = frame.sum(Student::getAge); // 获取所有学生的年龄合计
+        MaxMin<Student> s7 = frame.maxMin(Student::getAge); // 同时获取年龄最大和最小的学生
+        MaxMin<Integer> s8 = frame.maxMinValue(Student::getAge); // 同时获取学生里最大和最小的年龄
+        System.out.println();
     }
 }
