@@ -1,6 +1,7 @@
 package io.github.burukeyou.dataframe.util;
 
 import io.github.burukeyou.dataframe.iframe.BigDecimalFunction;
+import io.github.burukeyou.dataframe.iframe.support.NumberFunction;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -71,6 +72,20 @@ public class CollectorsPlusUtil {
 		}
 	}
 
+	public static <T,R extends Number> Collector<T, ?, BigDecimal> summingBigDecimalForNumber(NumberFunction<T,R> numberFunction) {
+		BigDecimalFunction<? super T> mapper = getBigDecimalFunction(numberFunction);
+		return summingBigDecimal(mapper);
+	}
+
+	private static <T, R extends Number> BigDecimalFunction<? super T> getBigDecimalFunction(NumberFunction<T, R> numberFunction) {
+		return (e) -> {
+			Number apply = numberFunction.apply(e);
+			if (apply == null){
+				return null;
+			}
+			return apply instanceof BigDecimal ? (BigDecimal)apply : new BigDecimal(apply.toString());
+		};
+	}
 
 	public static <T> Collector<T, ?, BigDecimal> summingBigDecimal(BigDecimalFunction<? super T> mapper) {
 		return new CollectorImpl<>(() -> new BigDecimal[1], (a, t) -> {
@@ -145,6 +160,10 @@ public class CollectorsPlusUtil {
 				a -> a[0], CH_NOID);
 	}
 
+	public static <T,R extends Number> Collector<T, ?, BigDecimal> averagingBigDecimal(NumberFunction<T,R> mapper, int newScale,
+																	  int roundingMode){
+		return averagingBigDecimal(getBigDecimalFunction(mapper),newScale,roundingMode);
+	}
 
 	public static <T> Collector<T, ?, BigDecimal> averagingBigDecimal(BigDecimalFunction<? super T> mapper, int newScale,
 																	  int roundingMode) {

@@ -17,8 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 /**
  * @author caizhihao
@@ -318,6 +317,14 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
                                 .stream()
                 )
                 .collect(toList());
+    }
+
+    protected  <K, J, V extends Comparable<V>> Map<K, Map<J, T>> groupToMap(Function<T, K> key, Function<T, J> key2,Function<List<T>, T> getListMaxFunction) {
+        return stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListMaxFunction))));
+    }
+
+    protected  <V extends Comparable<V>> Function<List<T>, T> getListMaxFunction(Function<T, V> value) {
+        return e -> e.stream().max(Comparator.comparing(value)).orElse(null);
     }
 
     public <R> Stream<T> streamFilterNull(Function<T,R> function){

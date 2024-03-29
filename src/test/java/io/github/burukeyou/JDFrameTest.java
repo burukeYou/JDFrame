@@ -193,4 +193,15 @@ public class JDFrameTest {
         MaxMin<Integer> s8 = frame.maxMinValue(Student::getAge); // 同时获取学生里最大和最小的年龄
         System.out.println();
     }
+
+    @Test
+    public void testGroup(){
+        JDFrame<Student> frame = JDFrame.read(studentList);
+        // 等价于 select sum(age) ... group by school
+        List<FI2<String, BigDecimal>> a = frame.groupBySum(Student::getSchool, Student::getAge).toLists();
+        // 等价于 select sum(age) ... group by school
+        List<FI2<String, Student>> a2 = frame.groupByMax(Student::getSchool, Student::getAge).toLists();
+
+        System.out.println();
+    }
 }

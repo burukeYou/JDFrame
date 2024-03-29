@@ -6,6 +6,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.DefaultJoin;
 import io.github.burukeyou.dataframe.iframe.support.Join;
 import io.github.burukeyou.dataframe.iframe.support.JoinOn;
+import io.github.burukeyou.dataframe.iframe.support.NumberFunction;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -585,7 +586,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key       group field
      * @param value     Aggregated field
      */
-    <K> JDFrame<FI2<K, BigDecimal>> groupBySum(Function<T, K> key, BigDecimalFunction<T> value);
+    <K,R extends Number> JDFrame<FI2<K, BigDecimal>> groupBySum(Function<T, K> key, NumberFunction<T,R> value);
 
     /**
      * Group summation
@@ -593,7 +594,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K, J> JDFrame<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key, Function<T, J> key2, BigDecimalFunction<T> value);
+    <K, J,R extends Number> JDFrame<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key, Function<T, J> key2, NumberFunction<T,R> value);
 
     /**
      * Group summation
@@ -603,10 +604,10 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key3    third level group field
      * @param value   Aggregated field
      */
-    <K, J, H> JDFrame<FI4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
+    <K, J, H,R extends Number> JDFrame<FI4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
                                                            Function<T, J> key2,
                                                            Function<T, H> key3,
-                                                           BigDecimalFunction<T> value);
+                                                           NumberFunction<T,R> value);
 
     /**
      * Group count
@@ -637,7 +638,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param value         Aggregated field
      * @return              FItem3(key, Sum, Count)
      */
-    <K> JDFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, BigDecimalFunction<T> value);
+    <K,R extends Number> JDFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, NumberFunction<T,R> value);
 
     /**
      * Group sum and count together
@@ -647,7 +648,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param value         Aggregated field
      * @return              FItem4(key, ke2,Sum, Count)
      */
-    <K, J> JDFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key, Function<T, J> key2, BigDecimalFunction<T> value);
+    <K, J,R extends Number> JDFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key, Function<T, J> key2, NumberFunction<T,R> value);
 
 
     /**
@@ -655,7 +656,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key       group field
      * @param value     Aggregated field
      */
-    <K> JDFrame<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key, BigDecimalFunction<T> value) ;
+    <K,R extends Number> JDFrame<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key, NumberFunction<T,R> value) ;
 
     /**
      * Group average
@@ -663,7 +664,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K, J> JDFrame<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key, Function<T, J> key2, BigDecimalFunction<T> value);
+    <K, J,R extends Number> JDFrame<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key, Function<T, J> key2, NumberFunction<T,R> value);
 
     /**
      * Group average
@@ -672,10 +673,10 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key3      third level group field
      * @param value     Aggregated field
      */
-    <K, J, H> JDFrame<FI4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
+    <K, J, H,R extends Number> JDFrame<FI4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
                                                            Function<T, J> key2,
                                                            Function<T, H> key3,
-                                                           BigDecimalFunction<T> value) ;
+                                                           NumberFunction<T,R> value) ;
 
     /**
      * Group max
@@ -687,9 +688,33 @@ public interface JDFrame<T> extends IFrame<T> {
     /**
      * Group max
      * @param key       group field
+     * @param key2      secondary level group field
+     * @param value     Aggregated field
+     */
+    <K,J, V extends Comparable<V>> JDFrame<FI3<K,J, T>> groupByMax(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
+
+
+    /**
+     * Group max value
+     * @param key       group field
+     * @param value     Aggregated field
+     */
+    <K, V extends Comparable<V>> JDFrame<FI2<K, V>> groupByMaxValue(Function<T, K> key, Function<T, V> value) ;
+
+
+    /**
+     * Group min
+     * @param key       group field
      * @param value     Aggregated field
      */
     <K, V extends Comparable<V>> JDFrame<FI2<K, T>> groupByMin(Function<T, K> key, Function<T, V> value);
+
+    /**
+     * Group min value
+     * @param key       group field
+     * @param value     Aggregated field
+     */
+    <K, V extends Comparable<V>> JDFrame<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value);
 
     /**
      * Group max and min value

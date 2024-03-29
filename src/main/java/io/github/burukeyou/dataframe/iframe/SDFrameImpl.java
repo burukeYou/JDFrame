@@ -7,9 +7,10 @@ import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.DefaultJoin;
 import io.github.burukeyou.dataframe.iframe.support.Join;
 import io.github.burukeyou.dataframe.iframe.support.JoinOn;
-import io.github.burukeyou.dataframe.util.PartitionList;
+import io.github.burukeyou.dataframe.iframe.support.NumberFunction;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import io.github.burukeyou.dataframe.util.MathUtils;
+import io.github.burukeyou.dataframe.util.PartitionList;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -460,29 +461,28 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
 
 
-    public <K> SDFrame<FI2<K, BigDecimal>> groupBySum(Function<T, K> key,
-                                                      BigDecimalFunction<T> value) {
-        Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
+    public <K,R extends Number> SDFrame<FI2<K, BigDecimal>> groupBySum(Function<T, K> key, NumberFunction<T,R> value) {
+        Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI2<K, BigDecimal>> collect = group(key, tBigDecimalCollector);
         return returnDF(collect);
     }
 
 
-    public <K, J> SDFrame<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key,
+    public <K, J,R extends Number> SDFrame<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key,
                                                             Function<T, J> key2,
-                                                            BigDecimalFunction<T> value) {
-        Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
+                                                            NumberFunction<T,R> value) {
+        Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI3<K, J, BigDecimal>> collect = group(key, key2, tBigDecimalCollector);
         return returnDF(collect);
     }
 
 
 
-    public <K, J, H> SDFrame<FI4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
+    public <K, J, H,R extends Number> SDFrame<FI4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
                                                                   Function<T, J> key2,
                                                                   Function<T, H> key3,
-                                                                  BigDecimalFunction<T> value) {
-        Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
+                                                                  NumberFunction<T,R> value) {
+        Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI4<K, J, H, BigDecimal>> collect = group(key, key2, key3, tBigDecimalCollector);
         return returnDF(collect);
     }
@@ -512,9 +512,9 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
 
-    public <K> SDFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, BigDecimalFunction<T> value) {
+    public <K,R extends Number> SDFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, NumberFunction<T,R> value) {
         List<T> dataList = toLists();
-        Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
+        Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI2<K, BigDecimal>> sumList = returnDF(dataList).group(key, tBigDecimalCollector);
         List<FI2<K, Long>> countList =  returnDF(dataList).groupByCount(key).toLists();
         Map<K, Long> countMap = countList.stream().collect(toMap(FI2::getC1, FI2::getC2));
@@ -523,11 +523,11 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
 
-    public <K, J> SDFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key,
+    public <K, J,R extends Number> SDFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key,
                                                                        Function<T, J> key2,
-                                                                       BigDecimalFunction<T> value) {
+                                                                       NumberFunction<T,R> value) {
         List<T> dataList = toLists();
-        Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimal(value);
+        Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI3<K, J, BigDecimal>> sumList = returnDF(dataList).group(key, key2, tBigDecimalCollector);
         List<FI3<K, J, Long>> countList =  returnDF(dataList).groupByCount(key, key2).toLists();
         // 合并sum和count字段
@@ -540,17 +540,17 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
 
-    public <K> SDFrame<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key,
-                                                      BigDecimalFunction<T> value) {
+    public <K,R extends Number> SDFrame<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key,
+                                                      NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
         List<FI2<K, BigDecimal>> collect = group(key, tBigDecimalCollector);
         return returnDF(collect);
     }
 
 
-    public <K, J> SDFrame<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key,
+    public <K, J,R extends Number> SDFrame<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key,
                                                             Function<T, J> key2,
-                                                            BigDecimalFunction<T> value) {
+                                                            NumberFunction<T,R> value) {
 
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
         List<FI3<K, J, BigDecimal>> collect = group(key, key2, tBigDecimalCollector);
@@ -558,38 +558,54 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
 
-    public <K, J, H> SDFrame<FI4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
+    public <K, J, H,R extends Number> SDFrame<FI4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
                                                                   Function<T, J> key2,
                                                                   Function<T, H> key3,
-                                                                  BigDecimalFunction<T> value) {
+                                                                  NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
         List<FI4<K, J, H, BigDecimal>> collect = group(key, key2, key3, tBigDecimalCollector);
         return returnDF(collect);
     }
 
 
-
+    @Override
     public <K, V extends Comparable<V>> SDFrame<FI2<K, T>> groupByMax(Function<T, K> key,
                                                                       Function<T, V> value) {
-        Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), e -> e.stream().min(Comparator.comparing(value)).orElse(null))));
+        Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), getListMaxFunction(value))));
         return returnDF(convertToDataFrameItem2(collect));
     }
 
+    @Override
+    public <K, J, V extends Comparable<V>> SDFrame<FI3<K, J, T>> groupByMax(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+        Map<K, Map<J, T>> collect = groupToMap(key, key2,getListMaxFunction(value));
+        return returnDF(convertToDataFrameItem3(collect));
+    }
 
+    @Override
+    public <K, V extends Comparable<V>> SDFrame<FI2<K, V>> groupByMaxValue(Function<T, K> key, Function<T, V> value) {
+        return groupByMax(key, value).map(e -> new FI2<>(e.getC1(), value.apply(e.getC2())));
+    }
+
+    @Override
     public <K, V extends Comparable<V>> SDFrame<FI2<K, T>> groupByMin(Function<T, K> key,
                                                                       Function<T, V> value) {
         Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), e -> e.stream().min(Comparator.comparing(value)).orElse(null))));
         return returnDF(convertToDataFrameItem2(collect));
     }
 
+    @Override
+    public <K, V extends Comparable<V>> SDFrame<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value) {
+        return groupByMin(key, value).map(e -> new FI2<>(e.getC1(), value.apply(e.getC2())));
+    }
 
+    @Override
     public <K, V extends Comparable<V>> SDFrame<FI2<K, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
                                                                                       Function<T, V> value) {
         Map<K, MaxMin<V>> map = stream().collect(groupingBy(key, collectingAndThen(toList(), getListGroupMaxMinValueFunction(value))));
         return returnDF(convertToDataFrameItem2(map));
     }
 
-
+    @Override
     public <K, J, V extends Comparable<V>> SDFrame<FI3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
                                                                                             Function<T, J> key2,
                                                                                             Function<T, V> value) {
@@ -597,14 +613,14 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(convertToDataFrameItem3(map));
     }
 
-
+    @Override
     public <K, V extends Comparable<V>> SDFrame<FI2<K, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                  Function<T, V> value) {
         Map<K, MaxMin<T>> map = stream().collect(groupingBy(key, collectingAndThen(toList(), getListGroupMaxMinFunction(value))));
         return returnDF(convertToDataFrameItem2(map));
     }
 
-
+    @Override
     public <K, J, V extends Comparable<V>> SDFrame<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                        Function<T, J> key2,
                                                                                        Function<T, V> value) {
