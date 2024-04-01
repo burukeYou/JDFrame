@@ -708,11 +708,28 @@ public interface IFrame<T> extends Iterable<T>{
 
 
     /**
+     * Group max value
+     * @param key       group field
+     * @param key2      secondary level group field
+     * @param value     Aggregated field
+     */
+    <K,J, V extends Comparable<V>> IFrame<FI3<K,J,V>> groupByMaxValue(Function<T, K> key, Function<T, J> key2,Function<T, V> value) ;
+
+
+    /**
      * Group min
      * @param key       group field
      * @param value     Aggregated field
      */
     <K, V extends Comparable<V>> IFrame<FI2<K, T>> groupByMin(Function<T, K> key, Function<T, V> value);
+
+    /**
+     * Group min
+     * @param key       group field
+     * @param key2      secondary level group field
+     * @param value     Aggregated field
+     */
+    <K, J,V extends Comparable<V>> IFrame<FI3<K, J,T>> groupByMin(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
 
     /**
      * Group min value
@@ -721,6 +738,13 @@ public interface IFrame<T> extends Iterable<T>{
      */
     <K, V extends Comparable<V>> IFrame<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value);
 
+    /**
+     * Group min value
+     * @param key       group field
+     * @param key2      secondary level group field
+     * @param value     Aggregated field
+     */
+    <K,J,V extends Comparable<V>> IFrame<FI3<K,J,V>> groupByMinValue(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
 
     /**
      * Group max and min value

@@ -327,6 +327,10 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
         return e -> e.stream().max(Comparator.comparing(value)).orElse(null);
     }
 
+    protected  <V extends Comparable<V>> Function<List<T>, T> getListMinFunction(Function<T, V> value) {
+        return e -> e.stream().min(Comparator.comparing(value)).orElse(null);
+    }
+
     public <R> Stream<T> streamFilterNull(Function<T,R> function){
         return stream().filter(e -> function.apply(e) != null);
     }

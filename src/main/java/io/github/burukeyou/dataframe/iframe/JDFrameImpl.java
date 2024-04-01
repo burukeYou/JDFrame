@@ -577,16 +577,32 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return groupByMax(key, value).map(e -> new FI2<>(e.getC1(), value.apply(e.getC2())));
     }
 
+    @Override
+    public <K, J, V extends Comparable<V>> JDFrame<FI3<K, J, V>> groupByMaxValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+        return groupByMax(key, key2,value).map(e -> new FI3<>(e.getC1(),e.getC2(),value.apply(e.getC3())));
+    }
+
 
     public <K, V extends Comparable<V>> JDFrame<FI2<K, T>> groupByMin(Function<T, K> key,
                                                                       Function<T, V> value) {
-        Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), e -> e.stream().min(Comparator.comparing(value)).orElse(null))));
+        Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), getListMinFunction(value))));
         return returnDF(convertToDataFrameItem2(collect));
+    }
+
+    @Override
+    public <K, J, V extends Comparable<V>> JDFrame<FI3<K, J, T>> groupByMin(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+        Map<K, Map<J, T>> collect = groupToMap(key, key2,getListMinFunction(value));
+        return returnDF(convertToDataFrameItem3(collect));
     }
 
     @Override
     public <K, V extends Comparable<V>> JDFrame<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value) {
         return groupByMin(key, value).map(e -> new FI2<>(e.getC1(), value.apply(e.getC2())));
+    }
+
+    @Override
+    public <K, J, V extends Comparable<V>> JDFrame<FI3<K, J, V>> groupByMinValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+        return  groupByMin(key, key2,value).map(e -> new FI3<>(e.getC1(),e.getC2(),value.apply(e.getC3())));
     }
 
 
