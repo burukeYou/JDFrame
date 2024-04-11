@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  *  JDFrame
@@ -26,9 +27,11 @@ public interface JDFrame<T> extends IFrame<T> {
     /**
      * Convert a list to JDFrame
      */
-     static <T> JDFrame<T> read(List<T> list) {
+    static <R> JDFrame<R> from(List<R> list) {
         return new JDFrameImpl<>(list);
     }
+
+    <R> JDFrame<R> from(Stream<R> data);
 
 
     /**
@@ -581,6 +584,13 @@ public interface JDFrame<T> extends IFrame<T> {
 
 
     /** ===========================   Group Frame  ===================================== **/
+
+    /**
+     * Group list
+     * @param key        group field
+     */
+    <K> JDFrame<FI2<K,List<T>>> group(Function<T, K> key);
+
     /**
      * Group summation
      * @param key       group field

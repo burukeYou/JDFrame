@@ -256,13 +256,17 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
     }
 
 
+    protected  <K> List<FI2<K, List<T>>> groupKey(Function<T, K> K) {
+        return convertToDataFrameItem2(stream().collect(groupingBy(K)));
+    }
+
     /**
      * 一级分组
      *
      * @param K                    一级分组K
      * @param tBigDecimalCollector 聚合方式
      */
-    protected  <K, V> List<FI2<K, V>> group(Function<T, K> K, Collector<T, ?, V> tBigDecimalCollector) {
+    protected  <K, V> List<FI2<K, V>> groupKey(Function<T, K> K, Collector<T, ?, V> tBigDecimalCollector) {
         Map<K, V> resultMap = stream().collect(groupingBy(K, tBigDecimalCollector));
         return convertToDataFrameItem2(resultMap);
     }
@@ -274,7 +278,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
      * @param J                   二级分组K
      * @param tBigDecimalCollector 聚合方式
      */
-    protected <K, J, V> List<FI3<K, J, V>> group(Function<T, K> K, Function<T, J> J, Collector<T, ?, V> tBigDecimalCollector) {
+    protected <K, J, V> List<FI3<K, J, V>> groupKey(Function<T, K> K, Function<T, J> J, Collector<T, ?, V> tBigDecimalCollector) {
         Map<K, Map<J, V>> map = stream().collect(groupingBy(K, groupingBy(J, tBigDecimalCollector)));
         return convertToDataFrameItem3(map);
     }
@@ -287,7 +291,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
      * @param H            三级分组K
      * @param collectorType 聚合方式
      */
-    protected <K, J, H, V> List<FI4<K, J, H, V>> group(Function<T, K> K, Function<T, J> J, Function<T, H> H, Collector<T, ?, V> collectorType) {
+    protected <K, J, H, V> List<FI4<K, J, H, V>> groupKey(Function<T, K> K, Function<T, J> J, Function<T, H> H, Collector<T, ?, V> collectorType) {
         Map<K, Map<J, Map<H, V>>> map = stream().collect(groupingBy(K, groupingBy(J, groupingBy(H, collectorType))));
         return convertToDataFrameItem4(map);
     }

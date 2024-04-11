@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Stream DataFrame
@@ -27,9 +28,11 @@ public interface SDFrame<T> extends IFrame<T>  {
     /**
      * Convert a list to SDFrame
      */
-    static <T> SDFrame<T> read(List<T> list) {
+    static <R> SDFrame<R> read(List<R> list) {
         return new SDFrameImpl<>(list);
     }
+
+    <R> SDFrame<R> from(Stream<R> data);
 
     /**
      * ===========================   Frame Info =====================================
@@ -581,6 +584,14 @@ public interface SDFrame<T> extends IFrame<T>  {
 
 
     /** ===========================   Group Frame  ===================================== **/
+
+
+    /**
+     * Group list
+     * @param key        group field
+     */
+    <K> SDFrame<FI2<K,List<T>>> group(Function<T, K> key);
+
     /**
      * Group summation
      * @param key       group field

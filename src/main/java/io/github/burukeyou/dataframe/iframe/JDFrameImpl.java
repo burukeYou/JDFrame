@@ -42,17 +42,18 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return dataList.stream();
     }
 
-    public <R> JDFrameImpl<R> read(Stream<R> stream){
-        return read(stream.collect(toList()));
+    @Override
+    public <R> JDFrameImpl<R> from(Stream<R> stream){
+        return from(stream.collect(toList()));
     }
 
-    public <R> JDFrameImpl<R> read(List<R> list) {
+    public <R> JDFrameImpl<R> from(List<R> list) {
         return new JDFrameImpl<>(list);
     }
 
     @Override
     public <R> JDFrame<R> map(Function<T, R> map) {
-        return read(stream().map(map));
+        return from(stream().map(map));
     }
 
     @Override
@@ -72,7 +73,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrame<List<T>> partition(int n) {
-        return read(new PartitionList<>(toLists(), n));
+        return from(new PartitionList<>(toLists(), n));
     }
 
 
@@ -93,7 +94,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R, K> JDFrame<R> join(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
-        return read(joinList(other,on,join));
+        return from(joinList(other,on,join));
     }
 
     @Override
@@ -103,7 +104,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R, K> JDFrame<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
-        return read(leftJoinList(other,on,join));
+        return from(leftJoinList(other,on,join));
     }
 
     @Override
@@ -113,7 +114,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R, K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
-        return read(rightJoinList(other,on,join));
+        return from(rightJoinList(other,on,join));
     }
 
     @Override
@@ -128,7 +129,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         for (T t : this) {
             result.add(new FI2<>(t,index++));
         }
-        return read(result);
+        return from(result);
     }
 
     @Override
@@ -152,7 +153,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrame<FI2<T, Integer>> addRankingSameCol(Comparator<T> comparator) {
-        return read(rankingSameAsc(toLists(),comparator));
+        return from(rankingSameAsc(toLists(),comparator));
     }
 
     @Override
@@ -185,7 +186,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrameImpl<T> sortDesc(Comparator<T> comparator) {
-        return read(stream().sorted(comparator.reversed()));
+        return from(stream().sorted(comparator.reversed()));
     }
 
     @Override
@@ -196,7 +197,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrameImpl<T> sortAsc(Comparator<T> comparator) {
-        return read(stream().sorted(comparator));
+        return from(stream().sorted(comparator));
     }
 
     @Override
@@ -207,7 +208,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public JDFrame<T> cutRankingSameAsc(Comparator<T> comparator, int n) {
         List<FI2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator, n);
-        return read(tmpList.stream().map(FI2::getC1).collect(toList()));
+        return from(tmpList.stream().map(FI2::getC1).collect(toList()));
     }
 
     @Override
@@ -233,14 +234,14 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public JDFrameImpl<T> cutFirst(int n) {
         DFList<T> first = new DFList<>(toLists()).first(n);
-        return read(first.build());
+        return from(first.build());
     }
 
 
     @Override
     public JDFrameImpl<T> cutLast(int n) {
         DFList<T> first = new DFList<>(toLists()).last(n);
-        return read(first.build());
+        return from(first.build());
     }
 
 
@@ -263,7 +264,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrame<T> where(Predicate<? super T> predicate) {
-        return read(stream().filter(predicate));
+        return from(stream().filter(predicate));
     }
 
     @Override
@@ -439,9 +440,10 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnDF(whereLikeRightStream(function,value));
     }
 
-
-
-
+    @Override
+    public <K> JDFrame<FI2<K, List<T>>> group(Function<T, K> key) {
+        return returnDF(groupKey(key));
+    }
 
 
 
@@ -451,7 +453,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     public <K,R extends Number> JDFrame<FI2<K, BigDecimal>> groupBySum(Function<T, K> key,
                                                       NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
-        List<FI2<K, BigDecimal>> collect = group(key, tBigDecimalCollector);
+        List<FI2<K, BigDecimal>> collect = groupKey(key, tBigDecimalCollector);
         return returnDF(collect);
     }
 
@@ -460,7 +462,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
                                                             Function<T, J> key2,
                                                             NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
-        List<FI3<K, J, BigDecimal>> collect = group(key, key2, tBigDecimalCollector);
+        List<FI3<K, J, BigDecimal>> collect = groupKey(key, key2, tBigDecimalCollector);
         return returnDF(collect);
     }
 
@@ -471,7 +473,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
                                                                   Function<T, H> key3,
                                                                   NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
-        List<FI4<K, J, H, BigDecimal>> collect = group(key, key2, key3, tBigDecimalCollector);
+        List<FI4<K, J, H, BigDecimal>> collect = groupKey(key, key2, key3, tBigDecimalCollector);
         return returnDF(collect);
     }
 
@@ -503,8 +505,8 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     public <K,R extends Number> JDFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, NumberFunction<T,R> value) {
         List<T> dataList = toLists();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
-        List<FI2<K, BigDecimal>> sumList = returnDF(dataList).group(key, tBigDecimalCollector);
-        List<FI2<K, Long>> countList =  read(dataList).groupByCount(key).toLists();
+        List<FI2<K, BigDecimal>> sumList = returnDF(dataList).groupKey(key, tBigDecimalCollector);
+        List<FI2<K, Long>> countList =  from(dataList).groupByCount(key).toLists();
         Map<K, Long> countMap = countList.stream().collect(toMap(FI2::getC1, FI2::getC2));
         List<FI3<K, BigDecimal, Long>> collect = sumList.stream().map(e -> new FI3<>(e.getC1(), e.getC2(), countMap.get(e.getC1()))).collect(Collectors.toList());
         return returnDF(collect);
@@ -516,8 +518,8 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
                                                                        NumberFunction<T,R> value) {
         List<T> dataList = toLists();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
-        List<FI3<K, J, BigDecimal>> sumList = returnDF(dataList).group(key, key2, tBigDecimalCollector);
-        List<FI3<K, J, Long>> countList =  read(dataList).groupByCount(key, key2).toLists();
+        List<FI3<K, J, BigDecimal>> sumList = returnDF(dataList).groupKey(key, key2, tBigDecimalCollector);
+        List<FI3<K, J, Long>> countList =  from(dataList).groupByCount(key, key2).toLists();
         // 合并sum和count字段
         Map<String, FI3<K, J, Long>> countMap = countList.stream().collect(toMap(e -> e.getC1() + "_" + e.getC2(), Function.identity()));
         List<FI4<K, J, BigDecimal, Long>> collect = sumList.stream().map(e -> {
@@ -531,7 +533,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     public <K,R extends Number> JDFrame<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key,
                                                       NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
-        List<FI2<K, BigDecimal>> collect = group(key, tBigDecimalCollector);
+        List<FI2<K, BigDecimal>> collect = groupKey(key, tBigDecimalCollector);
         return returnDF(collect);
     }
 
@@ -541,7 +543,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
                                                             NumberFunction<T,R> value) {
 
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
-        List<FI3<K, J, BigDecimal>> collect = group(key, key2, tBigDecimalCollector);
+        List<FI3<K, J, BigDecimal>> collect = groupKey(key, key2, tBigDecimalCollector);
         return returnDF(collect);
     }
 
@@ -551,7 +553,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
                                                                   Function<T, H> key3,
                                                                   NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, 2, BigDecimal.ROUND_HALF_UP);
-        List<FI4<K, J, H, BigDecimal>> collect = group(key, key2, key3, tBigDecimalCollector);
+        List<FI4<K, J, H, BigDecimal>> collect = groupKey(key, key2, key3, tBigDecimalCollector);
         return returnDF(collect);
     }
 
@@ -660,10 +662,10 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     protected <R> JDFrame<R> returnDF(Stream<R> stream) {
-        return read(stream);
+        return from(stream);
     }
 
     protected <R> JDFrameImpl<R> returnDF(List<R> dataList) {
-        return read(dataList);
+        return from(dataList);
     }
 }

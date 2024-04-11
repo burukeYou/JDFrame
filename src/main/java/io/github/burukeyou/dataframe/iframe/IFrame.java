@@ -35,6 +35,8 @@ public interface IFrame<T> extends Iterable<T>{
      */
     Stream<T> stream();
 
+    <R> IFrame<R> from(Stream<R> data);
+
 
     /**
      * ===========================   Frame Info =====================================
@@ -586,6 +588,13 @@ public interface IFrame<T> extends Iterable<T>{
 
 
     /** ===========================   Group Frame  ===================================== **/
+
+    /**
+     * Group list
+     * @param key        group field
+     */
+    <K> IFrame<FI2<K,List<T>>> group(Function<T, K> key);
+
     /**
      * Group summation
      * @param key       group field
