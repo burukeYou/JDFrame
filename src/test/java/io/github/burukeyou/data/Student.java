@@ -20,6 +20,16 @@ public class Student {
 
     private Integer rank;
 
+
+    public Student(String school) {
+        this.school = school;
+    }
+
+    public Student(String school, String level) {
+        this.school = school;
+        this.level = level;
+    }
+
     public Student(String level, BigDecimal score) {
         this.level = level;
         this.score = score;

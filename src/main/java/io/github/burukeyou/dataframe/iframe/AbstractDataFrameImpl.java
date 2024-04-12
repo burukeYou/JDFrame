@@ -1,12 +1,14 @@
 package io.github.burukeyou.dataframe.iframe;
 
 
+import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.Join;
 import io.github.burukeyou.dataframe.iframe.support.JoinOn;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
+import io.github.burukeyou.dataframe.util.ListUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -464,4 +466,77 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
         List<T> ts = toLists();
         return ts.isEmpty() ? null : ts.get(ts.size()-1);
     }
+
+    protected static <T, C> List<T> replenish(List<T> itemDTOList,
+                                              Function<T, C> collectDim,
+                                              List<C> allDim,
+                                              Function<C,T> getEmptyObject){
+        allDim = new ArrayList<>(new HashSet<>(allDim));
+        // 计算差集，然后补充
+        List<C> collect = itemDTOList.stream().map(collectDim).collect(toList());
+        collect = new ArrayList<>(new HashSet<>(collect));
+        // 计算差集，然后补充
+        allDim.removeAll(collect);
+        List<T> collect1 = allDim.stream().map(getEmptyObject).collect(toList());
+        itemDTOList.addAll(collect1);
+        return itemDTOList;
+    }
+
+
+    /**
+     * 分组计算差集， 然后将差集补充到该分组内
+     *
+     *      将原始集合(itemDTOList) 按照groupDim维度进分组， 然后将每个分组内的所有collectDim字段进行汇总
+     *      汇总后 与 allAbscissa进行计算差集，这些差集就是需要补充的条目， 然后将这些差集按照getEmptyObject逻辑生成空对象添加到该分组内
+     *
+     * @param itemDTOList           原始集合
+     * @param groupDim              分组的维度字段
+     * @param collectDim            组内收集的数据字段
+     * @param allDim                组内需要展示的所有维度
+     * @param getEmptyObject        生成空对象的逻辑
+     *
+     * @param <T>                   原始集合的类型
+     * @param <G>                   分组的类型
+     * @param <C>                   组内收集的类型
+     *
+     * @return 补充后的集合
+     */
+    public static  <T,G, C> List<T> replenish(List<T> itemDTOList,
+                                              Function<T, G> groupDim,
+                                              Function<T, C> collectDim,
+                                              List<C> allDim,
+                                              ReplenishFunction<G,C,T> getEmptyObject){
+        // 计算差集，然后补充
+        Map<G, List<T>> nameItemListMap = itemDTOList.stream().collect(groupingBy(groupDim));
+        nameItemListMap.forEach((name, itemList) -> {
+            List<C> tmpAll = new ArrayList<>(allDim);
+            List<C> abasicssaList = itemList.stream().map(collectDim).collect(toList());
+            tmpAll.removeAll(abasicssaList);
+            if (ListUtils.isNotEmpty(tmpAll)) {
+                List<T> missingList = tmpAll.stream().map(e -> getEmptyObject.apply(name, e)).collect(toList());
+                itemList.addAll(missingList);
+            }
+        });
+
+        return nameItemListMap.values().stream().flatMap(Collection::stream).collect(toList());
+    }
+
+
+    protected  static <T,G, C> List<T> replenish(List<T> itemDTOList,
+                                                 Function<T, G> groupDim,
+                                                 Function<T, C> collectDim,
+                                                 ReplenishFunction<G,C,T> getEmptyObject) {
+        //Map<G, List<C>> nameAbscissaMap = itemDTOList.stream().collect(groupingBy(groupDim, Collectors.collectingAndThen(toList(), e -> e.stream().map(collectDim).collect(toList()))));
+        //List<C> allDim = mergeCollection(nameAbscissaMap.values());
+        List<C> allDim = itemDTOList.stream().map(collectDim).filter(Objects::nonNull).collect(toList());
+        allDim = new ArrayList<>(new HashSet<>(allDim));
+        return replenish(itemDTOList,groupDim,collectDim,allDim,getEmptyObject);
+    }
+
+    protected static <C> List<C> mergeCollection(Collection<List<C>> values) {
+        List<C> allAbscissa = values.stream().flatMap(Collection::stream).collect(toList());
+        allAbscissa = new HashSet<>(allAbscissa).stream().collect(toList());
+        return allAbscissa;
+    }
+
 }

@@ -1,6 +1,7 @@
 package io.github.burukeyou.dataframe.iframe;
 
 
+import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -639,6 +640,21 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
                                                                                        Function<T, V> value) {
         Map<K, Map<J, MaxMin<T>>> map = stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListGroupMaxMinFunction(value)))));
         return returnDF(convertToDataFrameItem3(map));
+    }
+
+    @Override
+    public <G, C> JDFrame<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G, C, T> getEmptyObject) {
+        return returnDF(replenish(toLists(),groupDim,collectDim,allDim,getEmptyObject));
+    }
+
+    @Override
+    public <C> JDFrame<T> replenish(Function<T, C> collectDim, List<C> allDim, Function<C, T> getEmptyObject) {
+        return returnDF(replenish(toLists(),collectDim,allDim,getEmptyObject));
+    }
+
+    @Override
+    public <G, C> JDFrame<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G, C, T> getEmptyObject) {
+        return returnDF(replenish(toLists(),groupDim,collectDim,getEmptyObject));
     }
 
     private <V extends Comparable<V>> Function<List<T>, MaxMin<V>> getListGroupMaxMinValueFunction(Function<T, V> value) {

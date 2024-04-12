@@ -1,5 +1,6 @@
 package io.github.burukeyou.dataframe.iframe;
 
+import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -795,4 +796,43 @@ public interface IFrame<T> extends Iterable<T>{
                                                                                Function<T, J> key2,
                                                                                Function<T, V> value);
 
+    /** ===========================   Other  ===================================== **/
+
+    /**
+     * Summarize all collectDim values, calculate the difference between them, and then add the missing difference to the Frame through getEmptyObject
+     *
+     */
+    <C> IFrame<T> replenish(Function<T, C> collectDim, List<C> allDim, Function<C,T> getEmptyObject);
+
+    /**
+     * Calculate the difference in groups and then add the difference to that group
+     *
+     *  according to the groupDim dimension, and then summarize all collectDim fields within each group
+     *  After summarizing, calculate the difference sets with allAbscissa, which are the entries that need to be supplemented.
+     *  Then, generate empty objects according to the ReplenishFunction logic and add them to the group
+     *
+     * @param groupDim              Dimension fields for grouping
+     * @param collectDim            Data fields collected within the group
+     * @param allDim                All dimensions that need to be displayed within the group
+     * @param getEmptyObject        Logic for generating empty objects
+     *
+     * @param <G>        The type of grouping
+     * @param <C>        type of collection within the group
+     *
+     *The set supplemented by @ return
+     */
+    <G, C> IFrame<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G,C,T> getEmptyObject);
+
+    /**
+     *  such as {@link IFrame#replenish(Function, Function, List, ReplenishFunction)}, but can not Specify allDim，
+     *  will auto generate allDim, The default allDim is the value of all collectDim fields in the set
+     *
+     * @param groupDim              Dimension fields for grouping
+     * @param collectDim            Data fields collected within the group
+     * @param getEmptyObject        Logic for generating empty objects
+     *
+     * @param <G>        The type of grouping
+     * @param <C>        type of collection within the group
+     */
+    <G, C> IFrame<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G,C,T> getEmptyObject);
 }
