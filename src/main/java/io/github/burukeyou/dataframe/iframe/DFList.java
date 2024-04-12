@@ -102,7 +102,7 @@ public class DFList<T> {
     }
 
     public JDFrame<T> toJDFrame(){
-        return JDFrame.from(this.data);
+        return JDFrame.read(this.data);
     }
 
 }

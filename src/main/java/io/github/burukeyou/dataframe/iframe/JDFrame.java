@@ -27,7 +27,7 @@ public interface JDFrame<T> extends IFrame<T> {
     /**
      * Convert a list to JDFrame
      */
-    static <R> JDFrame<R> from(List<R> list) {
+    static <R> JDFrame<R> read(List<R> list) {
         return new JDFrameImpl<>(list);
     }
 
@@ -211,7 +211,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * Add ranking columns by field
      * @param function          the sort field
      */
-    <R extends Comparable<R>> JDFrame<FI2<T,Integer>> addRankingSameCol(Function<T, R> function);
+    <R extends Comparable<R>> JDFrame<FI2<T,Integer>> addRankingSameColAsc(Function<T, R> function);
 
 
     /**
@@ -224,7 +224,12 @@ public interface JDFrame<T> extends IFrame<T> {
     /**
      *  Add ranking column to a certain column by field
      */
-    <R extends Comparable<R>>  JDFrame<T> addRankingSameCol(Function<T, R> function,SetFunction<T,Integer> set);
+    <R extends Comparable<R>>  JDFrame<T> addRankingSameColAsc(Function<T, R> function, SetFunction<T,Integer> set);
+
+    /**
+     *  Add ranking column to a certain column by field
+     */
+    <R extends Comparable<R>>  JDFrame<T> addRankingSameColDesc(Function<T, R> function, SetFunction<T,Integer> set);
 
 
     /**

@@ -160,7 +160,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<FI2<T, Integer>> addRankingSameCol(Function<T, R> function) {
+    public <R extends Comparable<R>> SDFrame<FI2<T, Integer>> addRankingSameColAsc(Function<T, R> function) {
         return addRankingSameCol(Comparator.comparing(function));
     }
 
@@ -174,8 +174,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> addRankingSameCol(Function<T, R> function, SetFunction<T, Integer> set) {
+    public <R extends Comparable<R>> SDFrame<T> addRankingSameColAsc(Function<T, R> function, SetFunction<T, Integer> set) {
         return addRankingSameCol(Comparator.comparing(function),set);
+    }
+
+    @Override
+    public <R extends Comparable<R>> SDFrame<T> addRankingSameColDesc(Function<T, R> function, SetFunction<T, Integer> set) {
+        return addRankingSameCol(Comparator.comparing(function).reversed(),set);
     }
 
     @Override

@@ -215,7 +215,7 @@ public interface IFrame<T> extends Iterable<T>{
      * Add ranking columns by field
      * @param function          the sort field
      */
-    <R extends Comparable<R>> IFrame<FI2<T,Integer>> addRankingSameCol(Function<T, R> function);
+    <R extends Comparable<R>> IFrame<FI2<T,Integer>> addRankingSameColAsc(Function<T, R> function);
 
 
     /**
@@ -228,7 +228,12 @@ public interface IFrame<T> extends Iterable<T>{
     /**
      *  Add ranking column to a certain column by field
      */
-    <R extends Comparable<R>>  IFrame<T> addRankingSameCol(Function<T, R> function,SetFunction<T,Integer> set);
+    <R extends Comparable<R>>  IFrame<T> addRankingSameColAsc(Function<T, R> function, SetFunction<T,Integer> set);
+
+    /**
+     *  Add ranking column to a certain column by field
+     */
+    <R extends Comparable<R>>  IFrame<T> addRankingSameColDesc(Function<T, R> function, SetFunction<T,Integer> set);
 
 
     /**

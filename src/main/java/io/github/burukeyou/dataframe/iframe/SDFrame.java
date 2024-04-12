@@ -211,7 +211,7 @@ public interface SDFrame<T> extends IFrame<T>  {
      * Add ranking columns by field
      * @param function          the sort field
      */
-    <R extends Comparable<R>> SDFrame<FI2<T,Integer>> addRankingSameCol(Function<T, R> function);
+    <R extends Comparable<R>> SDFrame<FI2<T,Integer>> addRankingSameColAsc(Function<T, R> function);
 
 
     /**
@@ -224,7 +224,13 @@ public interface SDFrame<T> extends IFrame<T>  {
     /**
      *  Add ranking column to a certain column by field
      */
-    <R extends Comparable<R>>  SDFrame<T> addRankingSameCol(Function<T, R> function,SetFunction<T,Integer> set);
+    <R extends Comparable<R>>  SDFrame<T> addRankingSameColAsc(Function<T, R> function, SetFunction<T,Integer> set);
+
+
+    /**
+     *  Add ranking column to a certain column by field
+     */
+    <R extends Comparable<R>>  SDFrame<T> addRankingSameColDesc(Function<T, R> function, SetFunction<T,Integer> set);
 
 
     /**

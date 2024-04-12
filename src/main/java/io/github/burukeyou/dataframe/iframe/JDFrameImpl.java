@@ -157,7 +157,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<FI2<T, Integer>> addRankingSameCol(Function<T, R> function) {
+    public <R extends Comparable<R>> JDFrame<FI2<T, Integer>> addRankingSameColAsc(Function<T, R> function) {
         return addRankingSameCol(Comparator.comparing(function));
     }
 
@@ -171,8 +171,13 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> addRankingSameCol(Function<T, R> function, SetFunction<T, Integer> set) {
+    public <R extends Comparable<R>> JDFrame<T> addRankingSameColAsc(Function<T, R> function, SetFunction<T, Integer> set) {
         return addRankingSameCol(Comparator.comparing(function),set);
+    }
+
+    @Override
+    public <R extends Comparable<R>> JDFrame<T> addRankingSameColDesc(Function<T, R> function, SetFunction<T, Integer> set) {
+        return addRankingSameCol(Comparator.comparing(function).reversed(),set);
     }
 
 
@@ -191,8 +196,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R extends Comparable<R>> JDFrameImpl<T> sortDesc(Function<T, R> function) {
-        sortDesc(Comparator.comparing(function));
-        return this;
+        return sortDesc(Comparator.comparing(function));
     }
 
     @Override
