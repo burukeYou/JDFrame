@@ -3,15 +3,16 @@ package io.github.burukeyou;
 import io.github.burukeyou.data.Student;
 import io.github.burukeyou.data.UserInfo;
 import io.github.burukeyou.dataframe.iframe.JDFrame;
+import io.github.burukeyou.dataframe.iframe.support.MaxMin;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
-import io.github.burukeyou.dataframe.iframe.MaxMin;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
+import io.github.burukeyou.dataframe.iframe.item.FI3;
+import io.github.burukeyou.dataframe.iframe.item.FI4;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class JDFrameTest {
@@ -21,7 +22,7 @@ public class JDFrameTest {
     static {
         studentList.add(new Student(1,"a","一中","一年级",11, new BigDecimal(1)));
         studentList.add(new Student(2,"a","一中","一年级",11, new BigDecimal(1)));
-        studentList.add(new Student(3,"b","一中","一年级",12, new BigDecimal(2)));
+        studentList.add(new Student(3,"b","一中","三年级",12, new BigDecimal(2)));
         studentList.add(new Student(4,"c","二中","一年级",13, new BigDecimal(3)));
         studentList.add(new Student(5,"d","二中","一年级",14, new BigDecimal(4)));
         studentList.add(new Student(6,"e","三中","二年级",14, new BigDecimal(5)));
@@ -103,10 +104,12 @@ public class JDFrameTest {
 
     @Test
     public void testJoin(){
+
+        System.out.println("======== 矩阵1 =======");
+
         SDFrame<Student> sdf = SDFrame.read(studentList);
 
         sdf.show(2);
-        System.out.println("======== 1 =======");
 
         // 获取学生年龄在9到16岁的学学校合计分数最高的前10名
         SDFrame<FI2<String, BigDecimal>> sdf2 = SDFrame.read(studentList)
@@ -116,20 +119,33 @@ public class JDFrameTest {
                 .sortDesc(FI2::getC2)
                 .cutFirst(10);
 
-
+        System.out.println("======== 矩阵2 =======");
         sdf2.show();
-        System.out.println("======== 2 =======");
+
+        List<Student> studentList2 = studentList;
+        List<FI2<String, BigDecimal>> fi2s = sdf2.toLists();
+
+
+
+        Map<String, FI2<String, BigDecimal>> collect = fi2s.stream().collect(Collectors.toMap(FI2::getC1, e -> e));
+        for (Student student : studentList2) {
+            FI2<String, BigDecimal> key = collect.get(student.getSchool());
+            if (key != null){
+
+            }
+        }
+
 
         SDFrame<UserInfo> frame = sdf.join(sdf2, (a, b) -> a.getSchool().equals(b.getC1()), (a, b) -> {
             UserInfo userInfo = new UserInfo();
-            userInfo.setC1(a.getSchool());
-            userInfo.setC2(b.getC2().intValue());
-            userInfo.setC3(String.valueOf(a.getId()));
+            userInfo.setKey1(a.getSchool());
+            userInfo.setKey2(b.getC2().intValue());
+            userInfo.setKey3(String.valueOf(a.getId()));
             return userInfo;
         });
 
+        System.out.println("======== 连接后结果 =======");
         frame.show(5);
-        System.out.println();
     }
 
     @Test
@@ -157,7 +173,8 @@ public class JDFrameTest {
 
         //List<FT2<Student, Integer>> ft2s = df.addRankingSameCol(Comparator.comparing(Student::getAge)).toLists();
 
-        List<Student> students2 = df.addRankingSameCol(Student::getAge, Student::setRank).toLists();
+        List<Student> students2 = df.addRankingSameColAsc(Student::getAge, Student::setRank).toLists();
+
 
         //SDFrame<Student> students = df.addSortNoCol(Student::setRank);
         //List<Student> students1 = students.toLists();
@@ -197,11 +214,63 @@ public class JDFrameTest {
     @Test
     public void testGroup(){
         JDFrame<Student> frame = JDFrame.read(studentList);
-        // 等价于 select sum(age) ... group by school
+        // 等价于 select school,sum(age) ... group by school
         List<FI2<String, BigDecimal>> a = frame.groupBySum(Student::getSchool, Student::getAge).toLists();
-        // 等价于 select sum(age) ... group by school
-        List<FI2<String, Student>> a2 = frame.groupByMax(Student::getSchool, Student::getAge).toLists();
+        // 等价于 select school,max(age) ... group by school
+        List<FI2<String, Integer>> a2 = frame.groupByMaxValue(Student::getSchool, Student::getAge).toLists();
+        //  与 groupByMaxValue 含义一致，只是返回的是最大的对象非最大的值
+        List<FI2<String, Student>> a3 = frame.groupByMax(Student::getSchool, Student::getAge).toLists();
+        // 等价于 select school,min(age) ... group by school
+        List<FI2<String, Integer>> a4 = frame.groupByMinValue(Student::getSchool, Student::getAge).toLists();
+        // 等价于 select school,count(*) ... group by school
+        List<FI2<String, Long>> a5 = frame.groupByCount(Student::getSchool).toLists();
+        // 等价于 select school,avg(age) ... group by school
+        List<FI2<String, BigDecimal>> a6 = frame.groupByAvg(Student::getSchool, Student::getAge).toLists();
+
+        // 等价于 select school,sum(age),count(age) group by school
+        List<FI3<String, BigDecimal, Long>> a7 = frame.groupBySumCount(Student::getSchool, Student::getAge).toLists();
+
+        // (二级分组)等价于 select school,level,sum(age),count(age) group by school,level
+        List<FI3<String, String, BigDecimal>> a8 = frame.groupBySum(Student::getSchool, Student::getLevel, Student::getAge).toLists();
+
+        // （三级分组）等价于 select school,level,name,sum(age),count(age) group by school,level,name
+        List<FI4<String, String, String, BigDecimal>> a9 = frame.groupBySum(Student::getSchool, Student::getLevel, Student::getName, Student::getAge).toLists();
+
 
         System.out.println();
     }
+
+    @Test
+    public void testSort(){
+        // 等价于 order by age desc
+        SDFrame.read(studentList).sortDesc(Student::getAge);
+        //  等价于 order by age desc, level asc
+        SDFrame.read(studentList).sortDesc(Student::getAge).sortAsc(Student::getLevel);
+        // 等价于 order by age asc
+        SDFrame.read(studentList).sortAsc(Student::getAge);
+        // 使用Comparator 排序
+        SDFrame.read(studentList).sortAsc(Comparator.comparing(e -> e.getLevel() + e.getId()));
+
+        // 等价于 select round(score*100,2) from student
+        SDFrame<Student> map2 = SDFrame.read(studentList).mapPercent(Student::getScore, Student::setScore,2);
+    }
+
+    // 序号列
+    @Test
+    public void testNo(){
+        //List<Student> students = SDFrame.read(studentList).sortDesc(Student::getAge).addSortNoCol(Student::setRank).toLists();
+        //System.out.println();
+
+        SDFrame<Student> df = SDFrame.read(studentList).addRankingSameColDesc(Student::getAge, Student::setRank);
+        df.show(20);
+    }
+
+    @Test
+    public void testReplenish(){
+        List<String> allDim = Arrays.asList("一中","二中","三中","四中");
+        //SDFrame.read(studentList).replenish(Student::getSchool,allDim,(school) -> new Student(school)).show(30);
+
+        SDFrame.read(studentList).replenish(Student::getSchool,Student::getLevel,(school,level) -> new Student(school,level)).show(30);
+    }
+
 }
