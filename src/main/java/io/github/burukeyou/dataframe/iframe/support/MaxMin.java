@@ -1,4 +1,4 @@
-package io.github.burukeyou.dataframe.iframe;
+package io.github.burukeyou.dataframe.iframe.support;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

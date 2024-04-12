@@ -7,6 +7,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.Join;
 import io.github.burukeyou.dataframe.iframe.support.JoinOn;
+import io.github.burukeyou.dataframe.iframe.support.MaxMin;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import io.github.burukeyou.dataframe.util.ListUtils;
 import lombok.Getter;
