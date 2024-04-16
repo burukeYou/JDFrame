@@ -9,6 +9,7 @@ import io.github.burukeyou.dataframe.iframe.support.Join;
 import io.github.burukeyou.dataframe.iframe.support.JoinOn;
 import io.github.burukeyou.dataframe.iframe.support.MaxMin;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
+import io.github.burukeyou.dataframe.util.FrameUtil;
 import io.github.burukeyou.dataframe.util.ListUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -260,7 +261,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
 
 
     protected  <K> List<FI2<K, List<T>>> groupKey(Function<T, K> K) {
-        return convertToDataFrameItem2(stream().collect(groupingBy(K)));
+        return FrameUtil.toListFI2(stream().collect(groupingBy(K)));
     }
 
     /**
@@ -271,7 +272,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
      */
     protected  <K, V> List<FI2<K, V>> groupKey(Function<T, K> K, Collector<T, ?, V> tBigDecimalCollector) {
         Map<K, V> resultMap = stream().collect(groupingBy(K, tBigDecimalCollector));
-        return convertToDataFrameItem2(resultMap);
+        return FrameUtil.toListFI2(resultMap);
     }
 
     /**
@@ -283,7 +284,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
      */
     protected <K, J, V> List<FI3<K, J, V>> groupKey(Function<T, K> K, Function<T, J> J, Collector<T, ?, V> tBigDecimalCollector) {
         Map<K, Map<J, V>> map = stream().collect(groupingBy(K, groupingBy(J, tBigDecimalCollector)));
-        return convertToDataFrameItem3(map);
+        return FrameUtil.toListFI3(map);
     }
 
     /**
@@ -296,35 +297,11 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
      */
     protected <K, J, H, V> List<FI4<K, J, H, V>> groupKey(Function<T, K> K, Function<T, J> J, Function<T, H> H, Collector<T, ?, V> collectorType) {
         Map<K, Map<J, Map<H, V>>> map = stream().collect(groupingBy(K, groupingBy(J, groupingBy(H, collectorType))));
-        return convertToDataFrameItem4(map);
+        return FrameUtil.toListFI4(map);
     }
 
 
-    protected <K, V> List<FI2<K, V>> convertToDataFrameItem2(Map<K, V> resultMap) {
-        return resultMap.entrySet().stream().map(e -> new FI2<>(e.getKey(), e.getValue())).collect(toList());
-    }
 
-    protected <K, J, V> List<FI3<K, J, V>> convertToDataFrameItem3(Map<K, Map<J, V>> map) {
-        return map.entrySet().stream()
-                .flatMap(et ->
-                        et.getValue().entrySet().stream()
-                                .map(subEt -> new FI3<>(et.getKey(), subEt.getKey(), subEt.getValue()))
-                                .collect(toList())
-                                .stream()
-                )
-                .collect(toList());
-    }
-
-    protected <K, J, H, V> List<FI4<K, J, H, V>> convertToDataFrameItem4(Map<K, Map<J, Map<H, V>>> map) {
-        return map.entrySet().stream()
-                .flatMap(et ->
-                        et.getValue().entrySet().stream()
-                                .flatMap(subEt -> subEt.getValue().entrySet().stream().map(sub2Et -> new FI4<>(et.getKey(), subEt.getKey(), sub2Et.getKey(), sub2Et.getValue())).collect(toList()).stream())
-                                .collect(toList())
-                                .stream()
-                )
-                .collect(toList());
-    }
 
     protected  <K, J, V extends Comparable<V>> Map<K, Map<J, T>> groupToMap(Function<T, K> key, Function<T, J> key2,Function<List<T>, T> getListMaxFunction) {
         return stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListMaxFunction))));

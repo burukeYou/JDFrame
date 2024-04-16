@@ -6,10 +6,12 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
+import io.github.burukeyou.dataframe.util.FrameUtil;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -31,6 +33,23 @@ public interface SDFrame<T> extends IFrame<T>  {
         return new SDFrameImpl<>(list);
     }
 
+    /**
+     * Convert a map to SDFrame
+     */
+    static <K,V> SDFrame<FI2<K,V>> read(Map<K,V> map) {
+        return new SDFrameImpl<>(FrameUtil.toListFI2(map));
+    }
+
+    /**
+     * Convert a map to SDFrame
+     */
+    static <K,J,V> SDFrame<FI3<K,J,V>> readMap(Map<K,Map<J,V>> map) {
+        return new SDFrameImpl<>(FrameUtil.toListFI3(map));
+    }
+
+    /**
+     * Convert to other JDFrame
+     */
     <R> SDFrame<R> from(Stream<R> data);
 
     /**
