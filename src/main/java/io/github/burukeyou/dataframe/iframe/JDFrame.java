@@ -549,13 +549,13 @@ public interface JDFrame<T> extends IFrame<T> {
      * Finding the maximum and minimum element
      * @param function      the  field
      */
-    <R extends Comparable<R>> MaxMin<T> maxMin(Function<T, R> function);
+    <R extends Comparable<? super R>> MaxMin<T> maxMin(Function<T, R> function);
 
     /**
      * Finding the maximum and minimum value
      * @param function      the  field
      */
-    <R extends Comparable<R>> MaxMin<R> maxMinValue(Function<T, R> function);
+    <R extends Comparable<? super R>> MaxMin<R> maxMinValue(Function<T, R> function);
 
     /**
      * Finding the maximum  element
@@ -567,13 +567,13 @@ public interface JDFrame<T> extends IFrame<T> {
      * Finding the maximum  value
      * @param function      the  field
      */
-    <R extends Comparable<R>> R maxValue(Function<T, R> function);
+    <R extends Comparable<? super R>> R maxValue(Function<T, R> function);
 
     /**
      * Finding the minimum  value
      * @param function      the  field
      */
-    <R extends Comparable<R>> R minValue(Function<T, R> function);
+    <R extends Comparable<? super R>> R minValue(Function<T, R> function);
 
     /**
      * Finding the minimum  element
@@ -697,7 +697,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key       group field
      * @param value     Aggregated field
      */
-    <K, V extends Comparable<V>> JDFrame<FI2<K, T>> groupByMax(Function<T, K> key, Function<T, V> value) ;
+    <K, V extends Comparable<? super V>> JDFrame<FI2<K, T>> groupByMax(Function<T, K> key, Function<T, V> value) ;
 
     /**
      * Group max
@@ -705,7 +705,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K,J, V extends Comparable<V>> JDFrame<FI3<K,J, T>> groupByMax(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
+    <K,J, V extends Comparable<? super V>> JDFrame<FI3<K,J, T>> groupByMax(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
 
 
     /**
@@ -713,7 +713,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key       group field
      * @param value     Aggregated field
      */
-    <K, V extends Comparable<V>> JDFrame<FI2<K, V>> groupByMaxValue(Function<T, K> key, Function<T, V> value) ;
+    <K, V extends Comparable<? super V>> JDFrame<FI2<K, V>> groupByMaxValue(Function<T, K> key, Function<T, V> value) ;
 
 
     /**
@@ -722,7 +722,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K,J, V extends Comparable<V>> JDFrame<FI3<K,J,V>> groupByMaxValue(Function<T, K> key, Function<T, J> key2,Function<T, V> value) ;
+    <K,J, V extends Comparable<? super V>> JDFrame<FI3<K,J,V>> groupByMaxValue(Function<T, K> key, Function<T, J> key2,Function<T, V> value) ;
 
 
     /**
@@ -730,7 +730,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key       group field
      * @param value     Aggregated field
      */
-    <K, V extends Comparable<V>> JDFrame<FI2<K, T>> groupByMin(Function<T, K> key, Function<T, V> value);
+    <K, V extends Comparable<? super V>> JDFrame<FI2<K, T>> groupByMin(Function<T, K> key, Function<T, V> value);
 
 
     /**
@@ -739,7 +739,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K, J,V extends Comparable<V>> JDFrame<FI3<K, J,T>> groupByMin(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
+    <K, J,V extends Comparable<? super V>> JDFrame<FI3<K, J,T>> groupByMin(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
 
 
     /**
@@ -747,7 +747,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key       group field
      * @param value     Aggregated field
      */
-    <K, V extends Comparable<V>> JDFrame<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value);
+    <K, V extends Comparable<? super V>> JDFrame<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value);
 
 
     /**
@@ -756,7 +756,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K,J,V extends Comparable<V>> JDFrame<FI3<K,J,V>> groupByMinValue(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
+    <K,J,V extends Comparable<? super V>> JDFrame<FI3<K,J,V>> groupByMinValue(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
 
 
     /**
@@ -764,7 +764,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key       group field
      * @param value     Aggregated field
      */
-    <K, V extends Comparable<V>> JDFrame<FI2<K, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key, Function<T, V> value);
+    <K, V extends Comparable<? super V>> JDFrame<FI2<K, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key, Function<T, V> value);
 
     /**
      * Group max and min value
@@ -772,7 +772,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K, J, V extends Comparable<V>> JDFrame<FI3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
+    <K, J, V extends Comparable<? super V>> JDFrame<FI3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
                                                                                      Function<T, J> key2,
                                                                                      Function<T, V> value);
 
@@ -781,7 +781,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key       group field
      * @param value     Aggregated field
      */
-    <K, V extends Comparable<V>> JDFrame<FI2<K, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
+    <K, V extends Comparable<? super V>> JDFrame<FI2<K, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                           Function<T, V> value) ;
 
     /**
@@ -790,7 +790,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K, J, V extends Comparable<V>> JDFrame<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
+    <K, J, V extends Comparable<? super V>> JDFrame<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                 Function<T, J> key2,
                                                                                 Function<T, V> value);
 

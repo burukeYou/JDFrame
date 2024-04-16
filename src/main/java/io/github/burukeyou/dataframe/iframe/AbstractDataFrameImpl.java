@@ -204,12 +204,12 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
                 .divide(BigDecimal.valueOf(bigDecimalList.size()),8, RoundingMode.HALF_UP);
     }
 
-    public <R extends Comparable<R>> MaxMin<R> maxMinValue(Function<T, R> function) {
+    public <R extends Comparable<? super R>> MaxMin<R> maxMinValue(Function<T, R> function) {
         MaxMin<T> maxAndMin = maxMin(function);
         return new MaxMin<>(function.apply(maxAndMin.getMax()), function.apply(maxAndMin.getMin()));
     }
 
-    public <R extends Comparable<R>> MaxMin<T> maxMin(Function<T, R> function) {
+    public <R extends Comparable<? super R>> MaxMin<T> maxMin(Function<T, R> function) {
         List<T> itemList = stream().filter(e -> function.apply(e) != null).collect(toList());
         if (itemList.isEmpty()){
             return new MaxMin<>(null,null);
@@ -231,26 +231,26 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
         return new MaxMin<>(max, min);
     }
 
-    public <R extends Comparable<R>> R maxValue(Function<T, R> function) {
+    public <R extends Comparable<? super R>> R maxValue(Function<T, R> function) {
         Optional<R> value = stream().map(function).filter(Objects::nonNull).max(Comparator.comparing(e -> e));
         return value.orElse(null);
     }
 
 
     public <R extends Comparable<R>> T max(Function<T, R> function) {
-        Optional<T> max = stream().filter(Objects::nonNull).max(Comparator.comparing(function));
+        Optional<T> max = stream().filter(e -> function.apply(e) != null).max(Comparator.comparing(function));
         return max.orElse(null);
     }
 
 
-    public <R extends Comparable<R>> R minValue(Function<T, R> function) {
+    public <R extends Comparable<? super R>> R minValue(Function<T, R> function) {
         Optional<R> value = stream().map(function).filter(Objects::nonNull).min(Comparator.comparing(e -> e));
         return value.orElse(null);
     }
 
 
     public <R extends Comparable<R>> T min(Function<T, R> function) {
-        Optional<T> min = stream().filter(Objects::nonNull).min(Comparator.comparing(function));
+        Optional<T> min = stream().filter(e -> function.apply(e) != null).min(Comparator.comparing(function));
         return min.orElse(null);
     }
 
@@ -330,13 +330,38 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
         return stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListMaxFunction))));
     }
 
-    protected  <V extends Comparable<V>> Function<List<T>, T> getListMaxFunction(Function<T, V> value) {
-        return e -> e.stream().max(Comparator.comparing(value)).orElse(null);
+    protected  <V extends Comparable<? super V>> Function<List<T>, T> getListMaxFunction(Function<T, V> value) {
+        return e -> e.stream().filter(a ->  value.apply(a) != null).max(Comparator.comparing(value)).orElse(null);
     }
 
-    protected  <V extends Comparable<V>> Function<List<T>, T> getListMinFunction(Function<T, V> value) {
+    protected  <V extends Comparable<? super V>> Function<List<T>, T> getListMinFunction(Function<T, V> value) {
         return e -> e.stream().min(Comparator.comparing(value)).orElse(null);
     }
+
+    protected <V extends Comparable<? super V>> Function<List<T>, MaxMin<V>> getListGroupMaxMinValueFunction(Function<T, V> value) {
+        return list -> {
+            if (list == null || list.isEmpty()) {
+                return null;
+            }
+            MaxMin<V> maxMin = new MaxMin<>();
+            maxMin.setMax(list.stream().max(Comparator.comparing(value)).map(value).orElse(null));
+            maxMin.setMin(list.stream().min(Comparator.comparing(value)).map(value).orElse(null));
+            return maxMin;
+        };
+    }
+
+    protected <V extends Comparable<? super V>> Function<List<T>, MaxMin<T>> getListGroupMaxMinFunction(Function<T, V> value) {
+        return list -> {
+            if (list == null || list.isEmpty()) {
+                return new MaxMin<>();
+            }
+            MaxMin<T> maxMin = new MaxMin<>();
+            maxMin.setMax(list.stream().max(Comparator.comparing(value)).orElse(null));
+            maxMin.setMin(list.stream().min(Comparator.comparing(value)).orElse(null));
+            return maxMin;
+        };
+    }
+
 
     public <R> Stream<T> streamFilterNull(Function<T,R> function){
         return stream().filter(e -> function.apply(e) != null);
@@ -540,4 +565,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
         return allAbscissa;
     }
 
+    protected <R> R getApplyValue(Function<T, R> fun,T obj){
+        return obj == null ? null : fun.apply(obj);
+    }
 }

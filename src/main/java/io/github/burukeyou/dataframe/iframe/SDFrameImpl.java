@@ -587,60 +587,60 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
 
     @Override
-    public <K, V extends Comparable<V>> SDFrame<FI2<K, T>> groupByMax(Function<T, K> key,
+    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, T>> groupByMax(Function<T, K> key,
                                                                       Function<T, V> value) {
         Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), getListMaxFunction(value))));
         return returnDF(convertToDataFrameItem2(collect));
     }
 
     @Override
-    public <K, J, V extends Comparable<V>> SDFrame<FI3<K, J, T>> groupByMax(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, T>> groupByMax(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
         Map<K, Map<J, T>> collect = groupToMap(key, key2,getListMaxFunction(value));
         return returnDF(convertToDataFrameItem3(collect));
     }
 
     @Override
-    public <K, V extends Comparable<V>> SDFrame<FI2<K, V>> groupByMaxValue(Function<T, K> key, Function<T, V> value) {
-        return groupByMax(key, value).map(e -> new FI2<>(e.getC1(), value.apply(e.getC2())));
+    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, V>> groupByMaxValue(Function<T, K> key, Function<T, V> value) {
+        return groupByMax(key, value).map(e -> new FI2<>(e.getC1(), getApplyValue(value,e.getC2())));
     }
 
     @Override
-    public <K, J, V extends Comparable<V>> SDFrame<FI3<K, J, V>> groupByMaxValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
-        return groupByMax(key, key2,value).map(e -> new FI3<>(e.getC1(),e.getC2(),value.apply(e.getC3())));
+    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, V>> groupByMaxValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+        return groupByMax(key, key2,value).map(e -> new FI3<>(e.getC1(),e.getC2(),getApplyValue(value,e.getC3())));
     }
 
     @Override
-    public <K, V extends Comparable<V>> SDFrame<FI2<K, T>> groupByMin(Function<T, K> key,
+    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, T>> groupByMin(Function<T, K> key,
                                                                       Function<T, V> value) {
         Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), e -> e.stream().min(Comparator.comparing(value)).orElse(null))));
         return returnDF(convertToDataFrameItem2(collect));
     }
 
     @Override
-    public <K, J, V extends Comparable<V>> SDFrame<FI3<K, J, T>> groupByMin(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, T>> groupByMin(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
         Map<K, Map<J, T>> collect = groupToMap(key, key2,getListMinFunction(value));
         return returnDF(convertToDataFrameItem3(collect));
     }
 
     @Override
-    public <K, V extends Comparable<V>> SDFrame<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value) {
-        return groupByMin(key, value).map(e -> new FI2<>(e.getC1(), value.apply(e.getC2())));
+    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value) {
+        return groupByMin(key, value).map(e -> new FI2<>(e.getC1(),getApplyValue(value,e.getC2())));
     }
 
     @Override
-    public <K, J, V extends Comparable<V>> SDFrame<FI3<K, J, V>> groupByMinValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
-        return groupByMin(key, key2,value).map(e -> new FI3<>(e.getC1(),e.getC2(),value.apply(e.getC3())));
+    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, V>> groupByMinValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+        return groupByMin(key, key2,value).map(e -> new FI3<>(e.getC1(),e.getC2(),getApplyValue(value,e.getC3())));
     }
 
     @Override
-    public <K, V extends Comparable<V>> SDFrame<FI2<K, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
+    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
                                                                                       Function<T, V> value) {
         Map<K, MaxMin<V>> map = stream().collect(groupingBy(key, collectingAndThen(toList(), getListGroupMaxMinValueFunction(value))));
         return returnDF(convertToDataFrameItem2(map));
     }
 
     @Override
-    public <K, J, V extends Comparable<V>> SDFrame<FI3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
+    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
                                                                                             Function<T, J> key2,
                                                                                             Function<T, V> value) {
         Map<K, Map<J, MaxMin<V>>> map = stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListGroupMaxMinValueFunction(value)))));
@@ -648,14 +648,14 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <K, V extends Comparable<V>> SDFrame<FI2<K, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
+    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                  Function<T, V> value) {
         Map<K, MaxMin<T>> map = stream().collect(groupingBy(key, collectingAndThen(toList(), getListGroupMaxMinFunction(value))));
         return returnDF(convertToDataFrameItem2(map));
     }
 
     @Override
-    public <K, J, V extends Comparable<V>> SDFrame<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
+    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                        Function<T, J> key2,
                                                                                        Function<T, V> value) {
         Map<K, Map<J, MaxMin<T>>> map = stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListGroupMaxMinFunction(value)))));
@@ -675,30 +675,6 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public <G, C> SDFrame<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G, C, T> getEmptyObject) {
         return returnDF(replenish(toLists(),groupDim,collectDim,getEmptyObject));
-    }
-
-    private <V extends Comparable<V>> Function<List<T>, MaxMin<V>> getListGroupMaxMinValueFunction(Function<T, V> value) {
-        return list -> {
-            if (list == null || list.isEmpty()) {
-                return null;
-            }
-            MaxMin<V> maxMin = new MaxMin<>();
-            maxMin.setMax(list.stream().max(Comparator.comparing(value)).map(value).orElse(null));
-            maxMin.setMin(list.stream().min(Comparator.comparing(value)).map(value).orElse(null));
-            return maxMin;
-        };
-    }
-
-    private <V extends Comparable<V>> Function<List<T>, MaxMin<T>> getListGroupMaxMinFunction(Function<T, V> value) {
-        return list -> {
-            if (list == null || list.isEmpty()) {
-                return new MaxMin<>();
-            }
-            MaxMin<T> maxMin = new MaxMin<>();
-            maxMin.setMax(list.stream().max(Comparator.comparing(value)).orElse(null));
-            maxMin.setMin(list.stream().min(Comparator.comparing(value)).orElse(null));
-            return maxMin;
-        };
     }
 
     protected SDFrame<T> returnThis(Stream<T> stream) {
