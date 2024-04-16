@@ -469,8 +469,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         if (value == null) {
             return this;
         }
-        Stream<T> stream = stream().filter(e -> String.valueOf(function.apply(e)).endsWith(String.valueOf(value)));
-        return returnThis(stream);
+        return returnThis(whereLikeRightStream(function,value));
     }
 
 

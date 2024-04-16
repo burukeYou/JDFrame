@@ -206,11 +206,11 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
 
     public <R extends Comparable<? super R>> MaxMin<R> maxMinValue(Function<T, R> function) {
         MaxMin<T> maxAndMin = maxMin(function);
-        return new MaxMin<>(function.apply(maxAndMin.getMax()), function.apply(maxAndMin.getMin()));
+        return new MaxMin<>(getApplyValue(function,maxAndMin.getMax()), getApplyValue(function,maxAndMin.getMin()));
     }
 
     public <R extends Comparable<? super R>> MaxMin<T> maxMin(Function<T, R> function) {
-        List<T> itemList = stream().filter(e -> function.apply(e) != null).collect(toList());
+        List<T> itemList = stream().filter(e -> e != null && function.apply(e) != null).collect(toList());
         if (itemList.isEmpty()){
             return new MaxMin<>(null,null);
         }
@@ -364,7 +364,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
 
 
     public <R> Stream<T> streamFilterNull(Function<T,R> function){
-        return stream().filter(e -> function.apply(e) != null);
+        return stream().filter(e -> e != null && function.apply(e) != null);
     }
 
     @Override
