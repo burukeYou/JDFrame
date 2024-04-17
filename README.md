@@ -12,6 +12,15 @@ burukeyou的私房工具， 由于经常记不住stream的一些api每次要复�
 
 # 快速开始
 
+## 引入依赖
+<dependency>
+    <groupId>io.github.burukeyou</groupId>
+    <artifactId>jdframe</artifactId>
+    <version>0.0.2</version>
+</dependency>
+
+
+## 案例
 ```java
         // 获取学生年龄在9到16岁的学学校合计分数最高的前10名的学校
         SDFrame<FI2<String, BigDecimal>> sdf2 = SDFrame.read(studentList)
