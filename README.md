@@ -13,11 +13,14 @@ burukeyou的私房工具， 由于经常记不住stream的一些api每次要复�
 # 快速开始
 
 ## 引入依赖
+```java
 <dependency>
     <groupId>io.github.burukeyou</groupId>
     <artifactId>jdframe</artifactId>
     <version>0.0.2</version>
 </dependency>
+```
+
 
 
 ## 案例
