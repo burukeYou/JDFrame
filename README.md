@@ -19,7 +19,7 @@ burukeyou的私房工具， 由于经常记不住stream的一些api每次要复�
                 .whereBetween(Student::getAge,9,16)
                 .groupBySum(Student::getSchool, Student::getScore)
                 .sortDesc(FI2::getC2)
-                .subFirst(10);
+                .cutFirst(10);
 ```
 
 其他具体API见 IFrame接口
