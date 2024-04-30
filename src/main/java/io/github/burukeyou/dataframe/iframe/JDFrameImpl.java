@@ -14,6 +14,7 @@ import io.github.burukeyou.dataframe.util.PartitionList;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -45,6 +46,12 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public <R> JDFrameImpl<R> from(Stream<R> stream){
         return from(stream.collect(toList()));
+    }
+
+    @Override
+    public JDFrame<T> forEachDo(Consumer<? super T> action) {
+        this.forEach(action);
+        return this;
     }
 
     public <R> JDFrameImpl<R> from(List<R> list) {

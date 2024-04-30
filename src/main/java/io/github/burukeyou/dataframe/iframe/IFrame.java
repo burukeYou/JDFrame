@@ -10,6 +10,7 @@ import io.github.burukeyou.dataframe.iframe.support.*;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -36,6 +37,7 @@ public interface IFrame<T> extends Iterable<T>{
 
     <R> IFrame<R> from(Stream<R> data);
 
+    IFrame<T> forEachDo(Consumer<? super T> action);
 
     /**
      * ===========================   Frame Info =====================================

@@ -13,6 +13,7 @@ import io.github.burukeyou.dataframe.util.*;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -47,6 +48,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public <R> SDFrame<R> from(Stream<R> data) {
         return new SDFrameImpl<>(data);
+    }
+
+    @Override
+    public SDFrame<T> forEachDo(Consumer<? super T> action) {
+        this.forEach(action);
+        return this;
     }
 
     @Override

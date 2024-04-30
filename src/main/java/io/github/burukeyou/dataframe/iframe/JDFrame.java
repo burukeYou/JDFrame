@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -51,6 +52,8 @@ public interface JDFrame<T> extends IFrame<T> {
      */
     <R> JDFrame<R> from(Stream<R> data);
 
+
+    JDFrame<T> forEachDo(Consumer<? super T> action);
 
     /**
      * ===========================   Frame Info =====================================
