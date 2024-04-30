@@ -3,11 +3,12 @@ package io.github.burukeyou;
 import io.github.burukeyou.data.Student;
 import io.github.burukeyou.data.UserInfo;
 import io.github.burukeyou.dataframe.iframe.JDFrame;
-import io.github.burukeyou.dataframe.iframe.support.MaxMin;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
+import io.github.burukeyou.dataframe.iframe.support.MaxMin;
+import io.github.burukeyou.dataframe.iframe.window.Window;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -26,7 +27,11 @@ public class JDFrameTest {
         studentList.add(new Student(4,"c","二中","一年级",13, new BigDecimal(3)));
         studentList.add(new Student(5,"d","二中","一年级",14, new BigDecimal(4)));
         studentList.add(new Student(6,"e","三中","二年级",14, new BigDecimal(5)));
-        studentList.add(new Student(7,"e","三中","二年级",15, new BigDecimal(5)));
+        studentList.add(new Student(7,"e","三中","二年级",14, new BigDecimal(5)));
+        studentList.add(new Student(8,"e","三中","二年级",14, new BigDecimal(5)));
+        studentList.add(new Student(9,"e","三中","二年级",15, new BigDecimal(5)));
+        studentList.add(new Student(10,"e","三中","二年级",15, new BigDecimal(5)));
+        studentList.add(new Student(11,"e","三中","二年级",16, new BigDecimal(5)));
     }
 
     /**
@@ -273,4 +278,24 @@ public class JDFrameTest {
         SDFrame.read(studentList).replenish(Student::getSchool,Student::getLevel,(school,level) -> new Student(school,level)).show(30);
     }
 
+
+    @Test
+    public void testOver(){
+        SDFrame<Student> sdFrame = SDFrame.read(studentList);
+        //Over.OverBuilder<Student, Object, R> collect = Over.sortBy(Comparator.comparing(Student::getAge)).collect(OverEnum.ROW_NUMBER);
+        //SDFrame<FI2<Student, Integer>> fi2s = sdFrame.overRowNumber(overBuilder);
+
+        Window<Student> window = Window.groupBy(Student::getSchool, Student::getLevel).sortAsc(Student::getAge);
+        SDFrame<FI2<Student, Integer>> map = sdFrame.overRowNumber(window);
+        //SDFrame<FI2<Integer, Integer>> map = sdFrame.overRank(overParam).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
+        //SDFrame<FI2<Integer, Integer>> map = sdFrame.overDenseRank(overParam).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
+
+        //SDFrame<FI2<Integer, BigDecimal>> map = sdFrame.overPercentRank(overParam).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
+        //SDFrame<FI2<Integer, BigDecimal>> map = sdFrame.overCumeDist(overParam).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
+
+        //SDFrame<FI2<Integer, Integer>> map = sdFrame.overLag(overParam, Student::getId, 1).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
+        //SDFrame<FI2<Integer, Integer>> map = sdFrame.overLead(overParam, Student::getId, 1).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
+        map.show(30);
+
+    }
 }

@@ -11,6 +11,7 @@ import io.github.burukeyou.dataframe.iframe.support.MaxMin;
 import io.github.burukeyou.dataframe.iframe.window.OverEnum;
 import io.github.burukeyou.dataframe.iframe.window.OverParam;
 import io.github.burukeyou.dataframe.iframe.window.SupplierFunction;
+import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import io.github.burukeyou.dataframe.util.FrameUtil;
 import io.github.burukeyou.dataframe.util.ListUtils;
@@ -551,7 +552,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
     }
 
 
-    protected  <V> List<FI2<T, V>> overAbject(OverParam<T> overParam,
+    protected  <V> List<FI2<T, V>> overAbject(Window<T> overParam,
                                               SupplierFunction<T,V> supplier) {
         List<T> windowList = toLists();
         List<FI2<T, V>> result = new ArrayList<>();
@@ -559,8 +560,10 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
             return result;
         }
 
-        List<Function<T,?>> partitionList = overParam.getPartitionBy();
+        Comparator<T> comparator = overParam.getComparator();
+        List<Function<T,?>> partitionList = overParam.getGroupBy();
         if (ListUtils.isEmpty(partitionList)){
+            windowList.sort(comparator);
             return supplier.get(windowList);
         }
 
@@ -569,6 +572,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
         dfsFindWindow(allWindowList,windowList,partitionList,0);
 
         for (List<T> window : allWindowList) {
+            window.sort(comparator);
             List<FI2<T, V>> tmpList = supplier.get(window);
             result.addAll(tmpList);
         }

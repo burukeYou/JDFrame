@@ -6,7 +6,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
-import io.github.burukeyou.dataframe.iframe.window.OverParam;
+import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.util.FrameUtil;
 
 import java.math.BigDecimal;
@@ -823,37 +823,37 @@ public interface SDFrame<T> extends IFrame<T>  {
     /** ===========================   Over  ===================================== **/
 
 
-     SDFrame<FI2<T,Integer>> overRowNumber(OverParam<T> overParam);
+     SDFrame<FI2<T,Integer>> overRowNumber(Window<T> overParam);
 
-    SDFrame<FI2<T,Integer>> overRank(OverParam<T> overParam);
-
-
-     SDFrame<FI2<T,Integer>> overDenseRank(OverParam<T> overParam);
-
-     SDFrame<FI2<T,BigDecimal>> overPercentRank(OverParam<T> overParam);
-
-     SDFrame<FI2<T,BigDecimal>> overCumeDist(OverParam<T> overParam);
-
-    <F> SDFrame<FI2<T,F>> overLag(OverParam<T> overParam,Function<T,F> field,int n);
+    SDFrame<FI2<T,Integer>> overRank(Window<T> overParam);
 
 
-    <F> SDFrame<FI2<T,F>> overLead(OverParam<T> overParam,Function<T,F> field,int n);
+     SDFrame<FI2<T,Integer>> overDenseRank(Window<T> overParam);
 
-    <F> SDFrame<FI2<T,F>> overNthValue(OverParam<T> overParam,Function<T,F> field,int n);
+     SDFrame<FI2<T,BigDecimal>> overPercentRank(Window<T> overParam);
 
-    <F> SDFrame<FI2<T,F>> overFirstValue(OverParam<T> overParam,Function<T,F> field,int n);
+     SDFrame<FI2<T,BigDecimal>> overCumeDist(Window<T> overParam);
 
-    <F> SDFrame<FI2<T,F>> overLastValue(OverParam<T> overParam,Function<T,F> field,int n);
+    <F> SDFrame<FI2<T,F>> overLag(Window<T> overParam,Function<T,F> field,int n);
 
-    <F> SDFrame<FI2<T,BigDecimal>> overSum(OverParam<T> overParam,Function<T,F> field);
 
-    <F> SDFrame<FI2<T,BigDecimal>> overAvg(OverParam<T> overParam,Function<T,F> field);
+    <F> SDFrame<FI2<T,F>> overLead(Window<T> overParam,Function<T,F> field,int n);
 
-    <F extends Comparable<? super F>> SDFrame<FI2<T,F>> overMaxValue(OverParam<T> overParam,Function<T,F> field);
+    <F> SDFrame<FI2<T,F>> overNthValue(Window<T> overParam,Function<T,F> field,int n);
 
-    <F extends Comparable<? super F>> SDFrame<FI2<T,F>> overMinValue(OverParam<T> overParam,Function<T,F> field);
+    <F> SDFrame<FI2<T,F>> overFirstValue(Window<T> overParam,Function<T,F> field,int n);
 
-    SDFrame<FI2<T,Integer>> overCount(OverParam<T> overParam);
+    <F> SDFrame<FI2<T,F>> overLastValue(Window<T> overParam,Function<T,F> field,int n);
+
+    <F> SDFrame<FI2<T,BigDecimal>> overSum(Window<T> overParam,Function<T,F> field);
+
+    <F> SDFrame<FI2<T,BigDecimal>> overAvg(Window<T> overParam,Function<T,F> field);
+
+    <F extends Comparable<? super F>> SDFrame<FI2<T,F>> overMaxValue(Window<T> overParam,Function<T,F> field);
+
+    <F extends Comparable<? super F>> SDFrame<FI2<T,F>> overMinValue(Window<T> overParam,Function<T,F> field);
+
+    SDFrame<FI2<T,Integer>> overCount(Window<T> overParam);
 
 
     /** ===========================   Other  ===================================== **/
