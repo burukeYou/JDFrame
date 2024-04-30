@@ -8,9 +8,14 @@ import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.Join;
 import io.github.burukeyou.dataframe.iframe.support.JoinOn;
 import io.github.burukeyou.dataframe.iframe.support.MaxMin;
+import io.github.burukeyou.dataframe.iframe.window.OverEnum;
+import io.github.burukeyou.dataframe.iframe.window.OverParam;
+import io.github.burukeyou.dataframe.iframe.window.SupplierFunction;
+import io.github.burukeyou.dataframe.iframe.window.WindowFunction;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import io.github.burukeyou.dataframe.util.FrameUtil;
 import io.github.burukeyou.dataframe.util.ListUtils;
+import io.github.burukeyou.dataframe.util.MathUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -544,5 +549,233 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
 
     protected <R> R getApplyValue(Function<T, R> fun,T obj){
         return obj == null ? null : fun.apply(obj);
+    }
+
+
+    protected  <V> List<FI2<T, V>> overAbject(OverParam<T> overParam,
+                                              SupplierFunction<T,V> supplier) {
+        List<T> windowList = toLists();
+        List<FI2<T, V>> result = new ArrayList<>();
+        if (ListUtils.isEmpty(windowList)){
+            return result;
+        }
+
+        List<Function<T,?>> partitionList = overParam.getPartitionBy();
+        if (ListUtils.isEmpty(partitionList)){
+            return supplier.get(windowList);
+        }
+
+        // 获取每个窗口
+        List<List<T>> allWindowList = new ArrayList<>();
+        dfsFindWindow(allWindowList,windowList,partitionList,0);
+
+        for (List<T> window : allWindowList) {
+            List<FI2<T, V>> tmpList = supplier.get(window);
+            result.addAll(tmpList);
+        }
+
+        return result;
+    }
+
+    protected  <V> List<FI2<T, V>> over(OverParam<T> overParam,
+                                        OverEnum overEnum,
+                                        Class<V> resultType) {
+        List<T> windowList = toLists();
+        List<FI2<T, V>> result = new ArrayList<>();
+        if (ListUtils.isEmpty(windowList)){
+            return result;
+        }
+
+        List<Function<T,?>> partitionList = overParam.getPartitionBy();
+        if (ListUtils.isEmpty(partitionList)){
+            return doOverWindow(windowList,overParam.getComparator(),overEnum,resultType);
+        }
+
+        // 获取每个窗口
+        List<List<T>> allWindowList = new ArrayList<>();
+        dfsFindWindow(allWindowList,windowList,partitionList,0);
+
+        for (List<T> window : allWindowList) {
+            List<FI2<T, V>> tmpList = doOverWindow(window, overParam.getComparator(), overEnum, resultType);
+            result.addAll(tmpList);
+        }
+
+        return result;
+    }
+
+    protected  void dfsFindWindow(List<List<T>> result,
+                                  List<T> windowList,
+                                  List<Function<T, ?>> partitionList,
+                                  int index){
+        if (index >= partitionList.size()){
+            result.add(windowList);
+            return;
+        }
+        Function<T,?> partitionBy = partitionList.get(index);
+        Map<?,List<T>> collect = windowList.stream().collect(groupingBy(partitionBy));
+        for (List<T> window : collect.values()) {
+            dfsFindWindow(result,window,partitionList,index+1);
+        }
+    }
+
+
+    protected  <V> List<FI2<T, V>> doOverWindow(List<T> windowList,
+                                                Comparator<T> comparator,
+                                                OverEnum overEnum,
+                                                Class<V> resultType) {
+        List<FI2<T, V>> result = new ArrayList<>();
+        if (ListUtils.isEmpty(windowList)){
+            return result;
+        }
+
+        IFrame<T> sortFrame = null;
+        if (comparator == null) {
+            sortFrame = from(windowList.stream());
+        }else {
+            sortFrame = from(windowList.stream().sorted(comparator));
+        }
+
+        WindowFunction windowFunction = overEnum.getWindowFunction();
+
+        if (OverEnum.ROW_NUMBER.equals(overEnum)){
+            int index = 1;
+            for (T t : sortFrame) {
+                result.add(new FI2<>(t,resultType.cast(index++)));
+            }
+        }
+
+        if (OverEnum.DENSE_RANK.equals(overEnum)) {
+            result = windowFunctionForDensRank(resultType, windowList, comparator);
+        }
+
+        if (OverEnum.RANK.equals(overEnum)) {
+            result = windowFunctionForRank(resultType, windowList, comparator);
+        }
+
+        if (OverEnum.PERCENT_RANK.equals(overEnum)) {
+            result = windowFunctionForPercentRank(resultType, windowList, comparator);
+        }
+
+        if (OverEnum.CUME_DIST.equals(overEnum)) {
+            result = windowFunctionForCumeDist(resultType, windowList, comparator);
+        }
+
+        if (OverEnum.LAG.equals(overEnum)){
+            result = windowFunctionForLAG(resultType, windowList, comparator);
+        }
+
+        if (OverEnum.LEAD.equals(overEnum)){
+
+        }
+
+
+        if (OverEnum.NTH_VALUE.equals(overEnum)){
+
+        }
+
+        return result;
+    }
+
+    private <V> List<FI2<T, V>> windowFunctionForLAG(Class<V> resultType, List<T> windowList, Comparator<T> comparator) {
+
+        return null;
+    }
+
+
+    private <V> List<FI2<T, V>> windowFunctionForCumeDist(Class<V> resultType, List<T> windowList, Comparator<T> comparator) {
+        List<FI2<T, Integer>> result = new ArrayList<>();
+        int n = windowList.size();
+        int rank = 1;
+        Map<Integer,Integer> rankCountMap = new HashMap<>();
+        for (int i = 1; i < windowList.size(); i++) {
+            T pre = windowList.get(i-1);
+            T cur = windowList.get(i);
+            if (comparator.compare(pre,cur) != 0){
+                // 次数的rank累积的计数最大
+                rankCountMap.put(rank,i);
+                rank = i + 1;
+            }
+            if (rank <= n){
+                result.add(new FI2<>(cur, rank));
+            }else {
+                break;
+            }
+        }
+
+        // 最大排名
+        rankCountMap.computeIfAbsent(rank, k -> windowList.size());
+
+        List<FI2<T, V>> resultList = new ArrayList<>();
+        result.forEach(e -> {
+            Integer count = rankCountMap.get(e.getC2());
+            BigDecimal divide = MathUtils.divide(count, windowList.size(), 2);
+            resultList.add(new FI2<>(e.getC1(),resultType.cast(divide)));
+        });
+
+        return resultList;
+    }
+
+
+
+    private <V> List<FI2<T, V>> windowFunctionForPercentRank(Class<V> resultType, List<T> windowList, Comparator<T> comparator) {
+        // (rank-1) / (rows-1)
+        List<FI2<T, V>> result = new ArrayList<>();
+        int n = windowList.size();
+        int rank = 1;
+        result.add(new FI2<>(windowList.get(0), resultType.cast(new BigDecimal("0.00"))));
+        for (int i = 1; i < windowList.size(); i++) {
+            T pre = windowList.get(i-1);
+            T cur = windowList.get(i);
+            if (comparator.compare(pre,cur) != 0){
+                rank = i + 1;
+            }
+            if (rank <= n){
+                BigDecimal divide = MathUtils.divide((rank - 1), windowList.size() - 1, 2);
+                result.add(new FI2<>(cur, resultType.cast(divide)));
+            }else {
+                break;
+            }
+        }
+        return result;
+    }
+
+    private <V> List<FI2<T, V>> windowFunctionForDensRank(Class<V> resultType, List<T> windowList, Comparator<T> comparator) {
+        List<FI2<T, V>> result = new ArrayList<>();
+        int n = windowList.size();
+        int rank = 1;
+        result.add(new FI2<>(windowList.get(0), resultType.cast(1)));
+        for (int i = 1; i < windowList.size(); i++) {
+            T pre = windowList.get(i-1);
+            T cur = windowList.get(i);
+            if (comparator.compare(pre,cur) != 0){
+                rank += 1;
+            }
+            if (rank <= n){
+                result.add(new FI2<>(cur, resultType.cast(rank)));
+            }else {
+                break;
+            }
+        }
+        return result;
+    }
+
+    private <V> List<FI2<T, V>> windowFunctionForRank(Class<V> resultType, List<T> windowList, Comparator<T> comparator) {
+        List<FI2<T, V>> result = new ArrayList<>();
+        int n = windowList.size();
+        int rank = 1;
+        result.add(new FI2<>(windowList.get(0), resultType.cast(1)));
+        for (int i = 1; i < windowList.size(); i++) {
+            T pre = windowList.get(i-1);
+            T cur = windowList.get(i);
+            if (comparator.compare(pre,cur) != 0){
+                rank = i + 1;
+            }
+            if (rank <= n){
+                result.add(new FI2<>(cur, resultType.cast(rank)));
+            }else {
+                break;
+            }
+        }
+        return result;
     }
 }

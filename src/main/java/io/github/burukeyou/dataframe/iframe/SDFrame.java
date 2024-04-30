@@ -6,6 +6,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
+import io.github.burukeyou.dataframe.iframe.window.OverParam;
 import io.github.burukeyou.dataframe.util.FrameUtil;
 
 import java.math.BigDecimal;
@@ -812,6 +813,29 @@ public interface SDFrame<T> extends IFrame<T>  {
     <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                Function<T, J> key2,
                                                                                Function<T, V> value);
+
+
+    /** ===========================   Over  ===================================== **/
+
+
+     SDFrame<FI2<T,Integer>> overRowNumber(OverParam<T> overParam);
+
+    SDFrame<FI2<T,Integer>> overRank(OverParam<T> overParam);
+
+
+     SDFrame<FI2<T,Integer>> overDenseRank(OverParam<T> overParam);
+
+     SDFrame<FI2<T,BigDecimal>> overPercentRank(OverParam<T> overParam);
+
+     SDFrame<FI2<T,BigDecimal>> overCumeDist(OverParam<T> overParam);
+
+    <F> SDFrame<FI2<T,F>> overLag(OverParam<T> overParam,Function<T,F> field,int n);
+
+
+    <F> SDFrame<FI2<T,F>> overLead(OverParam<T> overParam,Function<T,F> field,int n);
+
+
+    <F> SDFrame<FI2<T,F>> overNthValue(OverParam<T> overParam,Function<T,F> field,int n);
 
 
     /** ===========================   Other  ===================================== **/
