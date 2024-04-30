@@ -834,8 +834,21 @@ public interface SDFrame<T> extends IFrame<T>  {
 
     <F> SDFrame<FI2<T,F>> overLead(OverParam<T> overParam,Function<T,F> field,int n);
 
-
     <F> SDFrame<FI2<T,F>> overNthValue(OverParam<T> overParam,Function<T,F> field,int n);
+
+    <F> SDFrame<FI2<T,F>> overFirstValue(OverParam<T> overParam,Function<T,F> field,int n);
+
+    <F> SDFrame<FI2<T,F>> overLastValue(OverParam<T> overParam,Function<T,F> field,int n);
+
+    <F> SDFrame<FI2<T,BigDecimal>> overSum(OverParam<T> overParam,Function<T,F> field);
+
+    <F> SDFrame<FI2<T,BigDecimal>> overAvg(OverParam<T> overParam,Function<T,F> field);
+
+    <F extends Comparable<? super F>> SDFrame<FI2<T,F>> overMaxValue(OverParam<T> overParam,Function<T,F> field);
+
+    <F extends Comparable<? super F>> SDFrame<FI2<T,F>> overMinValue(OverParam<T> overParam,Function<T,F> field);
+
+    SDFrame<FI2<T,Integer>> overCount(OverParam<T> overParam);
 
 
     /** ===========================   Other  ===================================== **/

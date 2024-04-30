@@ -11,59 +11,58 @@ public enum OverEnum {
     /**
      * Rank of current row within its partition, with gaps
      */
-    RANK(new RankWindowFunction()),
+    RANK,
 
     /**
      * Rank of current row within its partition, without gaps
      */
-    DENSE_RANK(new DenseRankWindowFunction()),
+    DENSE_RANK,
 
     /**
      *  Number of current row within its partition
      */
-    ROW_NUMBER(new RowNumberWindowFunction()),
+    ROW_NUMBER,
 
     /**
      * Percentage rank value
      */
-    PERCENT_RANK(new PercentRankWindowFunction()),
+    PERCENT_RANK,
 
     /**
      * Cumulative distribution value
      */
-    CUME_DIST(new CumeDistWindowFunction()),
+    CUME_DIST,
 
     /**
      * Value of argument from row lagging current row within partition
      */
-    LAG(new LagWindowFunction()),
+    LAG,
 
     /**
      * Value of argument from row leading current row within partition
      */
-    LEAD(new LeadWindowFunction()),
+    LEAD,
 
     /**
      * Value of argument from first row of window frame
      */
-    FIRST_VALUE(new FirstValueWindowFunction()),
+    FIRST_VALUE,
 
     /**
      * Value of argument from last row of window frame
      */
-    LAST_VALUE(new LastValueWindowFunction()),
+    LAST_VALUE,
 
     /**
      * Value of argument from N-th row of window frame
      */
-    NTH_VALUE(new NthValueWindowFunction()),
+    NTH_VALUE,
 
     /**
      * Bucket number of current row within its partition.
      */
    // NTILE,
 
-/*
 
     SUM,
 
@@ -74,22 +73,10 @@ public enum OverEnum {
     MIN,
 
     COUNT,
-*/
 
     /**
      *
      */
     //PROPORTION
-
-    ;
-
-    private WindowFunction windowFunction;
-
-    OverEnum(WindowFunction windowFunction) {
-        this.windowFunction = windowFunction;
-    }
-
-    public WindowFunction getWindowFunction() {
-        return windowFunction;
-    }
+    
 }

@@ -825,8 +825,76 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrame<FI2<T, F>> overNthValue(OverParam<T> overParam, Function<T, F> field, int n) {
+        SupplierFunction<T,F> supplier = (windowList) -> {
+            int index;
+            if (n == -1){
+                index = windowList.size() - 1;
+            }else {
+                index = n - 1;
+            }
+            if (index >= 0 && index < windowList.size()){
+                F value = field.apply( windowList.get(index));
+                return windowList.stream().map(e -> new FI2<>(e, value)).collect(toList());
+            }else {
+                return windowList.stream().map(e -> new FI2<T,F>(e,null)).collect(toList());
+            }
+        };
+        return returnDF(overAbject(overParam,supplier));
+    }
 
-        return null;
+    @Override
+    public <F> SDFrame<FI2<T, F>> overFirstValue(OverParam<T> overParam, Function<T, F> field, int n) {
+        return overNthValue(overParam,field,1);
+    }
+
+    @Override
+    public <F> SDFrame<FI2<T, F>> overLastValue(OverParam<T> overParam, Function<T, F> field, int n) {
+        return overNthValue(overParam,field,-1);
+    }
+
+    @Override
+    public <F> SDFrame<FI2<T, BigDecimal>> overSum(OverParam<T> overParam, Function<T, F> field) {
+        SupplierFunction<T,BigDecimal> supplier = (windowList) -> {
+            BigDecimal value = SDFrame.read(windowList).sum(field);
+            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+        };
+        return returnDF(overAbject(overParam,supplier));
+    }
+
+    @Override
+    public <F> SDFrame<FI2<T, BigDecimal>> overAvg(OverParam<T> overParam, Function<T, F> field) {
+        SupplierFunction<T,BigDecimal> supplier = (windowList) -> {
+            BigDecimal value = SDFrame.read(windowList).avg(field);
+            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+        };
+        return returnDF(overAbject(overParam,supplier));
+    }
+
+    @Override
+    public <F extends Comparable<? super F>>  SDFrame<FI2<T, F>> overMaxValue(OverParam<T> overParam, Function<T, F> field) {
+        SupplierFunction<T,F> supplier = (windowList) -> {
+            F value = SDFrame.read(windowList).maxValue(field);
+            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+        };
+        return returnDF(overAbject(overParam,supplier));
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> SDFrame<FI2<T, F>> overMinValue(OverParam<T> overParam, Function<T, F> field) {
+        SupplierFunction<T,F> supplier = (windowList) -> {
+            F value = SDFrame.read(windowList).minValue(field);
+            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+        };
+        return returnDF(overAbject(overParam,supplier));
+    }
+
+    @Override
+    public SDFrame<FI2<T, Integer>> overCount(OverParam<T> overParam) {
+        SupplierFunction<T,Integer> supplier = (windowList) -> {
+            int count = windowList.size();
+            return windowList.stream().map(e -> new FI2<>(e,count)).collect(toList());
+        };
+        return returnDF(overAbject(overParam,supplier));
     }
 
     @Override

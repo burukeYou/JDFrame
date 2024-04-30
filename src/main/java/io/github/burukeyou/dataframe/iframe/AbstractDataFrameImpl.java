@@ -11,7 +11,6 @@ import io.github.burukeyou.dataframe.iframe.support.MaxMin;
 import io.github.burukeyou.dataframe.iframe.window.OverEnum;
 import io.github.burukeyou.dataframe.iframe.window.OverParam;
 import io.github.burukeyou.dataframe.iframe.window.SupplierFunction;
-import io.github.burukeyou.dataframe.iframe.window.WindowFunction;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import io.github.burukeyou.dataframe.util.FrameUtil;
 import io.github.burukeyou.dataframe.util.ListUtils;
@@ -634,8 +633,6 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
         }else {
             sortFrame = from(windowList.stream().sorted(comparator));
         }
-
-        WindowFunction windowFunction = overEnum.getWindowFunction();
 
         if (OverEnum.ROW_NUMBER.equals(overEnum)){
             int index = 1;
