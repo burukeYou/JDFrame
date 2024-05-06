@@ -7,7 +7,6 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
-import io.github.burukeyou.dataframe.iframe.window.SupplierFunction;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import io.github.burukeyou.dataframe.util.FrameUtil;
@@ -673,15 +672,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public  SDFrame<FI2<T, Integer>> overRowNumber(Window<T> overParam) {
-        SupplierFunction<T,Integer> supplier = windowList -> {
-            List<FI2<T, Integer>> result = new ArrayList<>();
-            int index = 1;
-            for (T t : windowList) {
-                result.add(new FI2<>(t,index++));
-            }
-            return result;
-        };
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForRowNumber(overParam));
     }
 
     @Override
@@ -691,27 +682,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public  SDFrame<FI2<T, Integer>> overRank(Window<T> overParam) {
-        SupplierFunction<T,Integer> supplier = (windowList) -> {
-            Comparator<T> comparator = overParam.getComparator();
-            List<FI2<T, Integer>> result = new ArrayList<>();
-            int n = windowList.size();
-            int rank = 1;
-            result.add(new FI2<>(windowList.get(0), 1));
-            for (int i = 1; i < windowList.size(); i++) {
-                T pre = windowList.get(i-1);
-                T cur = windowList.get(i);
-                if (comparator.compare(pre,cur) != 0){
-                    rank = i + 1;
-                }
-                if (rank <= n){
-                    result.add(new FI2<>(cur, rank));
-                }else {
-                    break;
-                }
-            }
-            return result;
-        };
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForRank(overParam));
     }
 
     @Override
@@ -721,26 +692,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public  SDFrame<FI2<T, Integer>> overDenseRank(Window<T> overParam) {
-        SupplierFunction<T,Integer> supplier = (windowList) -> {
-            List<FI2<T, Integer>> result = new ArrayList<>();
-            int n = windowList.size();
-            int rank = 1;
-            result.add(new FI2<>(windowList.get(0), 1));
-            for (int i = 1; i < windowList.size(); i++) {
-                T pre = windowList.get(i-1);
-                T cur = windowList.get(i);
-                if (overParam.getComparator().compare(pre,cur) != 0){
-                    rank += 1;
-                }
-                if (rank <= n){
-                    result.add(new FI2<>(cur, rank));
-                }else {
-                    break;
-                }
-            }
-            return result;
-        };
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForDenseRank(overParam));
     }
 
     @Override
@@ -750,28 +702,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public  SDFrame<FI2<T, BigDecimal>> overPercentRank(Window<T> overParam) {
-        SupplierFunction<T,BigDecimal> supplier = (windowList) -> {
-            // (rank-1) / (rows-1)
-            List<FI2<T, BigDecimal>> result = new ArrayList<>();
-            int n = windowList.size();
-            int rank = 1;
-            result.add(new FI2<>(windowList.get(0), new BigDecimal("0.00")));
-            for (int i = 1; i < windowList.size(); i++) {
-                T pre = windowList.get(i-1);
-                T cur = windowList.get(i);
-                if (overParam.getComparator().compare(pre,cur) != 0){
-                    rank = i + 1;
-                }
-                if (rank <= n){
-                    BigDecimal divide = MathUtils.divide((rank - 1), windowList.size() - 1, 2);
-                    result.add(new FI2<>(cur, divide));
-                }else {
-                    break;
-                }
-            }
-            return result;
-        };
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForPercentRank(overParam));
     }
 
     @Override
@@ -781,37 +712,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public  SDFrame<FI2<T, BigDecimal>> overCumeDist(Window<T> overParam) {
-        SupplierFunction<T,BigDecimal> supplier = (windowList) -> {
-            List<FI2<T, Integer>> result = new ArrayList<>();
-            int n = windowList.size();
-            int rank = 1;
-            Map<Integer,Integer> rankCountMap = new HashMap<>();
-            for (int i = 1; i < windowList.size(); i++) {
-                T pre = windowList.get(i-1);
-                T cur = windowList.get(i);
-                if (overParam.getComparator().compare(pre,cur) != 0){
-                    // 次数的rank累积的计数最大
-                    rankCountMap.put(rank,i);
-                    rank = i + 1;
-                }
-                if (rank <= n){
-                    result.add(new FI2<>(cur, rank));
-                }else {
-                    break;
-                }
-            }
-            // 最大排名
-            rankCountMap.computeIfAbsent(rank, k -> windowList.size());
-            List<FI2<T, BigDecimal>> resultList = new ArrayList<>();
-            result.forEach(e -> {
-                Integer count = rankCountMap.get(e.getC2());
-                BigDecimal divide = MathUtils.divide(count, windowList.size(), 2);
-                resultList.add(new FI2<>(e.getC1(),divide));
-            });
-            return resultList;
-        };
-
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForCumeDist(overParam));
     }
 
     @Override
@@ -821,56 +722,17 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrame<FI2<T, F>> overLag(Window<T> overParam, Function<T, F> field, int n) {
-        SupplierFunction<T,F> supplier = (windowList) -> {
-            List<FI2<T, F>> result = new ArrayList<>();
-            for (int i = 0; i < windowList.size(); i++) {
-                int preIndex = i - n;
-                F value = null;
-                if (preIndex >= 0 && preIndex < windowList.size()){
-                    value = field.apply(windowList.get(preIndex));
-                }
-                result.add(new FI2<>(windowList.get(i),value));
-            }
-            return result;
-        };
-
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForLag(overParam,field,n));
     }
 
     @Override
     public <F> SDFrame<FI2<T, F>> overLead(Window<T> overParam, Function<T, F> field, int n) {
-        SupplierFunction<T,F> supplier = (windowList) -> {
-            List<FI2<T, F>> result = new ArrayList<>();
-            for (int i = 0; i < windowList.size(); i++) {
-                int afterIndex = i + n;
-                F value = null;
-                if (afterIndex >= 0 && afterIndex < windowList.size()){
-                    value = field.apply(windowList.get(afterIndex));
-                }
-                result.add(new FI2<>(windowList.get(i),value));
-            }
-            return result;
-        };
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForLead(overParam,field,n));
     }
 
     @Override
     public <F> SDFrame<FI2<T, F>> overNthValue(Window<T> overParam, Function<T, F> field, int n) {
-        SupplierFunction<T,F> supplier = (windowList) -> {
-            int index;
-            if (n == -1){
-                index = windowList.size() - 1;
-            }else {
-                index = n - 1;
-            }
-            if (index >= 0 && index < windowList.size()){
-                F value = field.apply( windowList.get(index));
-                return windowList.stream().map(e -> new FI2<>(e, value)).collect(toList());
-            }else {
-                return windowList.stream().map(e -> new FI2<T,F>(e,null)).collect(toList());
-            }
-        };
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForNthValue(overParam,field,n));
     }
 
     @Override
@@ -885,11 +747,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrame<FI2<T, BigDecimal>> overSum(Window<T> overParam, Function<T, F> field) {
-        SupplierFunction<T,BigDecimal> supplier = (windowList) -> {
-            BigDecimal value = SDFrame.read(windowList).sum(field);
-            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
-        };
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForSum(overParam,field));
     }
 
     @Override
@@ -899,11 +757,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrame<FI2<T, BigDecimal>> overAvg(Window<T> overParam, Function<T, F> field) {
-        SupplierFunction<T,BigDecimal> supplier = (windowList) -> {
-            BigDecimal value = SDFrame.read(windowList).avg(field);
-            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
-        };
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForAvg(overParam,field));
     }
 
     @Override
@@ -913,11 +767,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F extends Comparable<? super F>>  SDFrame<FI2<T, F>> overMaxValue(Window<T> overParam, Function<T, F> field) {
-        SupplierFunction<T,F> supplier = (windowList) -> {
-            F value = SDFrame.read(windowList).maxValue(field);
-            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
-        };
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForMaxValue(overParam,field));
     }
 
     @Override
@@ -927,11 +777,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F extends Comparable<? super F>> SDFrame<FI2<T, F>> overMinValue(Window<T> overParam, Function<T, F> field) {
-        SupplierFunction<T,F> supplier = (windowList) -> {
-            F value = SDFrame.read(windowList).minValue(field);
-            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
-        };
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForMinValue(overParam,field));
     }
 
     @Override
@@ -941,11 +787,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrame<FI2<T, Integer>> overCount(Window<T> overParam) {
-        SupplierFunction<T,Integer> supplier = (windowList) -> {
-            int count = windowList.size();
-            return windowList.stream().map(e -> new FI2<>(e,count)).collect(toList());
-        };
-        return returnDF(overAbject(overParam,supplier));
+        return returnDF(windowFunctionForCount(overParam));
     }
 
     @Override
