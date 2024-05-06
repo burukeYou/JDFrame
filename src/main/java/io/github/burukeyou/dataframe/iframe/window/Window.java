@@ -11,7 +11,7 @@ import java.util.function.Function;
 public interface Window<T>  {
 
     @SafeVarargs
-    static <T> Window<T> partitionBy(Function<T,?>...groupField){
+    static <T> Window<T> groupBy(Function<T,?>...groupField){
         return new WindowBuilder<>(Arrays.asList(groupField));
     }
 
