@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  *
  * @author caizhihao
  */
-public interface SDFrame<T> extends IFrame<T>  {
+public interface SDFrame<T> extends IFrame<T> , WindowSDFrame<T> {
 
     /**
      * Convert a list to SDFrame
@@ -821,6 +821,8 @@ public interface SDFrame<T> extends IFrame<T>  {
 
 
     /** ===========================   Window Function  ===================================== **/
+
+     WindowSDFrame<T> window(Window<T> window);
 
      SDFrame<FI2<T,Integer>> overRowNumber(Window<T> overParam);
 

@@ -671,6 +671,157 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public WindowSDFrame<T> window(Window<T> window) {
+        this.window = window;
+        return this;
+    }
+
+    @Override
+    public SDFrame<FI2<T, Integer>> overRowNumber() {
+        return overRowNumber(this.window);
+    }
+
+    @Override
+    public SDFrame<T> overRowNumber(SetFunction<T, Integer> setFunction) {
+        SDFrame<T> df = overRowNumber(setFunction, this.window);
+        ((AbstractWindowDataFrame<T>)df).setWindow(this.window);
+        return df;
+    }
+
+    @Override
+    public SDFrame<FI2<T, Integer>> overRank() {
+        return overRank(this.window);
+    }
+
+    @Override
+    public SDFrame<T> overRank(SetFunction<T, Integer> setFunction) {
+        SDFrame<T> df = overRank(setFunction, this.window);
+        ((AbstractWindowDataFrame<T>)df).setWindow(this.window);
+        return df;
+    }
+
+    @Override
+    public SDFrame<FI2<T, Integer>> overDenseRank() {
+        return overDenseRank(this.window);
+    }
+
+    @Override
+    public SDFrame<T> overDenseRank(SetFunction<T, Integer> setFunction) {
+        SDFrame<T> df = overDenseRank(setFunction, this.window);
+        ((AbstractWindowDataFrame<T>)df).setWindow(this.window);
+        return df;
+    }
+
+    @Override
+    public SDFrame<FI2<T, BigDecimal>> overPercentRank() {
+        return overPercentRank(this.window);
+    }
+
+    @Override
+    public SDFrame<T> overPercentRank(SetFunction<T, BigDecimal> setFunction) {
+        SDFrame<T> df = overPercentRank(setFunction, this.window);
+        ((AbstractWindowDataFrame<T>)df).setWindow(this.window);
+        return df;
+    }
+
+    @Override
+    public SDFrame<FI2<T, BigDecimal>> overCumeDist() {
+        return overCumeDist(this.window);
+    }
+
+    @Override
+    public SDFrame<T> overCumeDist(SetFunction<T, BigDecimal> setFunction) {
+        SDFrame<T> df = overCumeDist(setFunction, this.window);
+        ((AbstractWindowDataFrame<T>)df).setWindow(this.window);
+        return df;
+    }
+
+    @Override
+    public <F> SDFrame<FI2<T, F>> overLag(Function<T, F> field, int n) {
+        return overLag(this.window,field,n);
+    }
+
+    @Override
+    public <F> SDFrame<FI2<T, F>> overLead(Function<T, F> field, int n) {
+        return overLead(this.window,field,n);
+    }
+
+    @Override
+    public <F> SDFrame<FI2<T, F>> overNthValue(Function<T, F> field, int n) {
+        return overNthValue(this.window,field,n);
+    }
+
+    @Override
+    public <F> SDFrame<FI2<T, F>> overFirstValue(Function<T, F> field, int n) {
+        return overNthValue(this.window,field,1);
+    }
+
+    @Override
+    public <F> SDFrame<FI2<T, F>> overLastValue(Function<T, F> field, int n) {
+        return overNthValue(this.window,field,-1);
+    }
+
+    @Override
+    public <F> SDFrame<FI2<T, BigDecimal>> overSum(Function<T, F> field) {
+        return overSum(this.window,field);
+    }
+
+    @Override
+    public <F> SDFrame<T> overSum(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
+        SDFrame<T> df = overSum(setFunction, this.window, field);
+        ((AbstractWindowDataFrame<T>)df).setWindow(this.window);
+        return df;
+    }
+
+    @Override
+    public <F> SDFrame<FI2<T, BigDecimal>> overAvg(Function<T, F> field) {
+        return overAvg(this.window,field);
+    }
+
+    @Override
+    public <F> SDFrame<T> overAvg(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
+        SDFrame<T> df = overAvg(setFunction, this.window, field);
+        ((AbstractWindowDataFrame<T>)df).setWindow(this.window);
+        return df;
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> SDFrame<FI2<T, F>> overMaxValue(Function<T, F> field) {
+        return overMaxValue(this.window,field);
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> SDFrame<T> overMaxValue(SetFunction<T, F> setFunction, Function<T, F> field) {
+        SDFrame<T> df = overMaxValue(setFunction, this.window, field);
+        ((AbstractWindowDataFrame<T>)df).setWindow(this.window);
+        return df;
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> SDFrame<FI2<T, F>> overMinValue(Function<T, F> field) {
+        return overMinValue(this.window,field);
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> SDFrame<T> overMinValue(SetFunction<T, F> setFunction, Function<T, F> field) {
+        SDFrame<T> df =  overMinValue(setFunction,this.window,field);
+        ((AbstractWindowDataFrame<T>)df).setWindow(this.window);
+        return df;
+    }
+
+    @Override
+    public SDFrame<FI2<T, Integer>> overCount() {
+        return overCount(this.window);
+    }
+
+    @Override
+    public SDFrame<T> overCount(SetFunction<T, Integer> setFunction) {
+        SDFrame<T> df =  overCount(setFunction,this.window);
+        ((AbstractWindowDataFrame<T>)df).setWindow(this.window);
+        return df;
+    }
+
+    @Override
     public  SDFrame<FI2<T, Integer>> overRowNumber(Window<T> overParam) {
         return returnDF(windowFunctionForRowNumber(overParam));
     }
