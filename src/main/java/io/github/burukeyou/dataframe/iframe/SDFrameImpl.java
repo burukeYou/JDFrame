@@ -690,13 +690,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return overRowNumber(EMPTY_WINDOW);
     }
     @Override
-    public SDFrameImpl<T> overRowNumber(SetFunction<T,Integer> setFunction,Window<T> overParam) {
+    public SDFrameImpl<T> overRowNumberS(SetFunction<T,Integer> setFunction, Window<T> overParam) {
         return overRowNumber(overParam).forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
     }
 
     @Override
-    public SDFrame<T> overRowNumber(SetFunction<T, Integer> setFunction) {
-        return overRowNumber(setFunction,EMPTY_WINDOW);
+    public SDFrame<T> overRowNumberS(SetFunction<T, Integer> setFunction) {
+        return overRowNumberS(setFunction,EMPTY_WINDOW);
     }
 
     @Override
@@ -705,7 +705,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrameImpl<T> overRank(SetFunction<T, Integer> setFunction,Window<T> overParam) {
+    public SDFrameImpl<T> overRankS(SetFunction<T, Integer> setFunction, Window<T> overParam) {
         return overRank(overParam).forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
     }
 
@@ -715,7 +715,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrameImpl<T> overDenseRank(SetFunction<T, Integer> setFunction,Window<T> overParam) {
+    public SDFrameImpl<T> overDenseRankS(SetFunction<T, Integer> setFunction, Window<T> overParam) {
         return overDenseRank(overParam).forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
     }
 
@@ -725,7 +725,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrameImpl<T> overPercentRank(SetFunction<T, BigDecimal> setFunction,Window<T> overParam) {
+    public SDFrameImpl<T> overPercentRankS(SetFunction<T, BigDecimal> setFunction, Window<T> overParam) {
         return overPercentRank(overParam).forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
     }
 
@@ -735,7 +735,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrameImpl<T> overCumeDist(SetFunction<T, BigDecimal> setFunction,Window<T> overParam) {
+    public SDFrameImpl<T> overCumeDistS(SetFunction<T, BigDecimal> setFunction, Window<T> overParam) {
         return overCumeDist(overParam).forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
     }
 
@@ -800,13 +800,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <F> SDFrameImpl<T> overSum(SetFunction<T, BigDecimal> setFunction,Window<T> overParam, Function<T, F> field) {
+    public <F> SDFrameImpl<T> overSumS(SetFunction<T, BigDecimal> setFunction, Window<T> overParam, Function<T, F> field) {
         return overSum(overParam,field).forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
     }
 
     @Override
-    public <F> SDFrame<T> overSum(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
-        return overSum(setFunction,EMPTY_WINDOW,field);
+    public <F> SDFrame<T> overSumS(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
+        return overSumS(setFunction,EMPTY_WINDOW,field);
     }
 
     @Override
@@ -820,13 +820,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <F> SDFrameImpl<T> overAvg(SetFunction<T, BigDecimal> setFunction,Window<T> overParam, Function<T, F> field) {
+    public <F> SDFrameImpl<T> overAvgS(SetFunction<T, BigDecimal> setFunction, Window<T> overParam, Function<T, F> field) {
         return overAvg(overParam,field).forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
     }
 
     @Override
-    public <F> SDFrame<T> overAvg(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
-        return overAvg(setFunction,EMPTY_WINDOW,field);
+    public <F> SDFrame<T> overAvgS(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
+        return overAvgS(setFunction,EMPTY_WINDOW,field);
     }
 
     @Override
@@ -840,13 +840,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <F extends Comparable<? super F>> SDFrameImpl<T> overMaxValue(SetFunction<T, F> setFunction,Window<T> overParam, Function<T, F> field) {
+    public <F extends Comparable<? super F>> SDFrameImpl<T> overMaxValueS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field) {
         return overMaxValue(overParam,field).forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
     }
 
     @Override
-    public <F extends Comparable<? super F>> SDFrame<T> overMaxValue(SetFunction<T, F> setFunction, Function<T, F> field) {
-        return overMaxValue(setFunction,EMPTY_WINDOW,field);
+    public <F extends Comparable<? super F>> SDFrame<T> overMaxValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
+        return overMaxValueS(setFunction,EMPTY_WINDOW,field);
     }
 
     @Override
@@ -860,13 +860,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <F extends Comparable<? super F>> SDFrameImpl<T> overMinValue(SetFunction<T, F> setFunction,Window<T> overParam, Function<T, F> field) {
+    public <F extends Comparable<? super F>> SDFrameImpl<T> overMinValueS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field) {
         return overMinValue(overParam,field).forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
     }
 
     @Override
-    public <F extends Comparable<? super F>> SDFrame<T> overMinValue(SetFunction<T, F> setFunction, Function<T, F> field) {
-        return overMinValue(setFunction,EMPTY_WINDOW,field);
+    public <F extends Comparable<? super F>> SDFrame<T> overMinValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
+        return overMinValueS(setFunction,EMPTY_WINDOW,field);
     }
 
     @Override
@@ -880,13 +880,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrameImpl<T> overCount( SetFunction<T, Integer> setFunction,Window<T> overParam) {
+    public SDFrameImpl<T> overCountS(SetFunction<T, Integer> setFunction, Window<T> overParam) {
         return overCount(overParam).forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
     }
 
     @Override
-    public SDFrame<T> overCount(SetFunction<T, Integer> setFunction) {
-        return overCount(setFunction,EMPTY_WINDOW);
+    public SDFrame<T> overCountS(SetFunction<T, Integer> setFunction) {
+        return overCountS(setFunction,EMPTY_WINDOW);
     }
 
     @Override

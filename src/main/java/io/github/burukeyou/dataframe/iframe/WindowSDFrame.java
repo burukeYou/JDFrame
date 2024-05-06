@@ -14,23 +14,23 @@ public interface WindowSDFrame<T> extends SDFrame<T>  {
 
     SDFrame<FI2<T,Integer>> overRowNumber();
 
-    WindowSDFrame<T> overRowNumber(SetFunction<T,Integer> setFunction);
+    WindowSDFrame<T> overRowNumberS(SetFunction<T,Integer> setFunction);
 
     SDFrame<FI2<T,Integer>> overRank();
 
-    WindowSDFrame<T> overRank(SetFunction<T,Integer> setFunction);
+    WindowSDFrame<T> overRankS(SetFunction<T,Integer> setFunction);
 
     SDFrame<FI2<T,Integer>> overDenseRank();
 
-    WindowSDFrame<T> overDenseRank(SetFunction<T,Integer> setFunction);
+    WindowSDFrame<T> overDenseRankS(SetFunction<T,Integer> setFunction);
 
     SDFrame<FI2<T, BigDecimal>> overPercentRank();
 
-    WindowSDFrame<T> overPercentRank(SetFunction<T,BigDecimal> setFunction);
+    WindowSDFrame<T> overPercentRankS(SetFunction<T,BigDecimal> setFunction);
 
     SDFrame<FI2<T,BigDecimal>> overCumeDist();
 
-    WindowSDFrame<T> overCumeDist(SetFunction<T,BigDecimal> setFunction);
+    WindowSDFrame<T> overCumeDistS(SetFunction<T,BigDecimal> setFunction);
 
     <F> SDFrame<FI2<T,F>> overLag(Function<T,F> field, int n);
 
@@ -44,21 +44,21 @@ public interface WindowSDFrame<T> extends SDFrame<T>  {
 
     <F> SDFrame<FI2<T,BigDecimal>> overSum(Function<T,F> field);
 
-    <F> WindowSDFrame<T> overSum(SetFunction<T,BigDecimal> setFunction,Function<T,F> field);
+    <F> WindowSDFrame<T> overSumS(SetFunction<T,BigDecimal> setFunction, Function<T,F> field);
 
     <F> SDFrame<FI2<T,BigDecimal>> overAvg(Function<T,F> field);
 
-    <F> WindowSDFrame<T> overAvg(SetFunction<T,BigDecimal> setFunction,Function<T,F> field);
+    <F> WindowSDFrame<T> overAvgS(SetFunction<T,BigDecimal> setFunction, Function<T,F> field);
 
     <F extends Comparable<? super F>> SDFrame<FI2<T,F>> overMaxValue(Function<T,F> field);
 
-    <F extends Comparable<? super F>> WindowSDFrame<T> overMaxValue(SetFunction<T,F> setFunction,Function<T,F> field);
+    <F extends Comparable<? super F>> WindowSDFrame<T> overMaxValueS(SetFunction<T,F> setFunction, Function<T,F> field);
 
     <F extends Comparable<? super F>> SDFrame<FI2<T,F>> overMinValue(Function<T,F> field);
 
-    <F extends Comparable<? super F>> WindowSDFrame<T> overMinValue(SetFunction<T,F> setFunction,Function<T,F> field);
+    <F extends Comparable<? super F>> WindowSDFrame<T> overMinValueS(SetFunction<T,F> setFunction, Function<T,F> field);
 
     SDFrame<FI2<T,Integer>> overCount();
 
-    WindowSDFrame<T> overCount(SetFunction<T,Integer> setFunction);
+    WindowSDFrame<T> overCountS(SetFunction<T,Integer> setFunction);
 }

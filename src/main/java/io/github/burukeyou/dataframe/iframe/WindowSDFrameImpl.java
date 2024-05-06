@@ -43,8 +43,8 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
-    public WindowSDFrameImpl<T> overRowNumber(SetFunction<T, Integer> setFunction) {
-        return returnWDF(this.window, overRowNumber(setFunction, this.window).stream());
+    public WindowSDFrameImpl<T> overRowNumberS(SetFunction<T, Integer> setFunction) {
+        return returnWDF(this.window, overRowNumberS(setFunction, this.window).stream());
     }
 
     @Override
@@ -53,8 +53,8 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
-    public WindowSDFrameImpl<T> overRank(SetFunction<T, Integer> setFunction) {
-        return returnWDF(this.window,overRank(setFunction, this.window).stream());
+    public WindowSDFrameImpl<T> overRankS(SetFunction<T, Integer> setFunction) {
+        return returnWDF(this.window, overRankS(setFunction, this.window).stream());
     }
 
     @Override
@@ -63,8 +63,8 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
-    public WindowSDFrameImpl<T> overDenseRank(SetFunction<T, Integer> setFunction) {
-        return returnWDF(this.window,overDenseRank(setFunction, this.window).stream());
+    public WindowSDFrameImpl<T> overDenseRankS(SetFunction<T, Integer> setFunction) {
+        return returnWDF(this.window, overDenseRankS(setFunction, this.window).stream());
     }
 
     @Override
@@ -73,8 +73,8 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
-    public WindowSDFrameImpl<T> overPercentRank(SetFunction<T, BigDecimal> setFunction) {;
-        return returnWDF(this.window,overPercentRank(setFunction, this.window).stream());
+    public WindowSDFrameImpl<T> overPercentRankS(SetFunction<T, BigDecimal> setFunction) {;
+        return returnWDF(this.window, overPercentRankS(setFunction, this.window).stream());
     }
 
     @Override
@@ -83,8 +83,8 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
-    public WindowSDFrameImpl<T> overCumeDist(SetFunction<T, BigDecimal> setFunction) {
-        return returnWDF(this.window, overCumeDist(setFunction, this.window).stream());
+    public WindowSDFrameImpl<T> overCumeDistS(SetFunction<T, BigDecimal> setFunction) {
+        return returnWDF(this.window, overCumeDistS(setFunction, this.window).stream());
     }
 
     @Override
@@ -119,8 +119,8 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
-    public <F> WindowSDFrameImpl<T> overSum(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
-        return returnWDF(this.window,overSum(setFunction, this.window,field).stream());
+    public <F> WindowSDFrameImpl<T> overSumS(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
+        return returnWDF(this.window, overSumS(setFunction, this.window,field).stream());
     }
 
     @Override
@@ -129,8 +129,8 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
-    public <F> WindowSDFrameImpl<T> overAvg(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
-        return returnWDF(this.window,overAvg(setFunction, this.window, field).stream());
+    public <F> WindowSDFrameImpl<T> overAvgS(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
+        return returnWDF(this.window, overAvgS(setFunction, this.window, field).stream());
     }
 
     @Override
@@ -139,8 +139,8 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
-    public <F extends Comparable<? super F>> WindowSDFrameImpl<T> overMaxValue(SetFunction<T, F> setFunction, Function<T, F> field) {
-        return returnWDF(this.window,overMaxValue(setFunction, this.window, field).stream());
+    public <F extends Comparable<? super F>> WindowSDFrameImpl<T> overMaxValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
+        return returnWDF(this.window, overMaxValueS(setFunction, this.window, field).stream());
     }
 
     @Override
@@ -149,8 +149,8 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
-    public <F extends Comparable<? super F>> WindowSDFrameImpl<T> overMinValue(SetFunction<T, F> setFunction, Function<T, F> field) {
-        return returnWDF(this.window,overMinValue(setFunction,this.window,field).stream());
+    public <F extends Comparable<? super F>> WindowSDFrameImpl<T> overMinValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
+        return returnWDF(this.window, overMinValueS(setFunction,this.window,field).stream());
     }
 
     @Override
@@ -159,7 +159,7 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
-    public WindowSDFrameImpl<T> overCount(SetFunction<T, Integer> setFunction) {
-        return returnWDF(this.window,overCount(setFunction,this.window).stream());
+    public WindowSDFrameImpl<T> overCountS(SetFunction<T, Integer> setFunction) {
+        return returnWDF(this.window, overCountS(setFunction,this.window).stream());
     }
 }
