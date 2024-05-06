@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  *
  * @author caizhihao
  */
-public interface SDFrame<T> extends IFrame<T> , WindowSDFrame<T> {
+public interface SDFrame<T> extends IFrame<T> {
 
     /**
      * Convert a list to SDFrame
@@ -850,9 +850,9 @@ public interface SDFrame<T> extends IFrame<T> , WindowSDFrame<T> {
 
     <F> SDFrame<FI2<T,F>> overNthValue(Window<T> overParam,Function<T,F> field,int n);
 
-    <F> SDFrame<FI2<T,F>> overFirstValue(Window<T> overParam,Function<T,F> field,int n);
+    <F> SDFrame<FI2<T,F>> overFirstValue(Window<T> overParam,Function<T,F> field);
 
-    <F> SDFrame<FI2<T,F>> overLastValue(Window<T> overParam,Function<T,F> field,int n);
+    <F> SDFrame<FI2<T,F>> overLastValue(Window<T> overParam,Function<T,F> field);
 
     <F> SDFrame<FI2<T,BigDecimal>> overSum(Window<T> overParam,Function<T,F> field);
 
