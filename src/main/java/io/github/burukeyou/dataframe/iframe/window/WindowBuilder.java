@@ -23,8 +23,8 @@ public class WindowBuilder<T>  implements Window<T> {
 
 
     @Override
-    public Sorter<T> getComparator() {
-        return sorter;
+    public Comparator<T> getComparator() {
+        return sorter.getComparator();
     }
 
     public List<Function<T, ?>> partitions() {

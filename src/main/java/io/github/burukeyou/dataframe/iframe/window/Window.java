@@ -35,6 +35,6 @@ public interface Window<T>  {
 
     List<Function<T, ?>> partitions();
 
-    Sorter<T> getComparator();
+    Comparator<T> getComparator();
 
 }

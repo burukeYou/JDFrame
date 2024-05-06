@@ -19,6 +19,8 @@ import static java.util.stream.Collectors.toList;
  */
 public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
 
+    protected final Window<T> EMPTY_WINDOW = Window.sortBy(null);
+
     protected Window<T> window;
 
     public void setWindow(Window<T> window) {
@@ -31,6 +33,11 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         List<FI2<T, V>> result = new ArrayList<>();
         if (ListUtils.isEmpty(windowList)){
             return result;
+        }
+
+        if (overParam == null){
+            // 空窗口
+            overParam = EMPTY_WINDOW;
         }
 
         Comparator<T> comparator = overParam.getComparator();
@@ -85,8 +92,9 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
     }
 
     protected  List<FI2<T, Integer>> windowFunctionForRank(Window<T> overParam) {
+        checkWindow(overParam);
+
         SupplierFunction<T,Integer> supplier = (windowList) -> {
-            Comparator<T> comparator = overParam.getComparator();
             List<FI2<T, Integer>> result = new ArrayList<>();
             int n = windowList.size();
             int rank = 1;
@@ -94,7 +102,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
             for (int i = 1; i < windowList.size(); i++) {
                 T pre = windowList.get(i-1);
                 T cur = windowList.get(i);
-                if (comparator.compare(pre,cur) != 0){
+                if (overParam.getComparator().compare(pre,cur) != 0){
                     rank = i + 1;
                 }
                 if (rank <= n){
@@ -109,6 +117,8 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
     }
 
     protected List<FI2<T, Integer>> windowFunctionForDenseRank(Window<T> overParam) {
+        checkWindow(overParam);
+
         SupplierFunction<T,Integer> supplier = (windowList) -> {
             List<FI2<T, Integer>> result = new ArrayList<>();
             int n = windowList.size();
@@ -132,6 +142,8 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
     }
 
     protected  List<FI2<T, BigDecimal>> windowFunctionForPercentRank(Window<T> overParam) {
+        checkWindow(overParam);
+
         SupplierFunction<T,BigDecimal> supplier = (windowList) -> {
             // (rank-1) / (rows-1)
             List<FI2<T, BigDecimal>> result = new ArrayList<>();
@@ -157,6 +169,8 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
     }
 
     protected  List<FI2<T, BigDecimal>> windowFunctionForCumeDist(Window<T> overParam) {
+        checkWindow(overParam);
+
         SupplierFunction<T,BigDecimal> supplier = (windowList) -> {
             List<FI2<T, Integer>> result = new ArrayList<>();
             int n = windowList.size();
@@ -188,6 +202,13 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         };
 
         return overAbject(overParam,supplier);
+    }
+
+    private void checkWindow(Window<T> overParam) {
+        Comparator<T> comparator = overParam.getComparator();
+        if (comparator == null){
+            throw new IllegalArgumentException("please specify a window");
+        }
     }
 
     protected <F> List<FI2<T, F>> windowFunctionForLag(Window<T> overParam, Function<T, F> field, int n) {
@@ -276,6 +297,15 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         SupplierFunction<T,Integer> supplier = (windowList) -> {
             int count = windowList.size();
             return windowList.stream().map(e -> new FI2<>(e,count)).collect(toList());
+        };
+        return overAbject(overParam,supplier);
+    }
+
+    protected List<FI2<T, Integer>> windowFunctionForNtile(Window<T> overParam, int n) {
+        SupplierFunction<T,Integer> supplier = (windowList) -> {
+            List<FI2<T, Integer>> result = new ArrayList<>();
+            // todo Ntile实现
+            return result;
         };
         return overAbject(overParam,supplier);
     }
