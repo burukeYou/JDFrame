@@ -561,9 +561,11 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
         }
 
         Comparator<T> comparator = overParam.getComparator();
-        List<Function<T,?>> partitionList = overParam.getGroupBy();
+        List<Function<T,?>> partitionList = overParam.partitions();
         if (ListUtils.isEmpty(partitionList)){
-            windowList.sort(comparator);
+            if (comparator != null){
+                windowList.sort(comparator);
+            }
             return supplier.get(windowList);
         }
 
@@ -572,7 +574,9 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractCommonFrame<T>  {
         dfsFindWindow(allWindowList,windowList,partitionList,0);
 
         for (List<T> window : allWindowList) {
-            window.sort(comparator);
+            if (comparator != null){
+                window.sort(comparator);
+            }
             List<FI2<T, V>> tmpList = supplier.get(window);
             result.addAll(tmpList);
         }

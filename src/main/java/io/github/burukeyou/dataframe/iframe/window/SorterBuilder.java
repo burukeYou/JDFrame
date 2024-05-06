@@ -10,7 +10,7 @@ import java.util.function.Function;
  */
 
 @Getter
-public class SorterBuilder<T> implements  Sorter<T> {
+public class SorterBuilder<T> implements Sorter<T> {
 
     protected Comparator<T> comparator;
 
@@ -18,12 +18,11 @@ public class SorterBuilder<T> implements  Sorter<T> {
         this.comparator = comparator;
     }
 
-
     public <U extends Comparable<? super U>> Sorter<T> sortAsc(Function<T,U> sortField) {
         if (this.comparator == null){
             this.comparator = Comparator.comparing(sortField);
         }else {
-            this.comparator.thenComparing(Comparator.comparing(sortField));
+            this.comparator = this.comparator.thenComparing(sortField);
         }
         return this;
     }
@@ -33,11 +32,23 @@ public class SorterBuilder<T> implements  Sorter<T> {
         if (this.comparator == null){
             this.comparator = Comparator.comparing(sortField).reversed();
         }else {
-            this.comparator.thenComparing(Comparator.comparing(sortField).reversed());
+            this.comparator = this.comparator.thenComparing(Comparator.comparing(sortField).reversed());
         }
         return this;
     }
 
+    @Override
+    public Sorter<T> sort(Comparator<T> comparator) {
+        if (this.comparator == null){
+            this.comparator = comparator;
+        }else {
+            this.comparator = this.comparator.thenComparing(comparator);
+        }
+        return this;
+    }
 
-
+    @Override
+    public int compare(T o1, T o2) {
+        return comparator.compare(o1,o2);
+    }
 }

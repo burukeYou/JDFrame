@@ -10,25 +10,31 @@ import java.util.function.Function;
  */
 public interface Window<T>  {
 
-    List<Function<T, ?>> getGroupBy();
-
-    Comparator<T> getComparator();
-
-    static <T> Window<T> groupBy(Function<T,?>...groupField){
-        return new WindowBuilder<>(Arrays.asList(groupField),null);
+    @SafeVarargs
+    static <T> Window<T> partitionBy(Function<T,?>...groupField){
+        return new WindowBuilder<>(Arrays.asList(groupField));
     }
 
     static <T,U extends Comparable<? super U>> Window<T> sortAscBy(Function<T,U> sortField){
-        return new WindowBuilder<>(Comparator.comparing(sortField));
+        return new WindowBuilder<>(Sorter.sortAscBy(sortField));
     }
 
     static <T,U extends Comparable<? super U>> Window<T> sortDescBy(Function<T,U> sortField){
-        return new WindowBuilder<>(Comparator.comparing(sortField).reversed());
+        return new WindowBuilder<>(Sorter.sortDescBy(sortField));
+    }
+
+    static <T> Window<T> sortBy(Comparator<T> comparator){
+        return new WindowBuilder<>(Sorter.toSorter(comparator));
     }
 
     <U extends Comparable<? super U>> Window<T> sortAsc(Function<T,U> sortField);
 
     <U extends Comparable<? super U>> Window<T> sortDesc(Function<T,U> sortField);
 
+    Window<T> sort(Comparator<T> comparator);
+
+    List<Function<T, ?>> partitions();
+
+    Sorter<T> getComparator();
 
 }

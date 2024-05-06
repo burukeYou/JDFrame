@@ -1,10 +1,5 @@
 package io.github.burukeyou.dataframe.iframe.window;
 
-import lombok.Data;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -13,74 +8,54 @@ import java.util.function.Function;
  * @author caizhiao
  */
 
-public class WindowBuilder<T>   implements  Window<T> {
+public class WindowBuilder<T>  implements Window<T> {
 
     private List<Function<T,?>> groupBy;
-    protected Comparator<T> comparator;
+    protected Sorter<T> sorter;
 
-
-    public WindowBuilder(Comparator<T> comparator) {
-        this.comparator = comparator;
+    public WindowBuilder(Sorter<T> comparator) {
+        this.sorter = comparator;
     }
 
-    public WindowBuilder(List<Function<T, ?>> groupBy, Comparator<T> comparator) {
-        this.comparator = comparator;
+    public WindowBuilder(List<Function<T, ?>> groupBy) {
         this.groupBy = groupBy;
     }
 
 
     @Override
-    public Comparator<T> getComparator() {
-        return comparator;
+    public Sorter<T> getComparator() {
+        return sorter;
     }
 
-    public List<Function<T, ?>> getGroupBy() {
+    public List<Function<T, ?>> partitions() {
         return groupBy;
     }
 
-    static <T,U> WindowBuilder<T> groupBy(Function<T,U> groupField){
-        return new WindowBuilder<>(Collections.singletonList(groupField),null);
-    }
-
-    static <T,U> WindowBuilder<T> groupBy(Function<T,U>...groupField){
-        return new WindowBuilder<>(Arrays.asList(groupField),null);
-
-    }
-
-
     public <U extends Comparable<? super U>> Window<T> sortAsc(Function<T,U> sortField) {
-        if (this.comparator == null){
-            this.comparator = Comparator.comparing(sortField);
+        if (sorter == null){
+            this.sorter = Sorter.sortAscBy(sortField);
         }else {
-            this.comparator.thenComparing(Comparator.comparing(sortField));
+            sorter.sortAsc(sortField);
         }
         return this;
     }
-
 
     public <U extends Comparable<? super U>> Window<T> sortDesc(Function<T,U> sortField) {
-        if (this.comparator == null){
-            this.comparator = Comparator.comparing(sortField).reversed();
+        if (sorter == null){
+            this.sorter = Sorter.sortDescBy(sortField);
         }else {
-            this.comparator.thenComparing(Comparator.comparing(sortField).reversed());
+            sorter.sortDesc(sortField);
         }
         return this;
     }
 
-
-
-
-
-    public static void main(String[] args) {
-        Comparator<User> userComparator = Comparator.comparing(User::getAge).thenComparing(User::getName);
-
+    @Override
+    public Window<T> sort(Comparator<T> comparator) {
+        if (sorter == null){
+            this.sorter = Sorter.toSorter(comparator);
+        }else {
+            sorter.sort(comparator);
+        }
+        return this;
     }
-
-    @Data
-    public static class User {
-        private String name;
-        private Integer age;
-        private LocalDateTime createTime;
-    }
-
 }
