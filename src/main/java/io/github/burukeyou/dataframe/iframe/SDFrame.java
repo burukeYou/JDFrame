@@ -822,26 +822,25 @@ public interface SDFrame<T> extends IFrame<T>  {
 
     /** ===========================   Window Function  ===================================== **/
 
-
      SDFrame<FI2<T,Integer>> overRowNumber(Window<T> overParam);
 
-     SDFrame<T> overRowNumber(Window<T> overParam,SetFunction<T,Integer> setFunction);
+     SDFrame<T> overRowNumber(SetFunction<T,Integer> setFunction,Window<T> overParam);
 
      SDFrame<FI2<T,Integer>> overRank(Window<T> overParam);
 
-     SDFrame<T> overRank(Window<T> overParam,SetFunction<T,Integer> setFunction);
+     SDFrame<T> overRank(SetFunction<T,Integer> setFunction,Window<T> overParam);
 
      SDFrame<FI2<T,Integer>> overDenseRank(Window<T> overParam);
 
-     SDFrame<T> overDenseRank(Window<T> overParam,SetFunction<T,Integer> setFunction);
+     SDFrame<T> overDenseRank(SetFunction<T,Integer> setFunction,Window<T> overParam);
 
      SDFrame<FI2<T,BigDecimal>> overPercentRank(Window<T> overParam);
 
-     SDFrame<T> overPercentRank(Window<T> overParam,SetFunction<T,BigDecimal> setFunction);
+     SDFrame<T> overPercentRank(SetFunction<T,BigDecimal> setFunction,Window<T> overParam);
 
     SDFrame<FI2<T,BigDecimal>> overCumeDist(Window<T> overParam);
 
-    SDFrame<T> overCumeDist(Window<T> overParam,SetFunction<T,BigDecimal> setFunction);
+    SDFrame<T> overCumeDist(SetFunction<T,BigDecimal> setFunction,Window<T> overParam);
 
     <F> SDFrame<FI2<T,F>> overLag(Window<T> overParam,Function<T,F> field,int n);
 
@@ -855,23 +854,23 @@ public interface SDFrame<T> extends IFrame<T>  {
 
     <F> SDFrame<FI2<T,BigDecimal>> overSum(Window<T> overParam,Function<T,F> field);
 
-    <F> SDFrame<T> overSum(Window<T> overParam,Function<T,F> field,SetFunction<T,BigDecimal> setFunction);
+    <F> SDFrame<T> overSum(SetFunction<T,BigDecimal> setFunction,Window<T> overParam,Function<T,F> field);
 
     <F> SDFrame<FI2<T,BigDecimal>> overAvg(Window<T> overParam,Function<T,F> field);
 
-    <F> SDFrame<T> overAvg(Window<T> overParam,Function<T,F> field,SetFunction<T,BigDecimal> setFunction);
+    <F> SDFrame<T> overAvg(SetFunction<T,BigDecimal> setFunction,Window<T> overParam,Function<T,F> field);
 
     <F extends Comparable<? super F>> SDFrame<FI2<T,F>> overMaxValue(Window<T> overParam,Function<T,F> field);
 
-    <F extends Comparable<? super F>> SDFrame<T> overMaxValue(Window<T> overParam,Function<T,F> field,SetFunction<T,F> setFunction);
+    <F extends Comparable<? super F>> SDFrame<T> overMaxValue(SetFunction<T,F> setFunction,Window<T> overParam,Function<T,F> field);
 
     <F extends Comparable<? super F>> SDFrame<FI2<T,F>> overMinValue(Window<T> overParam,Function<T,F> field);
 
-    <F extends Comparable<? super F>> SDFrame<T> overMinValue(Window<T> overParam,Function<T,F> field,SetFunction<T,F> setFunction);
+    <F extends Comparable<? super F>> SDFrame<T> overMinValue(SetFunction<T,F> setFunction,Window<T> overParam,Function<T,F> field);
 
     SDFrame<FI2<T,Integer>> overCount(Window<T> overParam);
 
-    SDFrame<T> overCount(Window<T> overParam,SetFunction<T,Integer> setFunction);
+    SDFrame<T> overCount(SetFunction<T,Integer> setFunction,Window<T> overParam);
 
 
     /** ===========================   Other  ===================================== **/
