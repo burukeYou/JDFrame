@@ -910,7 +910,7 @@ public interface SDFrame<T> extends IFrame<T> {
 
     SDFrame<T> overCountS(SetFunction<T,Integer> setFunction);
 
-    SDFrame<FI2<T,Integer>> ntile(Window<T> overParam,int n);
+    SDFrame<FI2<T,Integer>> overNtile(Window<T> overParam, int n);
 
     /** ===========================   Other  ===================================== **/
 

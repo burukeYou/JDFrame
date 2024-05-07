@@ -1,5 +1,8 @@
 package io.github.burukeyou.dataframe.iframe.window;
 
+import io.github.burukeyou.dataframe.iframe.window.round.Round;
+import io.github.burukeyou.dataframe.iframe.window.round.WindowRound;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -27,11 +30,47 @@ public interface Window<T>  {
         return new WindowBuilder<>(Sorter.toSorter(comparator));
     }
 
+    static <T> Window<T> roundBetweenBy(WindowRound start, WindowRound end){
+        return new WindowBuilder<>(start,end);
+    }
+
+    static <T> Window<T> roundBefore2CurrentRowBy(int n){
+        return new WindowBuilder<>(Round.BEFORE(n),Round.CURRENT_ROW);
+    }
+
+    static <T> Window<T> roundCurrentRow2AfterBy(int n){
+        return new WindowBuilder<>(Round.CURRENT_ROW,Round.AFTER(n));
+    }
+
+    static <T> Window<T> roundCurrentRow2EndRowBy(){
+        return new WindowBuilder<>(Round.CURRENT_ROW,Round.END_ROW);
+    }
+
+    static <T>Window<T> roundStartRow2CurrentRowBy(){
+        return new WindowBuilder<>(Round.START_ROW,Round.CURRENT_ROW);
+    }
+
+    static <T> Window<T> roundAllRowBy(){
+        return new WindowBuilder<>(Round.START_ROW,Round.END_ROW);
+    }
+
     <U extends Comparable<? super U>> Window<T> sortAsc(Function<T,U> sortField);
 
     <U extends Comparable<? super U>> Window<T> sortDesc(Function<T,U> sortField);
 
     Window<T> sort(Comparator<T> comparator);
+
+    Window<T> roundBetween(WindowRound start, WindowRound end);
+
+    Window<T> roundBefore2CurrentRow(int n);
+
+    Window<T> roundCurrentRow2After(int n);
+
+    Window<T> roundCurrentRow2EndRow();
+
+    Window<T> roundStartRow2CurrentRow();
+
+    Window<T> roundAllRow();
 
     List<Function<T, ?>> partitions();
 

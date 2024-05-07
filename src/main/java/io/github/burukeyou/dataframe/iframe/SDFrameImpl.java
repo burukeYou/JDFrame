@@ -890,7 +890,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrame<FI2<T, Integer>> ntile(Window<T> overParam, int n) {
+    public SDFrame<FI2<T, Integer>> overNtile(Window<T> overParam, int n) {
         return returnDF(windowFunctionForNtile(overParam,n));
     }
 

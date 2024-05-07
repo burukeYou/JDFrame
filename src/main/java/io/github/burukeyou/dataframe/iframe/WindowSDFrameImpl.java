@@ -5,8 +5,6 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 
 import java.math.BigDecimal;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -20,18 +18,6 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
         super(data);
         this.window = window;
     }
-
-
-    @Override
-    public void forEach(Consumer<? super T> action) {
-        super.forEach(action);
-    }
-
-    @Override
-    public Spliterator<T> spliterator() {
-        return super.spliterator();
-    }
-
 
     protected <R> WindowSDFrameImpl<R> returnWDF(Window<R> window,Stream<R> stream) {
         return new WindowSDFrameImpl<>(window,stream);
