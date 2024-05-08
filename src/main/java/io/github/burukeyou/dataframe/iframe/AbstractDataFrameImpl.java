@@ -469,6 +469,18 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return ts.isEmpty() ? null : ts.get(ts.size()-1);
     }
 
+    @Override
+    public List<T> subList(Integer startIndex, Integer endIndex) {
+        List<T> ts = toLists();
+        if (startIndex == null || startIndex < 0){
+            startIndex = 0;
+        }
+        if (endIndex == null || endIndex > ts.size()){
+            endIndex = ts.size();
+        }
+        return ts.subList(startIndex,endIndex);
+    }
+
     protected static <T, C> List<T> replenish(List<T> itemDTOList,
                                               Function<T, C> collectDim,
                                               List<C> allDim,

@@ -23,15 +23,15 @@ public class JDFrameTest {
     static {
         studentList.add(new Student(1,"a","一中","一年级",11, new BigDecimal(1)));
         studentList.add(new Student(2,"a","一中","一年级",11, new BigDecimal(1)));
-        studentList.add(new Student(3,"b","一中","三年级",12, new BigDecimal(2)));
-        studentList.add(new Student(4,"c","二中","一年级",13, new BigDecimal(3)));
-        studentList.add(new Student(5,"d","二中","一年级",14, new BigDecimal(4)));
-        studentList.add(new Student(6,"e","三中","二年级",14, new BigDecimal(5)));
+        studentList.add(new Student(1,"d","二中","一年级",14, new BigDecimal(4)));
+        studentList.add(new Student(1,"b","一中","三年级",12, new BigDecimal(2)));
+        studentList.add(new Student(1,"c","二中","一年级",13, new BigDecimal(3)));
+        studentList.add(new Student(6,"e","三中","一年级",14, new BigDecimal(5)));
         studentList.add(new Student(7,"e","三中","二年级",14, new BigDecimal(5)));
         studentList.add(new Student(8,"e","三中","二年级",14, new BigDecimal(5)));
+        studentList.add(new Student(9,"e","三中","三年级",15, new BigDecimal(5)));
         studentList.add(new Student(9,"e","三中","二年级",15, new BigDecimal(5)));
-        studentList.add(new Student(10,"e","三中","二年级",15, new BigDecimal(5)));
-        studentList.add(new Student(11,"e","三中","二年级",16, new BigDecimal(5)));
+        studentList.add(new Student(9,"e","三中","二年级",16, new BigDecimal(5)));
     }
 
     /**
@@ -281,12 +281,58 @@ public class JDFrameTest {
 
     @Test
     public void testOver(){
+
+        List<Student> students1 = studentList.subList(3, 5);
+        System.out.println();
+
         SDFrame<Student> sdFrame = SDFrame.read(studentList);
         //Over.OverBuilder<Student, Object, R> collect = Over.sortBy(Comparator.comparing(Student::getAge)).collect(OverEnum.ROW_NUMBER);
         //SDFrame<FI2<Student, Integer>> fi2s = sdFrame.overRowNumber(overBuilder);
 
-        Window<Student> window = Window.groupBy(Student::getSchool, Student::getLevel).sortAsc(Student::getAge);
-        SDFrame<FI2<Student, Integer>> map = sdFrame.overRowNumber(window);
+        //Window<Student> window = Window.sortAscBy(Student::getId).sortDesc(Student::getAge);
+
+        //Window<Student> window = Window.sortBy(Comparator.comparing(Student::getId).thenComparing(Comparator.comparing(Student::getAge).reversed()));
+
+        //studentList.sort(Comparator.comparing(Student::getLevel).thenComparing(Student::getAge).reversed());
+        //studentList.sort(Comparator.comparing(Student::getId).thenComparing(Comparator.comparing(Student::getAge).reversed()));
+
+        //studentList.sort(Sorter.sortAscBy(Student::getId).sortDesc(Student::getAge));
+        //Window<Student> window = Window.groupBy(Student::getSchool, Student::getLevel).sortDesc(Student::getAge);
+
+        //Window<Student> window = Window.sortDescBy(Student::getAge);
+        //SDFrame<FI2<Student, Integer>> map = sdFrame.overRowNumber(window);
+
+
+        //sdFrame.window(Window.sortDescBy(Student::getAge)).overRowNumber().show(30);
+
+        //WindowSDFrame<Student> windowSDFrame = SDFrame.read(studentList).window(Window.sortDescBy(Student::getAge));
+
+/*
+        Window<Student> window = Window.sortDescBy(Student::getAge);
+        sdFrame = sdFrame.overRowNumber(Student::setRank,window)
+                         .overRank(Student::setId,window);
+*/
+
+
+        //WindowSDFrame<FI2<Student, Integer>> frame = sdFrame.window(Window.sortDescBy(Student::getAge)).overRowNumber();
+
+        SDFrame<Student> students = sdFrame
+                .whereNotNull(Student::getScore)
+                .window(Window.sortDescBy(Student::getAge))
+                .overRowNumberS(Student::setRank)
+                .overRankS(Student::setId);
+
+        //sdFrame.window().overMaxValue(Student::getAge).show(30);
+
+        //sdFrame.overMaxValue(Student::getAge).show(30);
+
+        sdFrame.overMaxValueS(Student::setId,Student::getAge).show(30);
+
+        //rank.forEachDo(e -> System.out.println(e));
+
+
+        sdFrame.window().overRowNumber();
+
         //SDFrame<FI2<Integer, Integer>> map = sdFrame.overRank(overParam).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
         //SDFrame<FI2<Integer, Integer>> map = sdFrame.overDenseRank(overParam).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
 
@@ -295,7 +341,6 @@ public class JDFrameTest {
 
         //SDFrame<FI2<Integer, Integer>> map = sdFrame.overLag(overParam, Student::getId, 1).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
         //SDFrame<FI2<Integer, Integer>> map = sdFrame.overLead(overParam, Student::getId, 1).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
-        map.show(30);
-
+        //map.show(30);
     }
 }

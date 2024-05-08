@@ -301,6 +301,12 @@ public interface SDFrame<T> extends IFrame<T> {
      */
     SDFrame<T> cutLast(int n);
 
+
+    /**
+     * cut elements within the scope
+     */
+    SDFrame<T> cut(Integer startIndex,Integer endIndex);
+
     /**
      * Cut the top n by ranking value, by comparator to ranking asc
      *          The same value is considered to have the same ranking

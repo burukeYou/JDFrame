@@ -255,8 +255,10 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return from(first.build());
     }
 
-
-
+    @Override
+    public JDFrame<T> cut(Integer startIndex, Integer endIndex) {
+        return returnDF(subList(startIndex, endIndex));
+    }
     @Override
     public JDFrame<T> distinct() {
         return returnDF(stream().distinct());

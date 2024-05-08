@@ -25,7 +25,7 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
 
     @Override
     public SDFrameImpl<FI2<T, Integer>> overRowNumber() {
-        return  overRowNumber(this.window);
+        return  super.overRowNumber(this.window);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
 
     @Override
     public SDFrameImpl<FI2<T, Integer>> overRank() {
-        return overRank(this.window);
+        return super.overRank(this.window);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
 
     @Override
     public SDFrameImpl<FI2<T, Integer>> overDenseRank() {
-        return overDenseRank(this.window);
+        return super.overDenseRank(this.window);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
 
     @Override
     public SDFrameImpl<FI2<T, BigDecimal>> overPercentRank() {
-        return overPercentRank(this.window);
+        return super.overPercentRank(this.window);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
 
     @Override
     public SDFrameImpl<FI2<T, BigDecimal>> overCumeDist() {
-        return overCumeDist(this.window);
+        return super.overCumeDist(this.window);
     }
 
     @Override
@@ -75,33 +75,33 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
 
     @Override
     public <F> SDFrameImpl<FI2<T, F>> overLag(Function<T, F> field, int n) {
-        return overLag(field,n);
+        return super.overLag(this.window,field,n);
     }
 
     @Override
     public <F> SDFrameImpl<FI2<T, F>> overLead(Function<T, F> field, int n) {
-        return overLead(field,n);
+        return super.overLead(this.window,field,n);
     }
 
     @Override
     public <F> SDFrameImpl<FI2<T, F>> overNthValue(Function<T, F> field, int n) {
-        return overNthValue(field,n);
+        return super.overNthValue(this.window,field,n);
     }
 
     @Override
     public <F> SDFrameImpl<FI2<T, F>> overFirstValue(Function<T, F> field) {
-        return overNthValue(field,1);
+        return super.overNthValue(this.window,field,1);
     }
 
     @Override
     public <F> SDFrameImpl<FI2<T, F>> overLastValue(Function<T, F> field) {
-        return overNthValue(field,-1);
+        return super.overNthValue(this.window,field,-1);
 
     }
 
     @Override
     public <F> SDFrameImpl<FI2<T, BigDecimal>> overSum(Function<T, F> field) {
-        return overSum(this.window,field);
+        return super.overSum(this.window,field);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
 
     @Override
     public <F extends Comparable<? super F>> SDFrameImpl<FI2<T, F>> overMaxValue(Function<T, F> field) {
-        return overMaxValue(this.window,field);
+        return super.overMaxValue(this.window,field);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
 
     @Override
     public <F extends Comparable<? super F>> SDFrameImpl<FI2<T, F>> overMinValue(Function<T, F> field) {
-        return overMinValue(this.window,field);
+        return super.overMinValue(this.window,field);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
 
     @Override
     public SDFrameImpl<FI2<T, Integer>> overCount() {
-        return overCount(this.window);
+        return super.overCount(this.window);
     }
 
     @Override

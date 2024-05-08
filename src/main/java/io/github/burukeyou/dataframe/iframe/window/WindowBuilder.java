@@ -20,29 +20,39 @@ public class WindowBuilder<T>  implements Window<T> {
 
     private WindowRound endRound;
 
+    public WindowBuilder() {
+    }
+
     public WindowBuilder(Sorter<T> comparator) {
         this.sorter = comparator;
-        initDefault();
     }
 
 
     public WindowBuilder(List<Function<T, ?>> groupBy) {
         this.groupBy = groupBy;
-        initDefault();
     }
 
     public WindowBuilder(WindowRound startRound, WindowRound endRound) {
-        this.startRound = startRound;
-        this.endRound = endRound;
+       roundBetween(startRound, endRound);
     }
 
-    private void initDefault() {
-        roundStartRow2CurrentRow();
+    public void initDefault() {
+        if (startRound == null){
+            this.startRound =  Round.START_ROW;
+        }
+
+        if (endRound == null){
+            if (sorter == null || sorter.getComparator() == null){
+                this.endRound = Round.END_ROW;
+            }else {
+                this.endRound = Round.CURRENT_ROW;
+            }
+        }
     }
 
     @Override
     public Comparator<T> getComparator() {
-        return sorter.getComparator();
+        return sorter == null ? null : sorter.getComparator();
     }
 
     public WindowRound getStartRound() {
@@ -87,6 +97,24 @@ public class WindowBuilder<T>  implements Window<T> {
 
     @Override
     public Window<T> roundBetween(WindowRound start, WindowRound end) {
+        if (Round.END_ROW.eq(start)){
+            throw new IllegalArgumentException("The starting boundary param cannot be set to END_ROW");
+        }
+        if (Round.AFTER_ROW.eq(start)){
+            throw new IllegalArgumentException("The starting boundary param cannot be set to AFTER_ROW");
+        }
+
+        if (Round.START_ROW.eq(end)){
+            throw new IllegalArgumentException("The ending boundary param cannot be set to START_ROW");
+        }
+
+        if (Round.BEFORE_ROW.eq(end)){
+            throw new IllegalArgumentException("The ending boundary param cannot be set to BEFORE_ROW");
+        }
+
+        start.check();
+        end.check();
+
         this.startRound = start;
         this.endRound = end;
         return this;
@@ -94,36 +122,31 @@ public class WindowBuilder<T>  implements Window<T> {
 
     @Override
     public Window<T> roundBefore2CurrentRow(int n) {
-        this.startRound = Round.BEFORE(n);
-        this.endRound = Round.CURRENT_ROW;
+        roundBetween(Round.BEFORE(n),Round.CURRENT_ROW);
         return this;
     }
 
     @Override
     public Window<T> roundCurrentRow2After(int n) {
-        this.startRound = Round.CURRENT_ROW;
-        this.endRound = Round.AFTER(n);
+        roundBetween(Round.CURRENT_ROW,Round.AFTER(n));
         return this;
     }
 
     @Override
     public Window<T> roundCurrentRow2EndRow() {
-        this.startRound = Round.CURRENT_ROW;
-        this.endRound = Round.END_ROW;
+        roundBetween(Round.CURRENT_ROW,Round.END_ROW);
         return this;
     }
 
     @Override
     public Window<T> roundStartRow2CurrentRow() {
-        this.startRound = Round.START_ROW;
-        this.endRound = Round.CURRENT_ROW;
+        roundBetween(Round.START_ROW,Round.CURRENT_ROW);
         return this;
     }
 
     @Override
     public Window<T> roundAllRow() {
-        this.startRound = Round.START_ROW;
-        this.endRound = Round.END_ROW;
-        return null;
+        roundBetween(Round.START_ROW,Round.END_ROW);
+        return this;
     }
 }

@@ -76,4 +76,7 @@ public interface Window<T>  {
 
     Comparator<T> getComparator();
 
+    WindowRound getStartRound();
+
+    WindowRound getEndRound();
 }

@@ -282,6 +282,11 @@ public interface IFrame<T> extends Iterable<T>{
     IFrame<T> cutLast(int n);
 
     /**
+     * cut elements within the scope
+     */
+    IFrame<T> cut(Integer startIndex,Integer endIndex);
+
+    /**
      * Cut the top n by ranking value, by comparator to ranking asc
      *          The same value is considered to have the same ranking
      * @param comparator            the ranking comparator
@@ -335,6 +340,11 @@ public interface IFrame<T> extends Iterable<T>{
      * Get the last n elements
      */
     List<T> tail(int n);
+
+    /**
+     *  Get elements within the scope.  [startIndex,endIndex]
+     */
+    List<T> subList(Integer startIndex, Integer endIndex);
 
     /** ===========================   Distinct Frame  ===================================== **/
 

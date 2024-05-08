@@ -284,6 +284,11 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public SDFrame<T> cut(Integer startIndex, Integer endIndex) {
+        return returnDF(subList(startIndex,endIndex));
+    }
+
+    @Override
     public SDFrame<T> distinct() {
         data = stream().distinct();
         return this;
@@ -740,22 +745,22 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <F> SDFrame<FI2<T, F>> overLag(Window<T> overParam, Function<T, F> field, int n) {
+    public <F> SDFrameImpl<FI2<T, F>> overLag(Window<T> overParam, Function<T, F> field, int n) {
         return returnDF(windowFunctionForLag(overParam,field,n));
     }
 
     @Override
-    public <F> SDFrame<FI2<T, F>> overLag(Function<T, F> field, int n) {
+    public <F> SDFrameImpl<FI2<T, F>> overLag(Function<T, F> field, int n) {
         return overLag(EMPTY_WINDOW,field,n);
     }
 
     @Override
-    public <F> SDFrame<FI2<T, F>> overLead(Window<T> overParam, Function<T, F> field, int n) {
+    public <F> SDFrameImpl<FI2<T, F>> overLead(Window<T> overParam, Function<T, F> field, int n) {
         return returnDF(windowFunctionForLead(overParam,field,n));
     }
 
     @Override
-    public <F> SDFrame<FI2<T, F>> overLead(Function<T, F> field, int n) {
+    public <F> SDFrameImpl<FI2<T, F>> overLead(Function<T, F> field, int n) {
         return overLead(EMPTY_WINDOW,field,n);
     }
 
@@ -765,7 +770,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <F> SDFrame<FI2<T, F>> overNthValue(Function<T, F> field, int n) {
+    public <F> SDFrameImpl<FI2<T, F>> overNthValue(Function<T, F> field, int n) {
         return overNthValue(EMPTY_WINDOW,field,n);
     }
 

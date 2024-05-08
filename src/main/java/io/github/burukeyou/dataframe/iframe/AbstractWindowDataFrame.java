@@ -3,6 +3,8 @@ package io.github.burukeyou.dataframe.iframe;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.window.SupplierFunction;
 import io.github.burukeyou.dataframe.iframe.window.Window;
+import io.github.burukeyou.dataframe.iframe.window.WindowBuilder;
+import io.github.burukeyou.dataframe.iframe.window.round.Round;
 import io.github.burukeyou.dataframe.util.ListUtils;
 import io.github.burukeyou.dataframe.util.MathUtils;
 
@@ -19,7 +21,7 @@ import static java.util.stream.Collectors.toList;
  */
 public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
 
-    protected final Window<T> EMPTY_WINDOW = Window.sortBy(null);
+    protected final Window<T> EMPTY_WINDOW = new WindowBuilder<>();
 
     protected Window<T> window;
 
@@ -29,15 +31,11 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
 
     protected  <V> List<FI2<T, V>> overAbject(Window<T> overParam,
                                               SupplierFunction<T,V> supplier) {
+        ((WindowBuilder<T>)overParam).initDefault();
         List<T> windowList = toLists();
         List<FI2<T, V>> result = new ArrayList<>();
         if (ListUtils.isEmpty(windowList)){
             return result;
-        }
-
-        if (overParam == null){
-            // 空窗口
-            overParam = EMPTY_WINDOW;
         }
 
         Comparator<T> comparator = overParam.getComparator();
@@ -211,11 +209,27 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         }
     }
 
+    /**
+     * 获取当前行的前N行的值
+     */
     protected <F> List<FI2<T, F>> windowFunctionForLag(Window<T> overParam, Function<T, F> field, int n) {
         SupplierFunction<T,F> supplier = (windowList) -> {
             List<FI2<T, F>> result = new ArrayList<>();
             for (int i = 0; i < windowList.size(); i++) {
                 int preIndex = i - n;
+                if (preIndex < 0){
+                    result.add(new FI2<>(windowList.get(i),null));
+                    continue;
+                }
+
+                if(overParam.getStartRound() != null){
+                    int startIndex = overParam.getStartRound().getStartIndex(i,windowList);
+                    if (preIndex < startIndex){
+                        // 越界为空
+                        preIndex = -1;
+                    }
+                }
+
                 F value = null;
                 if (preIndex >= 0 && preIndex < windowList.size()){
                     value = field.apply(windowList.get(preIndex));
@@ -227,11 +241,23 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         return overAbject(overParam,supplier);
     }
 
+    /**
+     * 获取当前行的后N行的值
+     */
     protected <F> List<FI2<T, F>> windowFunctionForLead(Window<T> overParam, Function<T, F> field, int n) {
         SupplierFunction<T,F> supplier = (windowList) -> {
             List<FI2<T, F>> result = new ArrayList<>();
             for (int i = 0; i < windowList.size(); i++) {
                 int afterIndex = i + n;
+
+                if (overParam.getEndRound() != null){
+                    int endIndex = overParam.getEndRound().getEndIndex(i,windowList);
+                    if (afterIndex > endIndex){
+                        // 越界为空
+                        afterIndex = -1;
+                    }
+                }
+
                 F value = null;
                 if (afterIndex >= 0 && afterIndex < windowList.size()){
                     value = field.apply(windowList.get(afterIndex));
@@ -243,60 +269,148 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         return overAbject(overParam,supplier);
     }
 
+    /**
+     *  获取窗口内第N行的值
+     */
     protected <F> List<FI2<T, F>> windowFunctionForNthValue(Window<T> overParam, Function<T, F> field, int n) {
         SupplierFunction<T,F> supplier = (windowList) -> {
             int index;
             if (n == -1){
+                // 获取窗口最后一行
                 index = windowList.size() - 1;
             }else {
                 index = n - 1;
             }
-            if (index >= 0 && index < windowList.size()){
-                F value = field.apply( windowList.get(index));
-                return windowList.stream().map(e -> new FI2<>(e, value)).collect(toList());
-            }else {
+
+            if (index < 0 || index >= windowList.size()){
                 return windowList.stream().map(e -> new FI2<T,F>(e,null)).collect(toList());
             }
+
+            List<FI2<T, F>> result = new ArrayList<>();
+            for (int i = 0; i < windowList.size(); i++) {
+                F value = null;
+                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
+                if (n != -1){
+                    // 获取窗口内的第n行
+                    index = indexRange.getC1() + n - 1;
+                }else {
+                    index = indexRange.getC2();
+                }
+                if (isInRange(indexRange,index)){
+                    value = field.apply(windowList.get(index));
+                }
+                result.add(new FI2<>(windowList.get(i),value));
+            }
+            return result;
         };
         return overAbject(overParam,supplier);
     }
 
+    public <V> FI2<Integer,Integer> getIndexRange(Window<T> overParam, int currentIndex,List<V> windowList){
+        Integer startIndex = overParam.getStartRound().getStartIndex(currentIndex, windowList);
+        Integer endIndex = overParam.getEndRound().getEndIndex(currentIndex, windowList);
+        return new FI2<>(startIndex, endIndex);
+    }
+
+    public boolean isInRange(FI2<Integer,Integer> round,int index){
+        return index >= round.getC1() && index <= round.getC2();
+    }
+
+    public boolean isAllRow(Window<T> overParam){
+        return Round.START_ROW.equals(overParam.getStartRound()) && Round.END_ROW.equals(overParam.getEndRound());
+    }
+
     protected <F> List<FI2<T, BigDecimal>> windowFunctionForSum(Window<T> overParam, Function<T, F> field) {
         SupplierFunction<T,BigDecimal> supplier = (windowList) -> {
-            BigDecimal value = SDFrame.read(windowList).sum(field);
-            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+            if (isAllRow(overParam)){
+                BigDecimal value = SDFrame.read(windowList).sum(field);
+                return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+            }
+
+            List<FI2<T, BigDecimal>> result = new ArrayList<>();
+            for (int i = 0; i < windowList.size(); i++) {
+                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
+                BigDecimal sum = SDFrame.read(windowList).cut(indexRange.getC1(), indexRange.getC2()+1).sum(field);
+                result.add(new FI2<>(windowList.get(i),sum));
+            }
+            return result;
         };
         return overAbject(overParam,supplier);
     }
 
     protected <F> List<FI2<T, BigDecimal>> windowFunctionForAvg(Window<T> overParam, Function<T, F> field) {
         SupplierFunction<T,BigDecimal> supplier = (windowList) -> {
-            BigDecimal value = SDFrame.read(windowList).avg(field);
-            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+            if (isAllRow(overParam)){
+                BigDecimal value = SDFrame.read(windowList).avg(field);
+                return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+            }
+
+            List<FI2<T, BigDecimal>> result = new ArrayList<>();
+            for (int i = 0; i < windowList.size(); i++) {
+                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
+                BigDecimal value = SDFrame.read(windowList).cut(indexRange.getC1(), indexRange.getC2()+1).avg(field);
+                result.add(new FI2<>(windowList.get(i),value));
+            }
+            return result;
         };
         return overAbject(overParam,supplier);
     }
 
     protected <F extends Comparable<? super F>>  List<FI2<T, F>>  windowFunctionForMaxValue(Window<T> overParam, Function<T, F> field) {
         SupplierFunction<T,F> supplier = (windowList) -> {
-            F value = SDFrame.read(windowList).maxValue(field);
-            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+            if (isAllRow(overParam)){
+                F value = SDFrame.read(windowList).maxValue(field);
+                return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+            }
+
+            List<FI2<T, F>> result = new ArrayList<>();
+            for (int i = 0; i < windowList.size(); i++) {
+                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
+                F value = SDFrame.read(windowList).cut(indexRange.getC1(), indexRange.getC2()+1).maxValue(field);
+                result.add(new FI2<>(windowList.get(i),value));
+            }
+            return result;
         };
         return overAbject(overParam,supplier);
     }
 
     protected <F extends Comparable<? super F>> List<FI2<T, F>> windowFunctionForMinValue(Window<T> overParam, Function<T, F> field) {
         SupplierFunction<T,F> supplier = (windowList) -> {
-            F value = SDFrame.read(windowList).minValue(field);
-            return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+            if (isAllRow(overParam)){
+                F value = SDFrame.read(windowList).minValue(field);
+                return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
+            }
+
+            List<FI2<T, F>> result = new ArrayList<>();
+            for (int i = 0; i < windowList.size(); i++) {
+                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
+                F value = SDFrame.read(windowList).cut(indexRange.getC1(), indexRange.getC2()+1).minValue(field);
+                result.add(new FI2<>(windowList.get(i),value));
+            }
+            return result;
         };
         return overAbject(overParam,supplier);
     }
 
     protected List<FI2<T, Integer>> windowFunctionForCount(Window<T> overParam) {
         SupplierFunction<T,Integer> supplier = (windowList) -> {
-            int count = windowList.size();
-            return windowList.stream().map(e -> new FI2<>(e,count)).collect(toList());
+            if (isAllRow(overParam)){
+                int count = windowList.size();
+                return windowList.stream().map(e -> new FI2<>(e,count)).collect(toList());
+            }
+            List<FI2<T, Integer>> result = new ArrayList<>();
+            for (int i = 0; i < windowList.size(); i++) {
+                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
+                if (indexRange.getC1() <= 0){
+                    indexRange.setC1(0);
+                }
+                if (indexRange.getC2() > windowList.size() - 1){
+                    indexRange.setC2(windowList.size() - 1);
+                }
+                Integer value = indexRange.getC2() -  indexRange.getC1() + 1;
+                result.add(new FI2<>(windowList.get(i),value));
+            }
+            return result;
         };
         return overAbject(overParam,supplier);
     }

@@ -298,6 +298,11 @@ public interface JDFrame<T> extends IFrame<T> {
     JDFrame<T> cutLast(int n);
 
     /**
+     * cut elements within the scope
+     */
+    JDFrame<T> cut(Integer startIndex,Integer endIndex);
+
+    /**
      * Cut the top n by ranking value, by comparator to ranking asc
      *          The same value is considered to have the same ranking
      * @param comparator            the ranking comparator
