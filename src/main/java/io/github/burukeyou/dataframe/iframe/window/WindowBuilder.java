@@ -149,4 +149,10 @@ public class WindowBuilder<T>  implements Window<T> {
         roundBetween(Round.START_ROW,Round.END_ROW);
         return this;
     }
+
+    @Override
+    public Window<T> roundBeforeAfter(int before, int after) {
+        roundBetween(Round.BEFORE(before),Round.AFTER(after));
+        return this;
+    }
 }

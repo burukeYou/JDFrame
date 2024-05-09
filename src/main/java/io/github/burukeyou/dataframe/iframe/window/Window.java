@@ -54,6 +54,10 @@ public interface Window<T>  {
         return new WindowBuilder<>(Round.START_ROW,Round.END_ROW);
     }
 
+    static <T> Window<T> roundBeforeAfterBy(int before, int after){
+        return new WindowBuilder<>(Round.BEFORE(before),Round.AFTER(after));
+    }
+
     <U extends Comparable<? super U>> Window<T> sortAsc(Function<T,U> sortField);
 
     <U extends Comparable<? super U>> Window<T> sortDesc(Function<T,U> sortField);
@@ -71,6 +75,8 @@ public interface Window<T>  {
     Window<T> roundStartRow2CurrentRow();
 
     Window<T> roundAllRow();
+
+     Window<T> roundBeforeAfter(int before, int after);
 
     List<Function<T, ?>> partitions();
 
