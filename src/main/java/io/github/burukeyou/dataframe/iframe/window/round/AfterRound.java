@@ -31,10 +31,6 @@ public class AfterRound extends WindowRound {
 
     @Override
     public <T> Integer getEndIndex(Integer currentRowIndex, List<T> windowList) {
-        int index = currentRowIndex + n;
-        if (isIndexOutOfBounds(index,windowList)){
-            index = windowList.size() - 1;
-        }
-        return index;
+        return currentRowIndex + n;
     }
 }

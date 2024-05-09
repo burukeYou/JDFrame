@@ -7,6 +7,10 @@ import java.util.List;
  */
 public class StartRowRound extends WindowRound {
 
+    @Override
+    public boolean isFixedStartIndex() {
+        return true;
+    }
 
     @Override
     public <T> Integer getStartIndex(Integer currentRowIndex, List<T> windowList) {

@@ -8,6 +8,11 @@ import java.util.List;
 public class EndRowRound extends WindowRound {
 
     @Override
+    public boolean isFixedEndIndex() {
+        return true;
+    }
+
+    @Override
     public <T> Integer getStartIndex(Integer currentRowIndex, List<T> windowList) {
         return null;
     }

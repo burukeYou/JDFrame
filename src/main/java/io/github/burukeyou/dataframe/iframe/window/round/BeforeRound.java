@@ -26,11 +26,7 @@ public class BeforeRound extends WindowRound {
 
     @Override
     public <T> Integer getStartIndex(Integer currentRowIndex, List<T> windowList) {
-        int index = currentRowIndex - n;
-        if (isIndexOutOfBounds(index,windowList)){
-            index = 0;
-        }
-        return index;
+        return  currentRowIndex - n;
     }
 
     @Override

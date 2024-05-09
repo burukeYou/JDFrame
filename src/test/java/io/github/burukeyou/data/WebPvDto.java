@@ -23,6 +23,7 @@ public class WebPvDto {
 
     private Integer max;
 
+    private BigDecimal avg;
 
     public WebPvDto(String type, Integer score, Integer pvCount) {
         this.type = type;

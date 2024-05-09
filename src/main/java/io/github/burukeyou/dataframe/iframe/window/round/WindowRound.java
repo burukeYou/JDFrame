@@ -7,12 +7,18 @@ import java.util.List;
  */
 public abstract class WindowRound {
 
+    /**
+     *  校验参数合法
+     */
     public void check(){}
 
-    public  <T> boolean isIndexOutOfBounds(int index, List<T> windowList){
-        return index < 0 || index >= windowList.size();
+    public boolean isFixedStartIndex(){
+        return false;
     }
 
+    public boolean isFixedEndIndex(){
+        return false;
+    }
 
     public abstract <T> Integer getStartIndex(Integer currentRowIndex, List<T> windowList);
 
