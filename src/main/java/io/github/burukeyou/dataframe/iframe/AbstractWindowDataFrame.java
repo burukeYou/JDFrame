@@ -9,7 +9,6 @@ import io.github.burukeyou.dataframe.util.FieldValueList;
 import io.github.burukeyou.dataframe.util.ListUtils;
 import io.github.burukeyou.dataframe.util.MathUtils;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
@@ -318,10 +317,6 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         return index >= round.getC1() && index <= round.getC2();
     }
 
-    public boolean isInRange(List<T> dataList,int index){
-        return index >= 0 && index < dataList.size();
-    }
-
     public boolean isAllRow(Window<T> overParam){
         return Round.START_ROW.equals(overParam.getStartRound()) && Round.END_ROW.equals(overParam.getEndRound());
     }
@@ -332,13 +327,6 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
                 BigDecimal value = SDFrame.read(windowList).sum(field);
                 return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
             }
-
-           /* List<FI2<T, BigDecimal>> result = new ArrayList<>();
-            for (int i = 0; i < windowList.size(); i++) {
-                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
-                BigDecimal sum = SDFrame.read(windowList).cut(indexRange.getC1(), indexRange.getC2()+1).sum(field);
-                result.add(new FI2<>(windowList.get(i),sum));
-            }*/
             return slidingWindowSum(windowList,overParam,field);
         };
         return overAbject(overParam,supplier);
@@ -353,11 +341,9 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         BigDecimal windowSum = BigDecimal.ZERO;
         for (int i = startIndex; i <= endIndex && i < nums.size(); i++) {
             if (i >= 0){
-//                windowSum += nums[i];
                 windowSum = windowSum.add(getBigDecimalValue(nums.get(i),field));
             }
         }
-//        result.add(windowSum);
         List<FI2<T, BigDecimal>> dataList = new ArrayList<>();
 
         dataList.add(new FI2<>(nums.get(0),windowSum));
@@ -368,21 +354,18 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
             if (!overParam.getEndRound().isFixedEndIndex()){
                 ++endIndex;
                 if (endIndex >= 0 && endIndex < nums.size()){
-//                windowSum += nums[endIndex];
                     windowSum = windowSum.add(getBigDecimalValue(nums.get(endIndex),field));
                 }
             }
 
             if (!overParam.getStartRound().isFixedStartIndex()){
                 if (startIndex >= 0 && startIndex < nums.size()){
-//                windowSum -= nums[startIndex];
                     windowSum = windowSum.subtract(getBigDecimalValue(nums.get(startIndex),field));
                 }
                 startIndex++;
             }
 
-//            result.add(windowSum);
-            if (endIndex >= 0){ // ?
+            if (endIndex >= 0){
                 dataList.add(new FI2<>(nums.get(index++),windowSum));
             }
         }
@@ -408,12 +391,6 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
                 return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
             }
 
-          /*  List<FI2<T, BigDecimal>> result = new ArrayList<>();
-            for (int i = 0; i < windowList.size(); i++) {
-                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
-                BigDecimal value = SDFrame.read(windowList).cut(indexRange.getC1(), indexRange.getC2()+1).avg(field);
-                result.add(new FI2<>(windowList.get(i),value));
-            }*/
             return slidingWindowAvg(windowList,overParam,field);
         };
         return overAbject(overParam,supplier);
@@ -520,8 +497,6 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         Integer maxIndex = queue.peekFirst();
         dataList.add(new FI2<>(nums.get(0),obj.get(maxIndex)));
 
-        System.out.println("初始化queue:【" + queue.toString());
-
         // 滑动窗口
         int index = 1;
         while (dataList.size() < nums.size()) {
@@ -543,14 +518,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
             }
 
             if (endIndex >= 0){
-                T t = nums.get(index++);
-                try {
-                    Field queue1 = t.getClass().getField("queue");
-                    queue1.set(t,queue.toString());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                dataList.add(new FI2<>(t,obj.get(queue.peekFirst())));
+                dataList.add(new FI2<>(nums.get(index++),obj.get(queue.peekFirst())));
 
             }
         }
@@ -578,8 +546,6 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         Integer maxIndex = queue.peekFirst();
         dataList.add(new FI2<>(nums.get(0),obj.get(maxIndex)));
 
-        System.out.println("初始化queue:【" + queue.toString());
-
         // 滑动窗口
         int index = 1;
         while (dataList.size() < nums.size()) {
@@ -594,22 +560,12 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
                 startIndex++;
             }
 
-            // 窗口边界更新了，将越界的最大元素移除掉， 只要最大值没有越界就可以获取到，
-            // 那些不是最大值的虽然可能已经出窗口了但是获取不到不用管
             while(!queue.isEmpty() && queue.peekFirst() < startIndex){
                 queue.removeFirst();
             }
 
             if (endIndex >= 0){
-                T t = nums.get(index++);
-                try {
-                    Field queue1 = t.getClass().getField("queue");
-                    queue1.set(t,queue.toString());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                dataList.add(new FI2<>(t,obj.get(queue.peekFirst())));
-
+                dataList.add(new FI2<>(nums.get(index++),obj.get(queue.peekFirst())));
             }
         }
         return dataList;
@@ -621,13 +577,6 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
                 F value = SDFrame.read(windowList).maxValue(field);
                 return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
             }
-
-            List<FI2<T, F>> result = new ArrayList<>();
-           /* for (int i = 0; i < windowList.size(); i++) {
-                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
-                F value = SDFrame.read(windowList).cut(indexRange.getC1(), indexRange.getC2()+1).maxValue(field);
-                result.add(new FI2<>(windowList.get(i),value));
-            }*/
             return slidingWindowForMaxValue(windowList,overParam,field);
         };
         return overAbject(overParam,supplier);
@@ -639,13 +588,6 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
                 F value = SDFrame.read(windowList).minValue(field);
                 return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
             }
-
-          /*  List<FI2<T, F>> result = new ArrayList<>();
-            for (int i = 0; i < windowList.size(); i++) {
-                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
-                F value = SDFrame.read(windowList).cut(indexRange.getC1(), indexRange.getC2()+1).minValue(field);
-                result.add(new FI2<>(windowList.get(i),value));
-            }*/
             return slidingWindowForMinValue(windowList,overParam,field);
         };
         return overAbject(overParam,supplier);
