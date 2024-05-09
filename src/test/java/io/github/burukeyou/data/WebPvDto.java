@@ -25,6 +25,8 @@ public class WebPvDto {
 
     private BigDecimal avg;
 
+    public String queue;
+
     public WebPvDto(String type, Integer score, Integer pvCount) {
         this.type = type;
         this.score = score;
