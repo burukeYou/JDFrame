@@ -202,7 +202,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrameImpl<T> sortDesc(Function<T, R> function) {
+    public <R extends Comparable<? super R>> JDFrameImpl<T> sortDesc(Function<T, R> function) {
         return sortDesc(Comparator.comparing(function));
     }
 

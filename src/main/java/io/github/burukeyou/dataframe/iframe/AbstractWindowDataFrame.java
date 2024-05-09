@@ -5,6 +5,7 @@ import io.github.burukeyou.dataframe.iframe.window.SupplierFunction;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.iframe.window.WindowBuilder;
 import io.github.burukeyou.dataframe.iframe.window.round.Round;
+import io.github.burukeyou.dataframe.util.FieldValueList;
 import io.github.burukeyou.dataframe.util.ListUtils;
 import io.github.burukeyou.dataframe.util.MathUtils;
 
@@ -479,30 +480,86 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         return getIndexRange(overParam, 0, windowList);
     }
 
-    public <F extends Comparable<? super F>> List<FI2<T, F>> slidingWindowMaxValue(List<T> nums, Window<T> overParam, Function<T, F> field) {
-        FI2<Integer, Integer> round = getFirstSlidingWindow(nums, overParam);
-        int k = round.getC2() - round.getC1() + 1;
-        // 双端队列， 单调递减
-        LinkedList<Integer> queue = new LinkedList<>();
-        List<FI2<T, F>> result = new ArrayList<>();
+    public <F extends Comparable<? super F>> void updateSlidingWindowMaxQueue(LinkedList<Integer> queue,FieldValueList<T, F> obj, int i){
+        // 移除比当前元素小的
+        while (!queue.isEmpty() && obj.get(queue.peekLast()).compareTo(obj.get(i)) < 0){
+            queue.removeLast();
+        }
+        // 添加队列
+        queue.add(i);
+    }
 
-        // 枚举右边界，    窗口范围：  [i-k, i]
-        for(int i = 0; i < nums.size() ;i++){
-            while(!queue.isEmpty() && field.apply(nums.get(queue.peekLast())).compareTo(field.apply(nums.get(i))) <= 0){
-                queue.removeLast();
+    public <F extends Comparable<? super F>> List<FI2<T, F>> slidingWindowForMaxValue(List<T> nums, Window<T> overParam, Function<T, F> field) {
+        FI2<Integer, Integer> firstSlidingWindow = getFirstSlidingWindow(nums, overParam);
+        Integer startIndex = firstSlidingWindow.getC1();
+        Integer endIndex = firstSlidingWindow.getC2();
+        FieldValueList<T, F> obj = new FieldValueList<>(nums, field);
+
+        // 双端队列，存放窗口内的元素的索引。 单调递减
+        LinkedList<Integer> queue = new LinkedList<>();
+
+        // 计算第一个窗口的最大值
+        List<Integer> col = SDFrame.read(nums)
+                .cut(startIndex, endIndex + 1)
+                .window()
+                .overRowNumber()
+                .sortDesc(e -> field.apply(e.getC1()))
+                .col(e -> e.getC2() - 1);
+        queue = new LinkedList<>(col);
+   /*     for (int i = startIndex; i <= endIndex && i < nums.size(); i++) {
+            if (i < 0){
+                continue;
             }
-            queue.add(i);
-            if (queue.peekFirst() < i - k + 1){
-                // 不在窗口内移除掉
+
+            // 找到插入位置
+            if(queue.isEmpty()){
+                queue.add(i);
+                continue;
+            }
+            int addIndex = queue.size() - 1;
+            for (int j =  queue.size() - 1; j >= 0; j--) {
+                if (obj.get(j).compareTo(obj.get(i)) < 0) {
+                    addIndex--;
+                    continue;
+                }
+            }
+            if (addIndex == queue.size() - 1){
+                queue.addLast(i);
+            }else if (addIndex <= 0){
+                queue.addFirst(i);
+            }else {
+                queue.add(addIndex,i);
+            }
+        }*/
+
+        List<FI2<T, F>> dataList = new ArrayList<>();
+        Integer maxIndex = queue.peekFirst();
+        dataList.add(new FI2<>(nums.get(0),obj.get(maxIndex)));
+
+        // 滑动窗口
+        int index = 1;
+        while (dataList.size() < nums.size()) {
+            if (!overParam.getEndRound().isFixedEndIndex()){
+                ++endIndex;
+                if (endIndex >= 0 && endIndex < nums.size()){
+                    updateSlidingWindowMaxQueue(queue,obj,endIndex);
+                }
+            }
+
+            if (!overParam.getStartRound().isFixedStartIndex()){
+                startIndex++;
+            }
+
+            // 窗口边界更新了，将越界的最大元素移除掉
+            while(!queue.isEmpty() && queue.peekFirst() < startIndex){
                 queue.removeFirst();
             }
 
-            if (i >= round.getC2()){
-                F windowMaxValue = field.apply(nums.get(queue.peekFirst()));
-                result.add(new FI2<>(nums.get(i),windowMaxValue));
+            if (endIndex >= 0){
+                dataList.add(new FI2<>(nums.get(index++),obj.get(queue.peekFirst())));
             }
         }
-        return result;
+        return dataList;
     }
 
     protected <F extends Comparable<? super F>>  List<FI2<T, F>>  windowFunctionForMaxValue(Window<T> overParam, Function<T, F> field) {
@@ -518,7 +575,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
                 F value = SDFrame.read(windowList).cut(indexRange.getC1(), indexRange.getC2()+1).maxValue(field);
                 result.add(new FI2<>(windowList.get(i),value));
             }*/
-            return slidingWindowMaxValue(windowList,overParam,field);
+            return slidingWindowForMaxValue(windowList,overParam,field);
         };
         return overAbject(overParam,supplier);
     }

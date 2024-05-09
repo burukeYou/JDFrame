@@ -272,7 +272,7 @@ public interface SDFrame<T> extends IFrame<T> {
      * @param function      sort field
      * @param <R>           the  sort field type
      */
-    <R extends Comparable<R>> SDFrame<T> sortDesc(Function<T, R> function);
+    <R extends Comparable<? super R>> SDFrame<T> sortDesc(Function<T, R> function);
 
     /**
      * Ascending order

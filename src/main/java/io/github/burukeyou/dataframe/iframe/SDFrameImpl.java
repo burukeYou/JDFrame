@@ -228,7 +228,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> sortDesc(Function<T, R> function) {
+    public <R extends Comparable<? super R>> SDFrame<T> sortDesc(Function<T, R> function) {
         sortDesc(Comparator.comparing(function));
         return this;
     }
