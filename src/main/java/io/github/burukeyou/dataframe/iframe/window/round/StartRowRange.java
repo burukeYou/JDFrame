@@ -3,22 +3,22 @@ package io.github.burukeyou.dataframe.iframe.window.round;
 import java.util.List;
 
 /**
- *  The Last row
+ *  The first row
  */
-public class EndRowRound extends WindowRound {
+public class StartRowRange implements WindowRange {
 
     @Override
-    public boolean isFixedEndIndex() {
+    public boolean isFixedStartIndex() {
         return true;
     }
 
     @Override
     public <T> Integer getStartIndex(Integer currentRowIndex, List<T> windowList) {
-        return null;
+        return 0;
     }
 
     @Override
     public <T> Integer getEndIndex(Integer currentRowIndex, List<T> windowList) {
-        return windowList.size() - 1;
+        return null;
     }
 }

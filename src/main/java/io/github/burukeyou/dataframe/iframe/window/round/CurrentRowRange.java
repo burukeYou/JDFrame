@@ -7,7 +7,7 @@ import java.util.List;
  * Current row
  * @author caizhihao
  */
-public class CurrentRowRound extends WindowRound {
+public class CurrentRowRange implements WindowRange {
 
     @Override
     public <T> Integer getStartIndex(Integer currentRowIndex, List<T> windowList) {

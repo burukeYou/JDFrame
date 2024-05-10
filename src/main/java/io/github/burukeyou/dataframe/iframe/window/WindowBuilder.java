@@ -1,7 +1,7 @@
 package io.github.burukeyou.dataframe.iframe.window;
 
-import io.github.burukeyou.dataframe.iframe.window.round.Round;
-import io.github.burukeyou.dataframe.iframe.window.round.WindowRound;
+import io.github.burukeyou.dataframe.iframe.window.round.Range;
+import io.github.burukeyou.dataframe.iframe.window.round.WindowRange;
 
 import java.util.Comparator;
 import java.util.List;
@@ -16,9 +16,9 @@ public class WindowBuilder<T>  implements Window<T> {
     private List<Function<T,?>> groupBy;
     protected Sorter<T> sorter;
 
-    private WindowRound startRound;
+    private WindowRange startRange;
 
-    private WindowRound endRound;
+    private WindowRange endRange;
 
     public WindowBuilder() {
     }
@@ -32,17 +32,17 @@ public class WindowBuilder<T>  implements Window<T> {
         this.groupBy = groupBy;
     }
 
-    public WindowBuilder(WindowRound startRound, WindowRound endRound) {
+    public WindowBuilder(WindowRange startRound, WindowRange endRound) {
        roundBetween(startRound, endRound);
     }
 
     public void initDefault() {
-        if (startRound == null){
-            this.startRound =  Round.START_ROW;
+        if (startRange == null){
+            this.startRange =  Range.START_ROW;
         }
 
-        if (endRound == null){
-            this.endRound = Round.END_ROW;
+        if (endRange == null){
+            this.endRange = Range.END_ROW;
         }
     }
 
@@ -51,12 +51,12 @@ public class WindowBuilder<T>  implements Window<T> {
         return sorter == null ? null : sorter.getComparator();
     }
 
-    public WindowRound getStartRound() {
-        return startRound;
+    public WindowRange getStartRange() {
+        return startRange;
     }
 
-    public WindowRound getEndRound() {
-        return endRound;
+    public WindowRange getEndRange() {
+        return endRange;
     }
 
     public List<Function<T, ?>> partitions() {
@@ -92,63 +92,63 @@ public class WindowBuilder<T>  implements Window<T> {
     }
 
     @Override
-    public Window<T> roundBetween(WindowRound start, WindowRound end) {
-        if (Round.END_ROW.eq(start)){
+    public Window<T> roundBetween(WindowRange start, WindowRange end) {
+        if (Range.END_ROW.eq(start)){
             throw new IllegalArgumentException("The starting boundary param cannot be set to END_ROW");
         }
-        if (Round.AFTER_ROW.eq(start)){
+        if (Range.AFTER_ROW.eq(start)){
             throw new IllegalArgumentException("The starting boundary param cannot be set to AFTER_ROW");
         }
 
-        if (Round.START_ROW.eq(end)){
+        if (Range.START_ROW.eq(end)){
             throw new IllegalArgumentException("The ending boundary param cannot be set to START_ROW");
         }
 
-        if (Round.BEFORE_ROW.eq(end)){
+        if (Range.BEFORE_ROW.eq(end)){
             throw new IllegalArgumentException("The ending boundary param cannot be set to BEFORE_ROW");
         }
 
         start.check();
         end.check();
 
-        this.startRound = start;
-        this.endRound = end;
+        this.startRange = start;
+        this.endRange = end;
         return this;
     }
 
     @Override
     public Window<T> roundBefore2CurrentRow(int n) {
-        roundBetween(Round.BEFORE(n),Round.CURRENT_ROW);
+        roundBetween(Range.BEFORE(n), Range.CURRENT_ROW);
         return this;
     }
 
     @Override
     public Window<T> roundCurrentRow2After(int n) {
-        roundBetween(Round.CURRENT_ROW,Round.AFTER(n));
+        roundBetween(Range.CURRENT_ROW, Range.AFTER(n));
         return this;
     }
 
     @Override
     public Window<T> roundCurrentRow2EndRow() {
-        roundBetween(Round.CURRENT_ROW,Round.END_ROW);
+        roundBetween(Range.CURRENT_ROW, Range.END_ROW);
         return this;
     }
 
     @Override
     public Window<T> roundStartRow2CurrentRow() {
-        roundBetween(Round.START_ROW,Round.CURRENT_ROW);
+        roundBetween(Range.START_ROW, Range.CURRENT_ROW);
         return this;
     }
 
     @Override
     public Window<T> roundAllRow() {
-        roundBetween(Round.START_ROW,Round.END_ROW);
+        roundBetween(Range.START_ROW, Range.END_ROW);
         return this;
     }
 
     @Override
     public Window<T> roundBeforeAfter(int before, int after) {
-        roundBetween(Round.BEFORE(before),Round.AFTER(after));
+        roundBetween(Range.BEFORE(before), Range.AFTER(after));
         return this;
     }
 }

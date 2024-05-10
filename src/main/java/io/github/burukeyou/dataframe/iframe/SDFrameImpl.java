@@ -698,7 +698,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public WindowSDFrame<T> window() {
-        WindowSDFrameImpl<T> frame = new WindowSDFrameImpl<>(EMPTY_WINDOW,stream());
+        WindowSDFrameImpl<T> frame = new WindowSDFrameImpl<>(emptyWindow,stream());
         transmitMember(this,frame);
         return frame;
     }
@@ -714,7 +714,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrame<FI2<T, Integer>> overRowNumber() {
-        return overRowNumber(EMPTY_WINDOW);
+        return overRowNumber(emptyWindow);
     }
     @Override
     public SDFrameImpl<T> overRowNumberS(SetFunction<T,Integer> setFunction, Window<T> overParam) {
@@ -723,7 +723,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrame<T> overRowNumberS(SetFunction<T, Integer> setFunction) {
-        return overRowNumberS(setFunction,EMPTY_WINDOW);
+        return overRowNumberS(setFunction, emptyWindow);
     }
 
     @Override
@@ -777,7 +777,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrameImpl<FI2<T, F>> overLag(Function<T, F> field, int n) {
-        return overLag(EMPTY_WINDOW,field,n);
+        return overLag(emptyWindow,field,n);
     }
 
     @Override
@@ -797,7 +797,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrameImpl<FI2<T, F>> overLead(Function<T, F> field, int n) {
-        return overLead(EMPTY_WINDOW,field,n);
+        return overLead(emptyWindow,field,n);
     }
 
     @Override
@@ -817,7 +817,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrameImpl<FI2<T, F>> overNthValue(Function<T, F> field, int n) {
-        return overNthValue(EMPTY_WINDOW,field,n);
+        return overNthValue(emptyWindow,field,n);
     }
 
     @Override
@@ -837,7 +837,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrameImpl<FI2<T, F>> overFirstValue(Function<T, F> field) {
-        return overFirstValue(EMPTY_WINDOW,field);
+        return overFirstValue(emptyWindow,field);
     }
 
     @Override
@@ -857,7 +857,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrameImpl<FI2<T, F>> overLastValue(Function<T, F> field) {
-        return overLastValue(EMPTY_WINDOW,field);
+        return overLastValue(emptyWindow,field);
     }
 
     @Override
@@ -872,7 +872,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrameImpl<FI2<T, BigDecimal>> overSum(Function<T, F> field) {
-        return overSum(EMPTY_WINDOW,field);
+        return overSum(emptyWindow,field);
     }
 
     @Override
@@ -882,7 +882,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrameImpl<T> overSumS(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
-        return overSumS(setFunction,EMPTY_WINDOW,field);
+        return overSumS(setFunction, emptyWindow,field);
     }
 
     @Override
@@ -892,7 +892,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrameImpl<FI2<T, BigDecimal>> overAvg(Function<T, F> field) {
-        return overAvg(EMPTY_WINDOW,field);
+        return overAvg(emptyWindow,field);
     }
 
     @Override
@@ -902,7 +902,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F> SDFrameImpl<T> overAvgS(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
-        return overAvgS(setFunction,EMPTY_WINDOW,field);
+        return overAvgS(setFunction, emptyWindow,field);
     }
 
     @Override
@@ -912,7 +912,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F extends Comparable<? super F>> SDFrameImpl<FI2<T, F>> overMaxValue(Function<T, F> field) {
-        return overMaxValue(EMPTY_WINDOW,field);
+        return overMaxValue(emptyWindow,field);
     }
 
     @Override
@@ -922,7 +922,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F extends Comparable<? super F>> SDFrameImpl<T> overMaxValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
-        return overMaxValueS(setFunction,EMPTY_WINDOW,field);
+        return overMaxValueS(setFunction, emptyWindow,field);
     }
 
     @Override
@@ -932,7 +932,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F extends Comparable<? super F>> SDFrameImpl<FI2<T, F>> overMinValue(Function<T, F> field) {
-        return overMinValue(EMPTY_WINDOW,field);
+        return overMinValue(emptyWindow,field);
     }
 
     @Override
@@ -942,7 +942,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <F extends Comparable<? super F>> SDFrameImpl<T> overMinValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
-        return overMinValueS(setFunction,EMPTY_WINDOW,field);
+        return overMinValueS(setFunction, emptyWindow,field);
     }
 
     @Override
@@ -952,7 +952,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrameImpl<FI2<T, Integer>> overCount() {
-        return overCount(EMPTY_WINDOW);
+        return overCount(emptyWindow);
     }
 
     @Override
@@ -962,13 +962,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrameImpl<T> overCountS(SetFunction<T, Integer> setFunction) {
-        return overCountS(setFunction,EMPTY_WINDOW);
+        return overCountS(setFunction, emptyWindow);
     }
 
 
     @Override
     public SDFrameImpl<FI2<T, Integer>> overNtile(int n) {
-        return overNtile(EMPTY_WINDOW, n);
+        return overNtile(emptyWindow, n);
     }
 
     @Override
@@ -983,7 +983,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrameImpl<T> overNtileS(SetFunction<T, Integer> setFunction, int n) {
-        return overNtileS(setFunction,EMPTY_WINDOW,n);
+        return overNtileS(setFunction, emptyWindow,n);
     }
 
     @Override

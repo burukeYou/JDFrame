@@ -4,7 +4,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.window.SupplierFunction;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.iframe.window.WindowBuilder;
-import io.github.burukeyou.dataframe.iframe.window.round.Round;
+import io.github.burukeyou.dataframe.iframe.window.round.Range;
 import io.github.burukeyou.dataframe.util.FieldValueList;
 import io.github.burukeyou.dataframe.util.ListUtils;
 import io.github.burukeyou.dataframe.util.MathUtils;
@@ -17,15 +17,16 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 /**
+ * Window DataFrame implement
+ *
  * @author  caizhihao
  * @param <T>
  */
 public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
 
-    protected final Window<T> EMPTY_WINDOW = new WindowBuilder<>(Round.START_ROW,Round.END_ROW);
+    protected final Window<T> emptyWindow = new WindowBuilder<>(Range.START_ROW, Range.END_ROW);
 
     protected Window<T> window;
-
 
     protected  <V> List<FI2<T, V>> overAbject(Window<T> overParam,
                                               SupplierFunction<T,V> supplier) {
@@ -304,8 +305,8 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
     }
 
     public <V> FI2<Integer,Integer> getIndexRange(Window<T> overParam, int currentIndex,List<V> windowList){
-        Integer startIndex = overParam.getStartRound().getStartIndex(currentIndex, windowList);
-        Integer endIndex = overParam.getEndRound().getEndIndex(currentIndex, windowList);
+        Integer startIndex = overParam.getStartRange().getStartIndex(currentIndex, windowList);
+        Integer endIndex = overParam.getEndRange().getEndIndex(currentIndex, windowList);
         return new FI2<>(startIndex, endIndex);
     }
 
@@ -314,7 +315,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
     }
 
     public boolean isAllRow(Window<T> overParam){
-        return Round.START_ROW.equals(overParam.getStartRound()) && Round.END_ROW.equals(overParam.getEndRound());
+        return Range.START_ROW.equals(overParam.getStartRange()) && Range.END_ROW.equals(overParam.getEndRange());
     }
 
     protected <F> List<FI2<T, BigDecimal>> windowFunctionForSum(Window<T> overParam, Function<T, F> field) {
@@ -347,14 +348,14 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         // 滑动窗口并计算后续窗口的和 移动次数
         int index = 1;
         while (dataList.size() < nums.size()) {
-            if (!overParam.getEndRound().isFixedEndIndex()){
+            if (!overParam.getEndRange().isFixedEndIndex()){
                 ++endIndex;
                 if (endIndex >= 0 && endIndex < nums.size()){
                     windowSum = windowSum.add(getBigDecimalValue(nums.get(endIndex),field));
                 }
             }
 
-            if (!overParam.getStartRound().isFixedStartIndex()){
+            if (!overParam.getStartRange().isFixedStartIndex()){
                 if (startIndex >= 0 && startIndex < nums.size()){
                     windowSum = windowSum.subtract(getBigDecimalValue(nums.get(startIndex),field));
                 }
@@ -413,7 +414,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         int index = 1;
         while (dataList.size() < nums.size()) {
             // 滑动右窗口
-            if (!overParam.getEndRound().isFixedEndIndex()){
+            if (!overParam.getEndRange().isFixedEndIndex()){
                 ++endIndex;
                 if (endIndex >= 0 && endIndex < nums.size()){
                     windowSum = windowSum.add(getBigDecimalValue(nums.get(endIndex),field));
@@ -421,7 +422,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
             }
 
             // 滑动左窗口
-            if (!overParam.getStartRound().isFixedStartIndex()){
+            if (!overParam.getStartRange().isFixedStartIndex()){
                 if (startIndex >= 0 && startIndex < nums.size()){
                     windowSum = windowSum.subtract(getBigDecimalValue(nums.get(startIndex),field));
                 }
@@ -496,14 +497,14 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         // 滑动窗口
         int index = 1;
         while (dataList.size() < nums.size()) {
-            if (!overParam.getEndRound().isFixedEndIndex()){
+            if (!overParam.getEndRange().isFixedEndIndex()){
                 ++endIndex;
                 if (endIndex >= 0 && endIndex < nums.size()){
                     updateSlidingWindowMaxQueue(queue,obj,endIndex);
                 }
             }
 
-            if (!overParam.getStartRound().isFixedStartIndex()){
+            if (!overParam.getStartRange().isFixedStartIndex()){
                 startIndex++;
             }
 
@@ -545,14 +546,14 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         // 滑动窗口
         int index = 1;
         while (dataList.size() < nums.size()) {
-            if (!overParam.getEndRound().isFixedEndIndex()){
+            if (!overParam.getEndRange().isFixedEndIndex()){
                 ++endIndex;
                 if (endIndex >= 0 && endIndex < nums.size()){
                     updateSlidingWindowMinQueue(queue,obj,endIndex);
                 }
             }
 
-            if (!overParam.getStartRound().isFixedStartIndex()){
+            if (!overParam.getStartRange().isFixedStartIndex()){
                 startIndex++;
             }
 

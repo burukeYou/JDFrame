@@ -6,14 +6,14 @@ import java.util.List;
  * The last n rows of the current row
  * @author caizhihao
  */
-public class AfterRound extends WindowRound {
+public class AfterRange implements WindowRange {
 
     protected int n = 0;
 
-    public AfterRound() {
+    public AfterRange() {
     }
 
-    public AfterRound(int n) {
+    public AfterRange(int n) {
         this.n = n;
     }
 

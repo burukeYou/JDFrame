@@ -6,14 +6,14 @@ import java.util.List;
  * The first n rows of the current row
  * @author caizhihao
  */
-public class BeforeRound extends WindowRound {
+public class BeforeRange implements WindowRange {
 
     protected int n = 0;
 
-    public BeforeRound() {
+    public BeforeRange() {
     }
 
-    public BeforeRound(int n) {
+    public BeforeRange(int n) {
         this.n = n;
     }
 
