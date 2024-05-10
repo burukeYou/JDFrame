@@ -19,13 +19,15 @@ public class WebPvDto {
 
     private Integer densRank;
 
+    private BigDecimal percentRank;
+
     private BigDecimal sum;
 
     private Integer max;
 
     private BigDecimal avg;
 
-    public String queue;
+    public Object value;
 
     public WebPvDto(String type, Integer score, Integer pvCount) {
         this.type = type;

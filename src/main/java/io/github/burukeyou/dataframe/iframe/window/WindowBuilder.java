@@ -42,11 +42,7 @@ public class WindowBuilder<T>  implements Window<T> {
         }
 
         if (endRound == null){
-            if (sorter == null || sorter.getComparator() == null){
-                this.endRound = Round.END_ROW;
-            }else {
-                this.endRound = Round.CURRENT_ROW;
-            }
+            this.endRound = Round.END_ROW;
         }
     }
 

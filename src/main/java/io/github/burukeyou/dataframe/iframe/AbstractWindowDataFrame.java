@@ -22,13 +22,10 @@ import static java.util.stream.Collectors.toList;
  */
 public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
 
-    protected final Window<T> EMPTY_WINDOW = new WindowBuilder<>();
+    protected final Window<T> EMPTY_WINDOW = new WindowBuilder<>(Round.START_ROW,Round.END_ROW);
 
     protected Window<T> window;
 
-    public void setWindow(Window<T> window) {
-        this.window = window;
-    }
 
     protected  <V> List<FI2<T, V>> overAbject(Window<T> overParam,
                                               SupplierFunction<T,V> supplier) {
@@ -52,11 +49,11 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         List<List<T>> allWindowList = new ArrayList<>();
         dfsFindWindow(allWindowList,windowList,partitionList,0);
 
-        for (List<T> window : allWindowList) {
+        for (List<T> data : allWindowList) {
             if (comparator != null){
-                window.sort(comparator);
+                data.sort(comparator);
             }
-            List<FI2<T, V>> tmpList = supplier.get(window);
+            List<FI2<T, V>> tmpList = supplier.get(data);
             result.addAll(tmpList);
         }
 
@@ -148,7 +145,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
             List<FI2<T, BigDecimal>> result = new ArrayList<>();
             int n = windowList.size();
             int rank = 1;
-            result.add(new FI2<>(windowList.get(0), new BigDecimal("0.00")));
+            result.add(new FI2<>(windowList.get(0), BigDecimal.ZERO));
             for (int i = 1; i < windowList.size(); i++) {
                 T pre = windowList.get(i-1);
                 T cur = windowList.get(i);
@@ -156,7 +153,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
                     rank = i + 1;
                 }
                 if (rank <= n){
-                    BigDecimal divide = MathUtils.divide((rank - 1), windowList.size() - 1, 2);
+                    BigDecimal divide = MathUtils.divide((rank - 1), windowList.size() - 1, defaultScale,defaultRoundingMode);
                     result.add(new FI2<>(cur, divide));
                 }else {
                     break;
@@ -194,7 +191,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
             List<FI2<T, BigDecimal>> resultList = new ArrayList<>();
             result.forEach(e -> {
                 Integer count = rankCountMap.get(e.getC2());
-                BigDecimal divide = MathUtils.divide(count, windowList.size(), 2);
+                BigDecimal divide = MathUtils.divide(count, windowList.size(), defaultScale,defaultRoundingMode);
                 resultList.add(new FI2<>(e.getC1(),divide));
             });
             return resultList;
@@ -206,7 +203,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
     private void checkWindow(Window<T> overParam) {
         Comparator<T> comparator = overParam.getComparator();
         if (comparator == null){
-            throw new IllegalArgumentException("please specify a window");
+            throw new IllegalArgumentException("please specify window sort");
         }
     }
 
@@ -223,12 +220,9 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
                     continue;
                 }
 
-                if(overParam.getStartRound() != null){
-                    int startIndex = overParam.getStartRound().getStartIndex(i,windowList);
-                    if (preIndex < startIndex){
-                        // 越界为空
-                        preIndex = -1;
-                    }
+                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
+                if (!isInRange(indexRange,preIndex)){
+                    preIndex = -1;
                 }
 
                 F value = null;
@@ -251,12 +245,9 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
             for (int i = 0; i < windowList.size(); i++) {
                 int afterIndex = i + n;
 
-                if (overParam.getEndRound() != null){
-                    int endIndex = overParam.getEndRound().getEndIndex(i,windowList);
-                    if (afterIndex > endIndex){
-                        // 越界为空
-                        afterIndex = -1;
-                    }
+                FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
+                if (!isInRange(indexRange,afterIndex)){
+                    afterIndex = -1;
                 }
 
                 F value = null;
@@ -291,13 +282,18 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
             for (int i = 0; i < windowList.size(); i++) {
                 F value = null;
                 FI2<Integer, Integer> indexRange = getIndexRange(overParam, i, windowList);
+                if (indexRange.getC1() < 0){
+                    // 重新设置窗口开始边界
+                    indexRange.setC1(0);
+                }
+
                 if (n != -1){
                     // 获取窗口内的第n行
                     index = indexRange.getC1() + n - 1;
                 }else {
                     index = indexRange.getC2();
                 }
-                if (isInRange(indexRange,index)){
+                if (index >= 0 && index < windowList.size() && isInRange(indexRange,index)){
                     value = field.apply(windowList.get(index));
                 }
                 result.add(new FI2<>(windowList.get(i),value));
@@ -411,7 +407,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
             }
         }
         List<FI2<T, BigDecimal>> dataList = new ArrayList<>();
-        dataList.add(new FI2<>(nums.get(0),MathUtils.divide(windowSum,new BigDecimal(windowSize),4)));
+        dataList.add(new FI2<>(nums.get(0),MathUtils.divide(windowSum,new BigDecimal(windowSize),defaultScale,defaultRoundingMode)));
 
         // 滑动窗口并计算后续窗口的和 窗口大小
         int index = 1;
@@ -434,7 +430,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
 
             windowSize = getActualWindowSize(nums,startIndex,endIndex);
             if (endIndex >= 0){
-                dataList.add(new FI2<>(nums.get(index++),MathUtils.divide(windowSum,new BigDecimal(windowSize),4)));
+                dataList.add(new FI2<>(nums.get(index++),MathUtils.divide(windowSum,new BigDecimal(windowSize),defaultScale,defaultRoundingMode)));
             }
         }
         return dataList;
@@ -617,9 +613,52 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
     }
 
     protected List<FI2<T, Integer>> windowFunctionForNtile(Window<T> overParam, int n) {
+        if (n <= 0){
+            throw new IllegalArgumentException("incorrect arguments to ntile for " + n);
+        }
+
         SupplierFunction<T,Integer> supplier = (windowList) -> {
             List<FI2<T, Integer>> result = new ArrayList<>();
-            // todo Ntile实现
+
+            // 能均匀分
+            if (windowList.size() % n == 0){
+                int groupSize = windowList.size() / n;
+                int bucket = 1;
+                int index = 0;
+                for (T t : windowList) {
+                    index++;
+                    if (index > groupSize){
+                        bucket++;
+                        index = 1;
+                    }
+                    result.add(new FI2<>(t,bucket));
+                }
+                return result;
+            }
+
+            // 不能均匀分
+            // 如果不能平均分配，则优先分配较小编号的桶，并且各个桶中能放的行数最多相差1。
+            // 先分配组1，再分配组2，再分配组3。 如此循环直到将数字分配完
+            int[] arr = new int[n];
+            int count = windowList.size();
+            int index = 0;
+            while (count > 0){
+                if (index >= arr.length){
+                    index = 0;
+                }
+                arr[index++]++;
+                count--;
+            }
+
+            // 去消耗每个桶的数字，如果消耗完则桶编号增加
+            int bucket = 1;
+            for (int i = 0; i < windowList.size(); i++) {
+                arr[bucket-1]--;
+                result.add(new FI2<>(windowList.get(i),bucket));
+                if (arr[bucket-1] <= 0){
+                    bucket++;
+                }
+            }
             return result;
         };
         return overAbject(overParam,supplier);

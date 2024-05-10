@@ -691,13 +691,18 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public WindowSDFrame<T> window(Window<T> window) {
-        return new WindowSDFrameImpl<>(window,stream());
+        WindowSDFrameImpl<T> frame = new WindowSDFrameImpl<>(window, stream());
+        transmitMember(this,frame);
+        return frame;
     }
 
     @Override
     public WindowSDFrame<T> window() {
-        return new WindowSDFrameImpl<>(EMPTY_WINDOW,stream());
+        WindowSDFrameImpl<T> frame = new WindowSDFrameImpl<>(EMPTY_WINDOW,stream());
+        transmitMember(this,frame);
+        return frame;
     }
+
     @Override
     public  SDFrameImpl<FI2<T, Integer>> overRowNumber(Window<T> overParam) {
         return returnDF(windowFunctionForRowNumber(overParam));
@@ -938,7 +943,9 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     protected <R> SDFrameImpl<R> returnDF(List<R> dataList) {
-        return new SDFrameImpl<>(dataList);
+        SDFrameImpl<R> frame = new SDFrameImpl<>(dataList);
+        transmitMember(this,frame);
+        return frame;
     }
     
     

@@ -50,6 +50,11 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
         updateOldModelField();
     }
 
+    protected  void transmitMember(AbstractCommonFrame<?> from, AbstractCommonFrame<?> toFrame) {
+        toFrame.defaultScale = from.defaultScale;
+        toFrame.defaultRoundingMode = from.defaultRoundingMode;
+    }
+
     protected String[][] buildPrintDataArr(int limit) {
         List<T> dataList = toLists();
         if (dataList.isEmpty()){

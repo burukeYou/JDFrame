@@ -76,6 +76,10 @@ public class MathUtils {
     }
 
     public static <T1,T2> BigDecimal divide(T1 dividend, T2 divisor, int scale) {
+        return divide(dividend, divisor,scale, RoundingMode.HALF_UP);
+    }
+
+    public static <T1,T2> BigDecimal divide(T1 dividend, T2 divisor, int scale,RoundingMode roundingMode) {
         if (dividend == null || divisor == null) {
             return null;
         }
@@ -84,8 +88,7 @@ public class MathUtils {
         if (divisorBig.compareTo(BigDecimal.ZERO) == 0){
             return null;
         }
-
-        return dividendBig.divide(divisorBig, 8, RoundingMode.HALF_UP).setScale(scale, RoundingMode.HALF_UP);
+        return dividendBig.divide(divisorBig, scale, roundingMode);
     }
 
     public static <T> BigDecimal toBigDecimal(T value){

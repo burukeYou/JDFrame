@@ -680,10 +680,14 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
 
     protected <R> JDFrame<R> returnDF(Stream<R> stream) {
-        return from(stream);
+        JDFrameImpl<R> frame = from(stream);
+        transmitMember(this,frame);
+        return frame;
     }
 
     protected <R> JDFrameImpl<R> returnDF(List<R> dataList) {
-        return from(dataList);
+        JDFrameImpl<R> frame = from(dataList);
+        transmitMember(this,frame);
+        return frame;
     }
 }

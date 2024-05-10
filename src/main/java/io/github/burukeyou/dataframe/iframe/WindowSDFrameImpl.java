@@ -20,7 +20,9 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     protected <R> WindowSDFrameImpl<R> returnWDF(Window<R> window,Stream<R> stream) {
-        return new WindowSDFrameImpl<>(window,stream);
+        WindowSDFrameImpl<R> frame = new WindowSDFrameImpl<>(window, stream);
+        transmitMember(this,frame);
+        return frame;
     }
 
     @Override
