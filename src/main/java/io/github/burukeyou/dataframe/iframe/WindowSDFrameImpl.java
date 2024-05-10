@@ -150,4 +150,14 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     public WindowSDFrameImpl<T> overCountS(SetFunction<T, Integer> setFunction) {
         return returnWDF(this.window, overCountS(setFunction,this.window).stream());
     }
+
+    @Override
+    public SDFrame<FI2<T, Integer>> overNtile(int n) {
+        return super.overNtile(this.window,n);
+    }
+
+    @Override
+    public WindowSDFrame<T> overNtileS(SetFunction<T, Integer> setFunction, int n) {
+        return returnWDF(this.window,super.overNtileS(setFunction, n).stream());
+    }
 }

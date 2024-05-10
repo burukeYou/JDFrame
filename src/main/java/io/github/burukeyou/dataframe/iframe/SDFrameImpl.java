@@ -912,9 +912,25 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return overCountS(setFunction,EMPTY_WINDOW);
     }
 
+
+    @Override
+    public SDFrame<FI2<T, Integer>> overNtile(int n) {
+        return overNtile(EMPTY_WINDOW, n);
+    }
+
     @Override
     public SDFrame<FI2<T, Integer>> overNtile(Window<T> overParam, int n) {
         return returnDF(windowFunctionForNtile(overParam,n));
+    }
+
+    @Override
+    public SDFrame<T> overNtileS(SetFunction<T, Integer> setFunction, Window<T> overParam, int n) {
+        return overNtile(overParam,n).forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
+    }
+
+    @Override
+    public SDFrame<T> overNtileS(SetFunction<T, Integer> setFunction, int n) {
+        return overNtileS(setFunction,EMPTY_WINDOW,n);
     }
 
     @Override

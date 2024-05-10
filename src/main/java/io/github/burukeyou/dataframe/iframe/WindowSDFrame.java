@@ -61,4 +61,8 @@ public interface WindowSDFrame<T> extends SDFrame<T>  {
     SDFrame<FI2<T,Integer>> overCount();
 
     WindowSDFrame<T> overCountS(SetFunction<T,Integer> setFunction);
+
+    SDFrame<FI2<T,Integer>> overNtile(int n);
+
+    WindowSDFrame<T> overNtileS(SetFunction<T,Integer> setFunction, int n);
 }
