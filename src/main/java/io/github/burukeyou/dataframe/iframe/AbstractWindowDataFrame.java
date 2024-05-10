@@ -664,5 +664,4 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
         return overAbject(overParam,supplier);
     }
 
-
 }

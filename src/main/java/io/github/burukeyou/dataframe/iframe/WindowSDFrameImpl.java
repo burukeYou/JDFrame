@@ -81,13 +81,33 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
+    public <F> WindowSDFrameImpl<T> overLagS(SetFunction<T, F> setFunction, Function<T, F> field, int n) {
+        return returnWDF(this.window,super.overLagS(setFunction, this.window,field, n).stream());
+    }
+
+    @Override
     public <F> SDFrameImpl<FI2<T, F>> overLead(Function<T, F> field, int n) {
         return super.overLead(this.window,field,n);
     }
 
     @Override
+    public <F> WindowSDFrame<T> overLeadS(SetFunction<T,F> setFunction,Function<T,F> field, int n){
+        return returnWDF(this.window,super.overLeadS(setFunction, this.window,field, n).stream());
+    }
+
+    @Override
     public <F> SDFrameImpl<FI2<T, F>> overNthValue(Function<T, F> field, int n) {
         return super.overNthValue(this.window,field,n);
+    }
+
+    @Override
+    public <F> WindowSDFrameImpl<T> overNthValueS(SetFunction<T, F> setFunction, Function<T, F> field, int n) {
+        return returnWDF(this.window,super.overNthValueS(setFunction, this.window,field, n).stream());
+    }
+
+    @Override
+    public <F> WindowSDFrameImpl<T> overFirstValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
+        return returnWDF(this.window,super.overFirstValueS(setFunction, this.window,field).stream());
     }
 
     @Override
@@ -98,7 +118,11 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     @Override
     public <F> SDFrameImpl<FI2<T, F>> overLastValue(Function<T, F> field) {
         return super.overNthValue(this.window,field,-1);
+    }
 
+    @Override
+    public <F> WindowSDFrameImpl<T> overLastValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
+        return returnWDF(this.window,super.overLastValueS(setFunction, this.window,field).stream());
     }
 
     @Override
@@ -152,12 +176,12 @@ public class WindowSDFrameImpl<T> extends SDFrameImpl<T> implements WindowSDFram
     }
 
     @Override
-    public SDFrame<FI2<T, Integer>> overNtile(int n) {
+    public SDFrameImpl<FI2<T, Integer>> overNtile(int n) {
         return super.overNtile(this.window,n);
     }
 
     @Override
-    public WindowSDFrame<T> overNtileS(SetFunction<T, Integer> setFunction, int n) {
+    public WindowSDFrameImpl<T> overNtileS(SetFunction<T, Integer> setFunction, int n) {
         return returnWDF(this.window,super.overNtileS(setFunction, n).stream());
     }
 }

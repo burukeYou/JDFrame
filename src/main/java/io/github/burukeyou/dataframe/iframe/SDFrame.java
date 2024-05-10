@@ -873,23 +873,43 @@ public interface SDFrame<T> extends IFrame<T> {
 
     <F> SDFrame<FI2<T,F>> overLag(Window<T> overParam,Function<T,F> field,int n);
 
+    <F> SDFrame<T> overLagS(SetFunction<T,F> setFunction,Window<T> overParam,Function<T,F> field,int n);
+
     <F> SDFrame<FI2<T,F>> overLag(Function<T,F> field,int n);
+
+    <F> SDFrame<T> overLagS(SetFunction<T,F> setFunction,Function<T,F> field,int n);
 
     <F> SDFrame<FI2<T,F>> overLead(Window<T> overParam,Function<T,F> field,int n);
 
+    <F> SDFrame<T> overLeadS(SetFunction<T,F> setFunction,Window<T> overParam,Function<T,F> field,int n);
+
     <F> SDFrame<FI2<T,F>> overLead(Function<T,F> field,int n);
+
+    <F> SDFrame<T> overLeadS(SetFunction<T,F> setFunction,Function<T,F> field,int n);
 
     <F> SDFrame<FI2<T,F>> overNthValue(Window<T> overParam,Function<T,F> field,int n);
 
+    <F> SDFrame<T> overNthValueS(SetFunction<T,F> setFunction,Window<T> overParam,Function<T,F> field,int n);
+
     <F> SDFrame<FI2<T,F>> overNthValue(Function<T,F> field,int n);
+
+    <F> SDFrame<T> overNthValueS(SetFunction<T,F> setFunction,Function<T,F> field,int n);
 
     <F> SDFrame<FI2<T,F>> overFirstValue(Window<T> overParam,Function<T,F> field);
 
+    <F> SDFrame<T> overFirstValueS(SetFunction<T,F> setFunction,Window<T> overParam,Function<T,F> field);
+
     <F> SDFrame<FI2<T,F>> overFirstValue(Function<T,F> field);
+
+    <F> SDFrame<T> overFirstValueS(SetFunction<T,F> setFunction,Function<T,F> field);
 
     <F> SDFrame<FI2<T,F>> overLastValue(Window<T> overParam,Function<T,F> field);
 
+    <F> SDFrame<T> overLastValueS(SetFunction<T,F> setFunction,Window<T> overParam,Function<T,F> field);
+
     <F> SDFrame<FI2<T,F>> overLastValue(Function<T,F> field);
+
+    <F> SDFrame<T> overLastValueS(SetFunction<T,F> setFunction,Function<T,F> field);
 
     <F> SDFrame<FI2<T,BigDecimal>> overSum(Window<T> overParam,Function<T,F> field);
 
