@@ -8,6 +8,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
@@ -38,6 +39,19 @@ public interface IFrame<T> extends Iterable<T>{
     <R> IFrame<R> from(Stream<R> data);
 
     IFrame<T> forEachDo(Consumer<? super T> action);
+
+    /**
+     * ===========================   Frame Setting =====================================
+     **/
+    /**
+     * Set default decimal places
+     */
+    IFrame<T> defaultScale(int scale);
+
+    /**
+     *  Set default decimal places
+     */
+    IFrame<T> defaultScale(int scale, RoundingMode roundingMode);
 
     /**
      * ===========================   Frame Info =====================================

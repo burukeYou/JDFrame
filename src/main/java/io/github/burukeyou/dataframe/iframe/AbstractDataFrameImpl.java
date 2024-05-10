@@ -15,7 +15,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collector;
@@ -201,7 +200,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         }
         return bigDecimalList.stream()
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .divide(BigDecimal.valueOf(bigDecimalList.size()),8, RoundingMode.HALF_UP);
+                .divide(BigDecimal.valueOf(bigDecimalList.size()), defaultScale, defaultRoundingMode);
     }
 
     public <R extends Comparable<? super R>> MaxMin<R> maxMinValue(Function<T, R> function) {

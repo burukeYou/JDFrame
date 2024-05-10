@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 @Getter
@@ -15,6 +16,39 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
     protected static final String MSG = "****";
 
     protected List<String> fieldList = new ArrayList<>();
+
+    protected int defaultScale = 2;
+    protected RoundingMode defaultRoundingMode = RoundingMode.HALF_UP;
+
+    protected static Field oldModeField;
+
+
+    static {
+        updateOldModelField();
+    }
+
+    private static void updateOldModelField() {
+        try {
+            oldModeField = RoundingMode.class.getDeclaredField("oldMode");
+            oldModeField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected int getOldRoundingMode(){
+        try {
+            return oldModeField.getInt(defaultRoundingMode);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected void initDefaultScale(int scale,RoundingMode roundingMode){
+        this.defaultScale = scale;
+        this.defaultRoundingMode = roundingMode;
+        updateOldModelField();
+    }
 
     protected String[][] buildPrintDataArr(int limit) {
         List<T> dataList = toLists();

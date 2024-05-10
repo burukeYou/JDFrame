@@ -10,6 +10,7 @@ import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.util.FrameUtil;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,20 @@ public interface SDFrame<T> extends IFrame<T> {
 
 
     SDFrame<T> forEachDo(Consumer<? super T> action);
+
+    /**
+     * ===========================   Frame Setting =====================================
+     **/
+
+    /**
+     * Set default decimal places
+     */
+    SDFrame<T> defaultScale(int scale);
+
+    /**
+     *  Set default decimal places
+     */
+    SDFrame<T> defaultScale(int scale, RoundingMode roundingMode);
 
 
     /**
