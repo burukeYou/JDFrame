@@ -173,10 +173,10 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
             int n = windowList.size();
             int rank = 1;
             Map<Integer,Integer> rankCountMap = new HashMap<>();
-            for (int i = 1; i < windowList.size(); i++) {
-                T pre = windowList.get(i-1);
+            for (int i = 0; i < windowList.size(); i++) {
+                T pre = i > 0 ? windowList.get(i-1) : null;
                 T cur = windowList.get(i);
-                if (overParam.getComparator().compare(pre,cur) != 0){
+                if (pre != null && overParam.getComparator().compare(pre,cur) != 0){
                     // 次数的rank累积的计数最大
                     rankCountMap.put(rank,i);
                     rank = i + 1;
