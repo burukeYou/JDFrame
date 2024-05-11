@@ -244,16 +244,16 @@ public interface JDFrame<T> extends IFrame<T> {
     /**
      * Add ranking columns by comparator
      *      Ranking logic, the same value means the Ranking is the same. This is different from {@link #addRowNumberCol}
-     * @param Sorter    the ranking  comparator
+     * @param sorter    the ranking  comparator
      */
-    JDFrame<FI2<T,Integer>> addRankCol(Sorter<T> Sorter);
+    JDFrame<FI2<T,Integer>> addRankCol(Sorter<T> sorter);
 
     /**
      * Add ranking column to a certain column by Comparator
-     * @param Sorter            the ranking  comparator
+     * @param sorter            the ranking  sorter
      * @param set                   certain column
      */
-    JDFrame<T> addRankCol(Sorter<T> Sorter, SetFunction<T,Integer> set);
+    JDFrame<T> addRankCol(Sorter<T> sorter, SetFunction<T,Integer> set);
 
 
 
