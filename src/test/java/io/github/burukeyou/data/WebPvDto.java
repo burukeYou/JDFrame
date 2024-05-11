@@ -2,8 +2,6 @@ package io.github.burukeyou.data;
 
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 @Data
 public class WebPvDto {
 
@@ -13,8 +11,12 @@ public class WebPvDto {
 
     private Integer pvCount;
 
-    private Integer rank;
+//    private Integer rank;
 
+    public  Object value;
+
+
+/*
     private Integer rowNumber;
 
     private Integer densRank;
@@ -26,14 +28,12 @@ public class WebPvDto {
     private Integer max;
 
     private BigDecimal avg;
+*/
 
-    public Object value;
 
     public WebPvDto(String type, Integer score, Integer pvCount) {
         this.type = type;
         this.score = score;
         this.pvCount = pvCount;
     }
-
-
 }
