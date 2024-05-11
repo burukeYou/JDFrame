@@ -23,10 +23,10 @@ public class WindowFunctionTest {
         dataList.add(new WebPvDto("a",4,2));
         dataList.add(new WebPvDto("a",5,4));
         dataList.add(new WebPvDto("a",6,4));
-//        dataList.add(new WebPvDto("b",7,4));
-//        dataList.add(new WebPvDto("b",8,4));
-//        dataList.add(new WebPvDto("b",7,6));
-//        dataList.add(new WebPvDto("b",8,2));
+        dataList.add(new WebPvDto("b",7,1));
+        dataList.add(new WebPvDto("b",8,4));
+        dataList.add(new WebPvDto("b",7,6));
+        dataList.add(new WebPvDto("b",8,2));
 
     }
 
@@ -35,7 +35,7 @@ public class WindowFunctionTest {
      */
     @Test
     public void testOverCount(){
-        SDFrame.read(dataList)
+ /*       SDFrame.read(dataList)
                 //.window()
                 //.window(Window.roundStartRow2CurrentRowBy())
                 //.window(Window.roundCurrentRow2EndRowBy())
@@ -46,7 +46,69 @@ public class WindowFunctionTest {
                 .window(Window.roundBetweenBy(Range.BEFORE(1), Range.AFTER(2)))
                 .overCount()
                 .show(30);
+*/
+        // 等价于 select count(*) over(partition by type rows between UNBOUNDED PRECEDING and CURRENT ROW)
+/*        SDFrame.read(dataList)
+                .window(Window.groupBy(WebPvDto::getType).sortDesc(WebPvDto::getPvCount).roundStartRow2CurrentRow())
+                .overCountS(WebPvDto::setValue)
+                .show(30);*/
 
+        // 等价于 select sum(pv_count) over(rows between 1 PRECEDING and 2 FOLLOWING)
+/*        JDFrame.read(dataList)
+                .window(Window.roundBetweenBy(Range.BEFORE(1),Range.AFTER(2)))
+                .overSumS(WebPvDto::setValue,WebPvDto::getPvCount)
+                .show(30);*/
+
+        // 等价于 select avg(pv_count) over(partition by type )
+      /*  SDFrame.read(dataList)
+                .defaultScale(4)
+                .window(Window.groupBy(WebPvDto::getType))
+                .overAvgS(WebPvDto::setValue,WebPvDto::getPvCount)
+                .show(30);*/
+
+        // 等价于 select max(pv_count) over(partition by type order pv_count asc)
+/*        SDFrame.read(dataList)
+                .window(Window.groupBy(WebPvDto::getType).sortAsc(WebPvDto::getPvCount))
+                .overMaxValueS(WebPvDto::setValue,WebPvDto::getPvCount)
+                .show(30);*/
+
+        // 等价于 select min(pv_count) over(rows between CURRENT ROW and 2 FOLLOWING)
+/*        SDFrame.read(dataList)
+                .window(Window.roundCurrentRow2AfterBy(2))
+                .overMinValueS(WebPvDto::setValue,WebPvDto::getPvCount)
+                .show(30);*/
+
+        // 等价于 select lag(pv_count,2) over(partition by type order pv_count desc)
+/*        SDFrame.read(dataList)
+                .window(Window.groupBy(WebPvDto::getType).sortDesc(WebPvDto::getPvCount))
+                .overLagS(WebPvDto::setValue,WebPvDto::getPvCount,2)
+                .show(30);*/
+
+
+        // 等价于 select lead(pv_count,3) over()
+/*        SDFrame.read(dataList)
+                .window()
+                .overLeadS(WebPvDto::setValue,WebPvDto::getPvCount,3)
+                .show(30);*/
+
+
+        // 等价于 select NTH_VALUE(pv_count,2) over(rows between 1 PRECEDING and CURRENT ROW)
+/*        SDFrame.read(dataList)
+                .window(Window.roundBefore2CurrentRowBy(3))
+                .overNthValueS(WebPvDto::setValue,WebPvDto::getPvCount,2)
+                .show(30);*/
+
+        // 等价于 select FIRST_VALUE(pv_count) over(rows between 2 PRECEDING and CURRENT ROW)
+/*        SDFrame.read(dataList)
+                .window(Window.roundBetweenBy(Range.BEFORE(2), Range.CURRENT_ROW))
+                .overFirstValueS(WebPvDto::setValue,WebPvDto::getPvCount)
+                .show(30);*/
+
+        // 等价于 select LAST_VALUE(pv_count) over(rows between 2 PRECEDING and 2 FOLLOWING)
+        SDFrame.read(dataList)
+                .window(Window.roundBeforeAfterBy(2,2))
+                .overLastValueS(WebPvDto::setValue,WebPvDto::getPvCount)
+                .show(30);
     }
 
     /**
@@ -62,7 +124,7 @@ public class WindowFunctionTest {
                 .window(Window.roundCurrentRow2AfterBy(2))
                 //.window(Window.sortAscBy(WebPvDto::getScore))
                 //.window(Window.roundBetweenBy(Round.BEFORE(100),Round.AFTER(100)))
-                .overSumS(WebPvDto::setSum,Window.roundBetweenBy(Range.BEFORE(1), Range.AFTER(1)),WebPvDto::getPvCount)
+                .overSumS(WebPvDto::setValue,Window.roundBetweenBy(Range.BEFORE(1), Range.AFTER(1)),WebPvDto::getPvCount)
                 .show(30);
 
     }
@@ -80,7 +142,7 @@ public class WindowFunctionTest {
                 //.window(Window.roundCurrentRow2AfterBy(2))
                 //.window(Window.sortAscBy(WebPvDto::getScore))
                 .window(Window.roundBetweenBy(Range.BEFORE(1), Range.AFTER(2)))
-                .overAvgS(WebPvDto::setAvg,WebPvDto::getPvCount)
+                .overAvgS(WebPvDto::setValue,WebPvDto::getPvCount)
                 .show(30);
     }
 
@@ -99,7 +161,7 @@ public class WindowFunctionTest {
                 //.window(Window.sortAscBy(WebPvDto::getScore))
                 .window(Window.roundBetweenBy(Range.BEFORE(1), Range.AFTER(1)))
                 //.overMaxValueS(WebPvDto::setMax,WebPvDto::getPvCount)
-                .overMinValueS(WebPvDto::setMax,WebPvDto::getPvCount)
+                .overMinValueS(WebPvDto::setValue,WebPvDto::getPvCount)
                 .show(30);
 
     }
@@ -118,6 +180,13 @@ public class WindowFunctionTest {
                 //.window(Window.sortAscBy(WebPvDto::getScore))
                 //.window(Window.roundStartRow2CurrentRowBy())
                 //.window(Window.roundBetweenBy(Round.BEFORE(1),Round.AFTER(2)))
+                .overLead(WebPvDto::getPvCount,2)
+                .show(30);
+
+
+        SDFrame.read(dataList)
+                //.window()
+                .window(Window.roundBefore2CurrentRowBy(2))
                 .overLead(WebPvDto::getPvCount,2)
                 .show(30);
     }
@@ -151,14 +220,34 @@ public class WindowFunctionTest {
      */
     @Test
     public void testOverRank(){
-        SDFrame.read(dataList)
+      /*  SDFrame.read(dataList)
                 .defaultScale(8)
                 .window(Window.sortAscBy(WebPvDto::getPvCount))
-                .overRowNumberS(WebPvDto::setRowNumber)
-                .overRankS(WebPvDto::setRank)
-                .overDenseRankS(WebPvDto::setDensRank)
-                .overPercentRankS(WebPvDto::setPercentRank)
+                .overRowNumberS(WebPvDto::setValue)
+                .overRankS(WebPvDto::setValue)
+                .overDenseRankS(WebPvDto::setValue)
+                .overPercentRankS(WebPvDto::setValue)
+                .show(30);*/
+
+        // 等价于 select rank() over(partition by type order pv_count desc)
+ /*       SDFrame.read(dataList)
+                .window(Window.groupBy(WebPvDto::getType).sortDesc(WebPvDto::getPvCount))
+                .overRankS(WebPvDto::setValue)
+                .show(30);*/
+
+        // 等价于 select  PERCENT_RANK() over(partition by type order pv_count desc)
+       /* SDFrame.read(dataList)
+                .defaultScale(6)
+                .window(Window.groupBy(WebPvDto::getType).sortDesc(WebPvDto::getPvCount))
+                .overPercentRankS(WebPvDto::setValue)
+                .show(30);*/
+
+        // select  cume_dist() over(partition by type order pv_count desc)
+        SDFrame.read(dataList)
+                .window(Window.groupBy(WebPvDto::getType).sortDesc(WebPvDto::getPvCount))
+                .overCumeDistS(WebPvDto::setValue)
                 .show(30);
+
     }
 
     /**
@@ -168,15 +257,16 @@ public class WindowFunctionTest {
      */
     @Test
     public void testOverNtile(){
+        // 等价于 select  Ntile(3) over(partition by type order pv_count desc)
         SDFrame.read(dataList)
                 .window(Window.groupBy(WebPvDto::getType))
-                .overNtile(3)
+                .overNtileS(WebPvDto::setValue,3)
                 .show(30);
     }
 
     /**
      *  CumeDist： 累积分布的比率
-     *         先生成排名编号（相同值认为排名一样）， 然后计算 （大于等于该排名编号的数量 / 窗口行数） 作为结果
+     *         先深层成排名编号（相同值认为排名一样）， 然后计算 （大于等于该排名编号的数量 / 窗口行数） 作为结果
      */
     @Test
     public void testOverCumeDist(){
