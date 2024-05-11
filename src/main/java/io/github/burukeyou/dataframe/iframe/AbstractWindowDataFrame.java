@@ -384,7 +384,9 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
     protected <F> List<FI2<T, BigDecimal>> windowFunctionForAvg(Window<T> overParam, Function<T, F> field) {
         SupplierFunction<T,BigDecimal> supplier = (windowList) -> {
             if (isAllRow(overParam)){
-                BigDecimal value = SDFrame.read(windowList).avg(field);
+                BigDecimal value = SDFrame.read(windowList)
+                        .defaultScale(defaultScale,defaultRoundingMode)
+                        .avg(field);
                 return windowList.stream().map(e -> new FI2<>(e,value)).collect(toList());
             }
 
