@@ -51,11 +51,13 @@ public interface SDFrame<T> extends IFrame<T> {
     }
 
     /**
-     * Convert to other JDFrame
+     * Convert to other SDFrame
      */
     <R> SDFrame<R> from(Stream<R> data);
 
-
+    /**
+     * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+     */
     SDFrame<T> forEachDo(Consumer<? super T> action);
 
     /**

@@ -36,8 +36,14 @@ public interface IFrame<T> extends Iterable<T>{
      */
     Stream<T> stream();
 
+    /**
+     * Convert to other IFrame
+     */
     <R> IFrame<R> from(Stream<R> data);
 
+    /**
+     * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+     */
     IFrame<T> forEachDo(Consumer<? super T> action);
 
     /**

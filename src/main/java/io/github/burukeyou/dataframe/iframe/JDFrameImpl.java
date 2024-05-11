@@ -7,6 +7,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
+import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import io.github.burukeyou.dataframe.util.FrameUtil;
 import io.github.burukeyou.dataframe.util.MathUtils;
@@ -50,19 +51,19 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrame<T> forEachDo(Consumer<? super T> action) {
+    public JDFrameImpl<T> forEachDo(Consumer<? super T> action) {
         this.forEach(action);
         return this;
     }
 
     @Override
-    public JDFrame<T> defaultScale(int scale) {
+    public JDFrameImpl<T> defaultScale(int scale) {
         initDefaultScale(scale,defaultRoundingMode);
         return this;
     }
 
     @Override
-    public JDFrame<T> defaultScale(int scale, RoundingMode roundingMode) {
+    public JDFrameImpl<T> defaultScale(int scale, RoundingMode roundingMode) {
         initDefaultScale(scale,roundingMode);
         return this;
     }
@@ -72,17 +73,17 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R> JDFrame<R> map(Function<T, R> map) {
+    public <R> JDFrameImpl<R> map(Function<T, R> map) {
         return from(stream().map(map));
     }
 
     @Override
-    public <R extends Number> JDFrame<T> mapPercent(Function<T, R> get, SetFunction<T, BigDecimal> set) {
+    public <R extends Number> JDFrameImpl<T> mapPercent(Function<T, R> get, SetFunction<T, BigDecimal> set) {
         return mapPercent(get,set,2);
     }
 
     @Override
-    public <R extends Number> JDFrame<T> mapPercent(Function<T, R> get, SetFunction<T, BigDecimal> set, int scale) {
+    public <R extends Number> JDFrameImpl<T> mapPercent(Function<T, R> get, SetFunction<T, BigDecimal> set, int scale) {
         toLists().forEach(e -> {
             R value = get.apply(e);
             BigDecimal percentageValue = MathUtils.percentage(MathUtils.toBigDecimal(value), scale);
@@ -92,19 +93,19 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrame<List<T>> partition(int n) {
+    public JDFrameImpl<List<T>> partition(int n) {
         return from(new PartitionList<>(toLists(), n));
     }
 
 
     @Override
-    public JDFrame<T> append(T t) {
+    public JDFrameImpl<T> append(T t) {
         toLists().add(t);
         return this;
     }
 
     @Override
-    public JDFrame<T> union(IFrame<T> other) {
+    public JDFrameImpl<T> union(IFrame<T> other) {
         if (other.count() <= 0){
             return this;
         }
@@ -113,37 +114,37 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R, K> JDFrame<R> join(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+    public <R, K> JDFrameImpl<R> join(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return from(joinList(other,on,join));
     }
 
     @Override
-    public <R, K> JDFrame<R> join(IFrame<K> other, JoinOn<T, K> on) {
+    public <R, K> JDFrameImpl<R> join(IFrame<K> other, JoinOn<T, K> on) {
         return join(other,on,new DefaultJoin<>());
     }
 
     @Override
-    public <R, K> JDFrame<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+    public <R, K> JDFrameImpl<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return from(leftJoinList(other,on,join));
     }
 
     @Override
-    public <R, K> JDFrame<R> leftJoin(IFrame<K> other, JoinOn<T, K> on) {
+    public <R, K> JDFrameImpl<R> leftJoin(IFrame<K> other, JoinOn<T, K> on) {
         return leftJoin(other,on,new DefaultJoin<>());
     }
 
     @Override
-    public <R, K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+    public <R, K> JDFrameImpl<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return from(rightJoinList(other,on,join));
     }
 
     @Override
-    public <R, K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T, K> on) {
+    public <R, K> JDFrameImpl<R> rightJoin(IFrame<K> other, JoinOn<T, K> on) {
         return rightJoin(other,on,new DefaultJoin<>());
     }
 
     @Override
-    public JDFrame<FI2<T, Integer>> addSortNoCol() {
+    public JDFrameImpl<FI2<T, Integer>> addSortNoCol() {
         List<FI2<T, Integer>> result = new ArrayList<>();
         int index = 1;
         for (T t : this) {
@@ -153,17 +154,17 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrame<FI2<T, Integer>> addSortNoCol(Comparator<T> comparator) {
+    public JDFrameImpl<FI2<T, Integer>> addSortNoCol(Comparator<T> comparator) {
         return sortAsc(comparator).addSortNoCol();
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<FI2<T, Integer>> addSortNoCol(Function<T, R> function) {
+    public <R extends Comparable<R>> JDFrameImpl<FI2<T, Integer>> addSortNoCol(Function<T, R> function) {
         return addSortNoCol(Comparator.comparing(function));
     }
 
     @Override
-    public JDFrame<T> addSortNoCol(SetFunction<T, Integer> set) {
+    public JDFrameImpl<T> addSortNoCol(SetFunction<T, Integer> set) {
         int index = 0;
         for (T t : this) {
             set.accept(t,index++);
@@ -172,17 +173,17 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrame<FI2<T, Integer>> addRankingSameCol(Comparator<T> comparator) {
+    public JDFrameImpl<FI2<T, Integer>> addRankingSameCol(Comparator<T> comparator) {
         return from(rankingSameAsc(toLists(),comparator));
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<FI2<T, Integer>> addRankingSameColAsc(Function<T, R> function) {
+    public <R extends Comparable<R>> JDFrameImpl<FI2<T, Integer>> addRankingSameColAsc(Function<T, R> function) {
         return addRankingSameCol(Comparator.comparing(function));
     }
 
     @Override
-    public JDFrame<T> addRankingSameCol(Comparator<T> comparator, SetFunction<T, Integer> set) {
+    public JDFrameImpl<T> addRankingSameCol(Comparator<T> comparator, SetFunction<T, Integer> set) {
         List<FI2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator);
         for (FI2<T, Integer> p : tmpList) {
             set.accept(p.getC1(),p.getC2());
@@ -191,12 +192,12 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> addRankingSameColAsc(Function<T, R> function, SetFunction<T, Integer> set) {
+    public <R extends Comparable<R>> JDFrameImpl<T> addRankingSameColAsc(Function<T, R> function, SetFunction<T, Integer> set) {
         return addRankingSameCol(Comparator.comparing(function),set);
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> addRankingSameColDesc(Function<T, R> function, SetFunction<T, Integer> set) {
+    public <R extends Comparable<R>> JDFrameImpl<T> addRankingSameColDesc(Function<T, R> function, SetFunction<T, Integer> set) {
         return addRankingSameCol(Comparator.comparing(function).reversed(),set);
     }
 
@@ -230,23 +231,23 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrame<T> cutRankingSameAsc(Comparator<T> comparator, int n) {
+    public JDFrameImpl<T> cutRankingSameAsc(Comparator<T> comparator, int n) {
         List<FI2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator, n);
         return from(tmpList.stream().map(FI2::getC1).collect(toList()));
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> cutRankingSameAsc(Function<T, R> function, int n) {
+    public <R extends Comparable<R>> JDFrameImpl<T> cutRankingSameAsc(Function<T, R> function, int n) {
         return this.cutRankingSameAsc(Comparator.comparing(function),n);
     }
 
     @Override
-    public JDFrame<T> cutRankingSameDesc(Comparator<T> comparator, int n) {
+    public JDFrameImpl<T> cutRankingSameDesc(Comparator<T> comparator, int n) {
         return this.cutRankingSameAsc(comparator.reversed(), n);
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> cutRankingSameDesc(Function<T, R> function, int n) {
+    public <R extends Comparable<R>> JDFrameImpl<T> cutRankingSameDesc(Function<T, R> function, int n) {
         return this.cutRankingSameDesc(Comparator.comparing(function),n);
     }
 
@@ -269,27 +270,27 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrame<T> cut(Integer startIndex, Integer endIndex) {
+    public JDFrameImpl<T> cut(Integer startIndex, Integer endIndex) {
         return returnDF(subList(startIndex, endIndex));
     }
     @Override
-    public JDFrame<T> distinct() {
+    public JDFrameImpl<T> distinct() {
         return returnDF(stream().distinct());
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> distinct(Function<T, R> function) {
+    public <R extends Comparable<R>> JDFrameImpl<T> distinct(Function<T, R> function) {
         return distinct(Comparator.comparing(function));
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> distinct(Comparator<T> comparator) {
+    public <R extends Comparable<R>> JDFrameImpl<T> distinct(Comparator<T> comparator) {
         ArrayList<T> tmp = stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparator)), ArrayList::new));
         return returnDF(tmp);
     }
 
     @Override
-    public JDFrame<T> where(Predicate<? super T> predicate) {
+    public JDFrameImpl<T> where(Predicate<? super T> predicate) {
         return from(stream().filter(predicate));
     }
 
@@ -307,15 +308,15 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
      * ===========================   筛选相关  =====================================
      **/
     @Override
-    public <R> JDFrame<T> whereNull(Function<T, R> function) {
+    public <R> JDFrameImpl<T> whereNull(Function<T, R> function) {
         return returnDF(whereNullStream(function));
     }
 
-    public <R> JDFrame<T> whereNotNull(Function<T, R> function) {
+    public <R> JDFrameImpl<T> whereNotNull(Function<T, R> function) {
         return returnDF(whereNotNullStream(function));
     }
 
-    public <R extends Comparable<R>> JDFrame<T> whereBetween(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereBetween(Function<T, R> function, R start, R end) {
         if (start == null && end == null) {
             return this;
         }
@@ -323,7 +324,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> whereBetweenN(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereBetweenN(Function<T, R> function, R start, R end) {
         if (start == null && end == null) {
             return this;
         }
@@ -331,7 +332,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
 
-    public <R extends Comparable<R>> JDFrame<T> whereBetweenR(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereBetweenR(Function<T, R> function, R start, R end) {
         if (start == null && end == null) {
             return this;
         }
@@ -339,7 +340,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> whereBetweenL(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereBetweenL(Function<T, R> function, R start, R end) {
         if (start == null && end == null) {
             return this;
         }
@@ -347,7 +348,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
 
-    public <R extends Comparable<R>> JDFrame<T> whereNotBetween(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereNotBetween(Function<T, R> function, R start, R end) {
         if (start == null || end == null) {
             return this;
         }
@@ -355,7 +356,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> whereNotBetweenN(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereNotBetweenN(Function<T, R> function, R start, R end) {
         if (start == null || end == null) {
             return this;
         }
@@ -663,23 +664,325 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnDF(FrameUtil.toListFI3(map));
     }
 
+
+    /** ================= Window ============================================ */
+
     @Override
-    public <G, C> JDFrame<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G, C, T> getEmptyObject) {
+    public WindowJDFrame<T> window(Window<T> window) {
+        WindowJDFrameImpl<T> frame = new WindowJDFrameImpl<>(window, dataList);
+        transmitMember(this,frame);
+        return frame;
+    }
+
+    @Override
+    public WindowJDFrame<T> window() {
+        WindowJDFrameImpl<T> frame = new WindowJDFrameImpl<>(emptyWindow,dataList);
+        transmitMember(this,frame);
+        return frame;
+    }
+
+    public <F> JDFrameImpl<T> fi2Frame(JDFrameImpl<FI2<T, F>> frame,SetFunction<T, F> setFunction){
+         return frame.forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
+    }
+
+    @Override
+    public  JDFrameImpl<FI2<T, Integer>> overRowNumber(Window<T> overParam) {
+        return returnDF(windowFunctionForRowNumber(overParam));
+    }
+
+    @Override
+    public JDFrame<FI2<T, Integer>> overRowNumber() {
+        return overRowNumber(emptyWindow);
+    }
+    @Override
+    public JDFrameImpl<T> overRowNumberS(SetFunction<T,Integer> setFunction, Window<T> overParam) {
+        return fi2Frame(overRowNumber(overParam),setFunction);
+    }
+
+    @Override
+    public JDFrame<T> overRowNumberS(SetFunction<T, Integer> setFunction) {
+        return overRowNumberS(setFunction, emptyWindow);
+    }
+
+    @Override
+    public  JDFrameImpl<FI2<T, Integer>> overRank(Window<T> overParam) {
+        return returnDF(windowFunctionForRank(overParam));
+    }
+
+    @Override
+    public JDFrameImpl<T> overRankS(SetFunction<T, Integer> setFunction, Window<T> overParam) {
+        return fi2Frame(overRank(overParam),setFunction);
+    }
+
+    @Override
+    public  JDFrameImpl<FI2<T, Integer>> overDenseRank(Window<T> overParam) {
+        return returnDF(windowFunctionForDenseRank(overParam));
+    }
+
+    @Override
+    public JDFrameImpl<T> overDenseRankS(SetFunction<T, Integer> setFunction, Window<T> overParam) {
+        return fi2Frame(overDenseRank(overParam),setFunction);
+    }
+
+    @Override
+    public  JDFrameImpl<FI2<T, BigDecimal>> overPercentRank(Window<T> overParam) {
+        return returnDF(windowFunctionForPercentRank(overParam));
+    }
+
+    @Override
+    public JDFrameImpl<T> overPercentRankS(SetFunction<T, BigDecimal> setFunction, Window<T> overParam) {
+        return fi2Frame(overPercentRank(overParam),setFunction);
+    }
+    @Override
+    public  JDFrameImpl<FI2<T, BigDecimal>> overCumeDist(Window<T> overParam) {
+        return returnDF(windowFunctionForCumeDist(overParam));
+    }
+
+    @Override
+    public JDFrameImpl<T> overCumeDistS(SetFunction<T, BigDecimal> setFunction, Window<T> overParam) {
+        return fi2Frame(overCumeDist(overParam),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, F>> overLag(Window<T> overParam, Function<T, F> field, int n) {
+        return returnDF(windowFunctionForLag(overParam,field,n));
+    }
+
+    @Override
+    public <F> JDFrame<T> overLagS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field, int n) {
+        return fi2Frame(overLag(overParam,field,n),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, F>> overLag(Function<T, F> field, int n) {
+        return overLag(emptyWindow,field,n);
+    }
+
+    @Override
+    public <F> JDFrame<T> overLagS(SetFunction<T, F> setFunction, Function<T, F> field, int n) {
+        return fi2Frame(overLag(field,n),setFunction);
+    }
+
+    @Override
+    public <F> JDFrame<T> overLeadS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field, int n) {
+        return fi2Frame(overLead(overParam,field,n),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, F>> overLead(Window<T> overParam, Function<T, F> field, int n) {
+        return returnDF(windowFunctionForLead(overParam,field,n));
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, F>> overLead(Function<T, F> field, int n) {
+        return overLead(emptyWindow,field,n);
+    }
+
+    @Override
+    public <F> JDFrame<T> overLeadS(SetFunction<T, F> setFunction, Function<T, F> field, int n) {
+        return fi2Frame(overLead(field,n),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, F>> overNthValue(Window<T> overParam, Function<T, F> field, int n) {
+        return returnDF(windowFunctionForNthValue(overParam,field,n));
+    }
+
+    @Override
+    public <F> JDFrame<T> overNthValueS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field, int n) {
+        return fi2Frame(overNthValue(overParam,field,n),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, F>> overNthValue(Function<T, F> field, int n) {
+        return overNthValue(emptyWindow,field,n);
+    }
+
+    @Override
+    public <F> JDFrameImpl<T> overNthValueS(SetFunction<T, F> setFunction, Function<T, F> field, int n) {
+        return fi2Frame(overNthValue(field,n),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, F>> overFirstValue(Window<T> overParam, Function<T, F> field) {
+        return overNthValue(overParam,field,1);
+    }
+
+    @Override
+    public <F> JDFrame<T> overFirstValueS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field) {
+        return fi2Frame(overFirstValue(overParam, field),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, F>> overFirstValue(Function<T, F> field) {
+        return overFirstValue(emptyWindow,field);
+    }
+
+    @Override
+    public <F> JDFrameImpl<T> overFirstValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
+        return fi2Frame(overFirstValue(field),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, F>> overLastValue(Window<T> overParam, Function<T, F> field) {
+        return overNthValue(overParam,field,-1);
+    }
+
+    @Override
+    public <F> JDFrameImpl<T> overLastValueS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field) {
+        return fi2Frame(overLastValue(overParam,field),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, F>> overLastValue(Function<T, F> field) {
+        return overLastValue(emptyWindow,field);
+    }
+
+    @Override
+    public <F> JDFrame<T> overLastValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
+        return fi2Frame(overLastValue(field),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, BigDecimal>> overSum(Window<T> overParam, Function<T, F> field) {
+        return returnDF(windowFunctionForSum(overParam,field));
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, BigDecimal>> overSum(Function<T, F> field) {
+        return overSum(emptyWindow,field);
+    }
+
+    @Override
+    public <F> JDFrameImpl<T> overSumS(SetFunction<T, BigDecimal> setFunction, Window<T> overParam, Function<T, F> field) {
+        return fi2Frame(overSum(overParam,field),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<T> overSumS(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
+        return overSumS(setFunction, emptyWindow,field);
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, BigDecimal>> overAvg(Window<T> overParam, Function<T, F> field) {
+        return returnDF(windowFunctionForAvg(overParam,field));
+    }
+
+    @Override
+    public <F> JDFrameImpl<FI2<T, BigDecimal>> overAvg(Function<T, F> field) {
+        return overAvg(emptyWindow,field);
+    }
+
+    @Override
+    public <F> JDFrameImpl<T> overAvgS(SetFunction<T, BigDecimal> setFunction, Window<T> overParam, Function<T, F> field) {
+        return fi2Frame(overAvg(overParam,field),setFunction);
+    }
+
+    @Override
+    public <F> JDFrameImpl<T> overAvgS(SetFunction<T, BigDecimal> setFunction, Function<T, F> field) {
+        return overAvgS(setFunction, emptyWindow,field);
+    }
+
+    @Override
+    public <F extends Comparable<? super F>>  JDFrameImpl<FI2<T, F>> overMaxValue(Window<T> overParam, Function<T, F> field) {
+        return returnDF(windowFunctionForMaxValue(overParam,field));
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> JDFrameImpl<FI2<T, F>> overMaxValue(Function<T, F> field) {
+        return overMaxValue(emptyWindow,field);
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> JDFrameImpl<T> overMaxValueS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field) {
+        return fi2Frame(overMaxValue(overParam,field),setFunction);
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> JDFrameImpl<T> overMaxValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
+        return overMaxValueS(setFunction, emptyWindow,field);
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> JDFrameImpl<FI2<T, F>> overMinValue(Window<T> overParam, Function<T, F> field) {
+        return returnDF(windowFunctionForMinValue(overParam,field));
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> JDFrameImpl<FI2<T, F>> overMinValue(Function<T, F> field) {
+        return overMinValue(emptyWindow,field);
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> JDFrameImpl<T> overMinValueS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field) {
+        return fi2Frame(overMinValue(overParam,field),setFunction);
+    }
+
+    @Override
+    public <F extends Comparable<? super F>> JDFrameImpl<T> overMinValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
+        return overMinValueS(setFunction, emptyWindow,field);
+    }
+
+    @Override
+    public JDFrameImpl<FI2<T, Integer>> overCount(Window<T> overParam) {
+        return returnDF(windowFunctionForCount(overParam));
+    }
+
+    @Override
+    public JDFrameImpl<FI2<T, Integer>> overCount() {
+        return overCount(emptyWindow);
+    }
+
+    @Override
+    public JDFrameImpl<T> overCountS(SetFunction<T, Integer> setFunction, Window<T> overParam) {
+        return fi2Frame(overCount(overParam),setFunction);
+    }
+
+    @Override
+    public JDFrameImpl<T> overCountS(SetFunction<T, Integer> setFunction) {
+        return overCountS(setFunction, emptyWindow);
+    }
+
+
+    @Override
+    public JDFrameImpl<FI2<T, Integer>> overNtile(int n) {
+        return overNtile(emptyWindow, n);
+    }
+
+    @Override
+    public JDFrameImpl<FI2<T, Integer>> overNtile(Window<T> overParam, int n) {
+        return returnDF(windowFunctionForNtile(overParam,n));
+    }
+
+    @Override
+    public JDFrameImpl<T> overNtileS(SetFunction<T, Integer> setFunction, Window<T> overParam, int n) {
+        return fi2Frame(overNtile(overParam,n),setFunction);
+    }
+
+    @Override
+    public JDFrameImpl<T> overNtileS(SetFunction<T, Integer> setFunction, int n) {
+        return overNtileS(setFunction, emptyWindow,n);
+    }
+
+
+    /**  ============================== Other =============== */
+    @Override
+    public <G, C> JDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G, C, T> getEmptyObject) {
         return returnDF(replenish(toLists(),groupDim,collectDim,allDim,getEmptyObject));
     }
 
     @Override
-    public <C> JDFrame<T> replenish(Function<T, C> collectDim, List<C> allDim, Function<C, T> getEmptyObject) {
+    public <C> JDFrameImpl<T> replenish(Function<T, C> collectDim, List<C> allDim, Function<C, T> getEmptyObject) {
         return returnDF(replenish(toLists(),collectDim,allDim,getEmptyObject));
     }
 
     @Override
-    public <G, C> JDFrame<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G, C, T> getEmptyObject) {
+    public <G, C> JDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G, C, T> getEmptyObject) {
         return returnDF(replenish(toLists(),groupDim,collectDim,getEmptyObject));
     }
 
 
-    protected <R> JDFrame<R> returnDF(Stream<R> stream) {
+    protected <R> JDFrameImpl<R> returnDF(Stream<R> stream) {
         JDFrameImpl<R> frame = from(stream);
         transmitMember(this,frame);
         return frame;
