@@ -7,7 +7,7 @@ burukeyou的私房工具， 由于经常记不住stream的一些api每次要复�
 
 但是他们得硬编码去指定字段名，这对于有代码洁癖的burukeyou实在难以忍受，而且我只是简单统计下数据，我想在一些场景下能不能使用匿名函数去指定的字段处理去处理，于是便有了这个
 
-一个jvm层级的仿DataFrame工具，语意化和简化java8的stream流式处理工具
+一个jvm层级的仿DataFrame工具，语意化和简化java8的stream流式处理工具， 也支持窗口函数
 
 
 # 快速开始
@@ -17,7 +17,7 @@ burukeyou的私房工具， 由于经常记不住stream的一些api每次要复�
 <dependency>
     <groupId>io.github.burukeyou</groupId>
     <artifactId>jdframe</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
