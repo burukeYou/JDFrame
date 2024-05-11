@@ -17,7 +17,7 @@ burukeyou的私房工具， 由于经常记不住stream的一些api每次要复�
 <dependency>
     <groupId>io.github.burukeyou</groupId>
     <artifactId>jdframe</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 
