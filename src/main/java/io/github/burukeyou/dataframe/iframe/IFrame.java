@@ -83,6 +83,12 @@ public interface IFrame<T> extends Iterable<T>{
      */
     <R> List<R> col(Function<T, R> function);
 
+    /**
+     * Get paginated data
+     * @param page              The current page number is considered as the first page, regardless of whether it is passed as 0 or 1
+     * @param pageSize          page size
+     */
+    List<T> page(int page,int pageSize);
 
     /**
      * ===========================   Frame Join  =====================================
@@ -305,6 +311,13 @@ public interface IFrame<T> extends Iterable<T>{
      * cut elements within the scope
      */
     IFrame<T> cut(Integer startIndex,Integer endIndex);
+
+    /**
+     * cut paginated data
+     * @param page              The current page number is considered as the first page, regardless of whether it is passed as 0 or 1
+     * @param pageSize          page size
+     */
+    IFrame<T> cutPage(int page,int pageSize);
 
     /**
      * Cut the top n by ranking value, by comparator to ranking asc

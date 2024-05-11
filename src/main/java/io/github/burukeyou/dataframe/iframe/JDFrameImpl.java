@@ -46,6 +46,11 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public long count() {
+        return dataList.size();
+    }
+
+    @Override
     public <R> JDFrameImpl<R> from(Stream<R> stream){
         return from(stream.collect(toList()));
     }
@@ -272,6 +277,11 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public JDFrameImpl<T> cut(Integer startIndex, Integer endIndex) {
         return returnDF(subList(startIndex, endIndex));
+    }
+
+    @Override
+    public JDFrame<T> cutPage(int page, int pageSize) {
+        return returnDF(page(page,pageSize));
     }
     @Override
     public JDFrameImpl<T> distinct() {

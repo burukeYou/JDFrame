@@ -322,6 +322,13 @@ public interface JDFrame<T> extends IFrame<T> {
     JDFrame<T> cut(Integer startIndex,Integer endIndex);
 
     /**
+     * cut paginated data
+     * @param page              The current page number is considered as the first page, regardless of whether it is passed as 0 or 1
+     * @param pageSize          page size
+     */
+    JDFrame<T> cutPage(int page,int pageSize);
+
+    /**
      * Cut the top n by ranking value, by comparator to ranking asc
      *          The same value is considered to have the same ranking
      * @param comparator            the ranking comparator

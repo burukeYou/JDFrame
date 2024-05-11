@@ -368,6 +368,24 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     @Override
+    public List<T> page(int page, int pageSize) {
+        if (page < 0 || pageSize < 1) {
+            throw new IllegalArgumentException("Page and pageSize must be positive integers.");
+        }
+
+        if (page == 0){
+            page = 1;
+        }
+        int startIndex = (page - 1) * pageSize;
+        int count = (int)count();
+        if (startIndex >= count) {
+            return Collections.emptyList();
+        }
+        int endIndex = Math.min(startIndex + pageSize, count);
+        return toLists().subList(startIndex, endIndex);
+    }
+
+    @Override
     public void show(){
         show(10);
     }

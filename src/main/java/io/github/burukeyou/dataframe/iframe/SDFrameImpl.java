@@ -302,6 +302,11 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public SDFrame<T> cutPage(int page, int pageSize) {
+        return returnDF(page(page,pageSize));
+    }
+
+    @Override
     public SDFrame<T> distinct() {
         data = stream().distinct();
         return this;
