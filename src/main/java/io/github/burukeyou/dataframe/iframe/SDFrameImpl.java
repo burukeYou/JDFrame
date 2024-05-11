@@ -7,6 +7,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
+import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.util.*;
 
@@ -93,13 +94,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrame<List<T>> partition(int n) {
+    public SDFrameImpl<List<T>> partition(int n) {
         return returnDF(new PartitionList<>(toLists(), n));
     }
 
 
     @Override
-    public SDFrame<T> append(T t) {
+    public SDFrameImpl<T> append(T t) {
         List<T> ts = toLists();
         ts.add(t);
         data = ts.stream();
@@ -107,7 +108,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrame<T> union(IFrame<T> other) {
+    public SDFrameImpl<T> union(IFrame<T> other) {
         if (other.count() <= 0){
             return this;
         }
@@ -117,37 +118,37 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R, K> SDFrame<R> join(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+    public <R, K> SDFrameImpl<R> join(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return returnDF(joinList(other,on,join));
     }
 
     @Override
-    public <R, K> SDFrame<R> join(IFrame<K> other, JoinOn<T, K> on) {
+    public <R, K> SDFrameImpl<R> join(IFrame<K> other, JoinOn<T, K> on) {
         return join(other,on,new DefaultJoin<>());
     }
 
     @Override
-    public <R, K> SDFrame<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+    public <R, K> SDFrameImpl<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return returnDF(leftJoinList(other,on,join));
     }
 
     @Override
-    public <R, K> SDFrame<R> leftJoin(IFrame<K> other, JoinOn<T, K> on) {
+    public <R, K> SDFrameImpl<R> leftJoin(IFrame<K> other, JoinOn<T, K> on) {
         return leftJoin(other,on,new DefaultJoin<>());
     }
 
     @Override
-    public <R, K> SDFrame<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+    public <R, K> SDFrameImpl<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return returnDF(rightJoinList(other,on,join));
     }
 
     @Override
-    public <R, K> SDFrame<R> rightJoin(IFrame<K> other, JoinOn<T, K> on) {
+    public <R, K> SDFrameImpl<R> rightJoin(IFrame<K> other, JoinOn<T, K> on) {
         return rightJoin(other,on,new DefaultJoin<>());
     }
 
     @Override
-    public SDFrame<FI2<T, Integer>> addSortNoCol() {
+    public SDFrameImpl<FI2<T, Integer>> addRowNumberCol() {
         List<FI2<T, Integer>> result = new ArrayList<>();
         int index = 1;
         for (T t : this) {
@@ -157,19 +158,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrame<FI2<T, Integer>> addSortNoCol(Comparator<T> comparator) {
-        return sortAsc(comparator).addSortNoCol();
+    public SDFrameImpl<FI2<T, Integer>> addRowNumberCol(Sorter<T> sorter) {
+        return sortAsc(sorter).addRowNumberCol();
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<FI2<T, Integer>> addSortNoCol(Function<T, R> function) {
-        return addSortNoCol(Comparator.comparing(function));
-    }
-
-
-    @Override
-    public SDFrame<T> addSortNoCol(SetFunction<T, Integer> set) {
-        int index = 0;
+    public SDFrameImpl<T> addRowNumberCol(SetFunction<T, Integer> set) {
+        int index = 1;
         for (T t : this) {
            set.accept(t,index++);
         }
@@ -177,33 +172,21 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrame<FI2<T, Integer>> addRankingSameCol(Comparator<T> comparator) {
-        return returnDF(rankingSameAsc(toLists(),comparator));
+    public SDFrameImpl<T> addRowNumberCol(Sorter<T> sorter, SetFunction<T, Integer> set) {
+        return sortAsc(sorter).addRowNumberCol(set);
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<FI2<T, Integer>> addRankingSameColAsc(Function<T, R> function) {
-        return addRankingSameCol(Comparator.comparing(function));
+    public SDFrameImpl<FI2<T, Integer>> addRankCol(Sorter<T> sorter) {
+        return overRank(Window.sortBy(sorter));
     }
 
-    @Override
-    public SDFrame<T> addRankingSameCol(Comparator<T> comparator, SetFunction<T, Integer> set) {
-        List<FI2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator);
-        for (FI2<T, Integer> p : tmpList) {
-            set.accept(p.getC1(),p.getC2());
-        }
-        return this;
-    }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> addRankingSameColAsc(Function<T, R> function, SetFunction<T, Integer> set) {
-        return addRankingSameCol(Comparator.comparing(function),set);
+    public SDFrame<T> addRankCol(Sorter<T> sorter, SetFunction<T, Integer> set) {
+        return fi2Frame(this.addRankCol(sorter),set);
     }
 
-    @Override
-    public <R extends Comparable<R>> SDFrame<T> addRankingSameColDesc(Function<T, R> function, SetFunction<T, Integer> set) {
-        return addRankingSameCol(Comparator.comparing(function).reversed(),set);
-    }
 
     @Override
     public List<T> toLists() {
@@ -235,48 +218,32 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
      **/
 
     @Override
-    public SDFrame<T> sortDesc(Comparator<T> comparator) {
+    public SDFrameImpl<T> sortDesc(Comparator<T> comparator) {
         data = stream().sorted(comparator.reversed());
         return this;
     }
 
     @Override
-    public <R extends Comparable<? super R>> SDFrame<T> sortDesc(Function<T, R> function) {
+    public <R extends Comparable<? super R>> SDFrameImpl<T> sortDesc(Function<T, R> function) {
         sortDesc(Comparator.comparing(function));
         return this;
     }
 
     @Override
-    public SDFrame<T> sortAsc(Comparator<T> comparator) {
+    public SDFrameImpl<T> sortAsc(Comparator<T> comparator) {
         data = stream().sorted(comparator);
         return this;
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> sortAsc(Function<T, R> function) {
+    public <R extends Comparable<R>> SDFrameImpl<T> sortAsc(Function<T, R> function) {
         sortAsc(Comparator.comparing(function));
         return this;
     }
 
     @Override
-    public SDFrame<T> cutRankingSameAsc(Comparator<T> comparator, int n) {
-        List<FI2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator, n);
-        return returnThis(tmpList.stream().map(FI2::getC1).collect(toList()).stream());
-    }
-
-    @Override
-    public <R extends Comparable<R>> SDFrame<T> cutRankingSameAsc(Function<T, R> function, int n) {
-        return this.cutRankingSameAsc(Comparator.comparing(function),n);
-    }
-
-    @Override
-    public SDFrame<T> cutRankingSameDesc(Comparator<T> comparator, int n) {
-        return this.cutRankingSameAsc(comparator.reversed(),n);
-    }
-
-    @Override
-    public <R extends Comparable<R>> SDFrame<T> cutRankingSameDesc(Function<T, R> function, int n) {
-        return this.cutRankingSameDesc(Comparator.comparing(function),n);
+    public SDFrame<T> cutFirstRank(Sorter<T> sorter, int n) {
+        return overRank(Window.sortBy(sorter)).whereLe(FI2::getC2, n).map(FI2::getC1);
     }
 
 

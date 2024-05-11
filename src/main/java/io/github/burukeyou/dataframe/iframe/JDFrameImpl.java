@@ -7,6 +7,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
+import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import io.github.burukeyou.dataframe.util.FrameUtil;
@@ -149,7 +150,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrameImpl<FI2<T, Integer>> addSortNoCol() {
+    public JDFrameImpl<FI2<T, Integer>> addRowNumberCol() {
         List<FI2<T, Integer>> result = new ArrayList<>();
         int index = 1;
         for (T t : this) {
@@ -159,18 +160,13 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrameImpl<FI2<T, Integer>> addSortNoCol(Comparator<T> comparator) {
-        return sortAsc(comparator).addSortNoCol();
+    public JDFrameImpl<FI2<T, Integer>> addRowNumberCol(Sorter<T> sorter) {
+        return sortAsc(sorter).addRowNumberCol();
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrameImpl<FI2<T, Integer>> addSortNoCol(Function<T, R> function) {
-        return addSortNoCol(Comparator.comparing(function));
-    }
-
-    @Override
-    public JDFrameImpl<T> addSortNoCol(SetFunction<T, Integer> set) {
-        int index = 0;
+    public JDFrameImpl<T> addRowNumberCol(SetFunction<T, Integer> set) {
+        int index = 1;
         for (T t : this) {
             set.accept(t,index++);
         }
@@ -178,34 +174,19 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrameImpl<FI2<T, Integer>> addRankingSameCol(Comparator<T> comparator) {
-        return from(rankingSameAsc(toLists(),comparator));
+    public JDFrameImpl<T> addRowNumberCol(Sorter<T> sorter, SetFunction<T, Integer> set) {
+        return sortAsc(sorter).addRowNumberCol(set);
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrameImpl<FI2<T, Integer>> addRankingSameColAsc(Function<T, R> function) {
-        return addRankingSameCol(Comparator.comparing(function));
+    public JDFrameImpl<FI2<T, Integer>> addRankCol(Sorter<T> sorter) {
+        return overRank(Window.sortBy(sorter));
     }
 
     @Override
-    public JDFrameImpl<T> addRankingSameCol(Comparator<T> comparator, SetFunction<T, Integer> set) {
-        List<FI2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator);
-        for (FI2<T, Integer> p : tmpList) {
-            set.accept(p.getC1(),p.getC2());
-        }
-        return this;
+    public JDFrameImpl<T> addRankCol(Sorter<T> sorter, SetFunction<T, Integer> set) {
+        return fi2Frame(this.addRankCol(sorter),set);
     }
-
-    @Override
-    public <R extends Comparable<R>> JDFrameImpl<T> addRankingSameColAsc(Function<T, R> function, SetFunction<T, Integer> set) {
-        return addRankingSameCol(Comparator.comparing(function),set);
-    }
-
-    @Override
-    public <R extends Comparable<R>> JDFrameImpl<T> addRankingSameColDesc(Function<T, R> function, SetFunction<T, Integer> set) {
-        return addRankingSameCol(Comparator.comparing(function).reversed(),set);
-    }
-
 
     public List<T> toLists() {
         return dataList;
@@ -217,7 +198,8 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrameImpl<T> sortDesc(Comparator<T> comparator) {
-        return from(stream().sorted(comparator.reversed()));
+        dataList.sort(comparator.reversed());
+        return this;
     }
 
     @Override
@@ -227,7 +209,8 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrameImpl<T> sortAsc(Comparator<T> comparator) {
-        return from(stream().sorted(comparator));
+        dataList.sort(comparator);
+        return this;
     }
 
     @Override
@@ -236,25 +219,10 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrameImpl<T> cutRankingSameAsc(Comparator<T> comparator, int n) {
-        List<FI2<T, Integer>> tmpList = rankingSameAsc(toLists(), comparator, n);
-        return from(tmpList.stream().map(FI2::getC1).collect(toList()));
+    public JDFrameImpl<T> cutFirstRank(Sorter<T> sorter, int n) {
+        return overRank(Window.sortBy(sorter)).whereLe(FI2::getC2, n).map(FI2::getC1);
     }
 
-    @Override
-    public <R extends Comparable<R>> JDFrameImpl<T> cutRankingSameAsc(Function<T, R> function, int n) {
-        return this.cutRankingSameAsc(Comparator.comparing(function),n);
-    }
-
-    @Override
-    public JDFrameImpl<T> cutRankingSameDesc(Comparator<T> comparator, int n) {
-        return this.cutRankingSameAsc(comparator.reversed(), n);
-    }
-
-    @Override
-    public <R extends Comparable<R>> JDFrameImpl<T> cutRankingSameDesc(Function<T, R> function, int n) {
-        return this.cutRankingSameDesc(Comparator.comparing(function),n);
-    }
 
     /** ===========================   截取相关  ===================================== **/
 
@@ -438,7 +406,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
 
-    public <R extends Comparable<R>> JDFrame<T> whereLe(Function<T, R> function, R value) {
+    public <R extends Comparable<R>> JDFrameImpl<T> whereLe(Function<T, R> function, R value) {
         if (value == null) {
             return this;
         }

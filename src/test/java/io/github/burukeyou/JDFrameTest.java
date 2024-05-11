@@ -8,6 +8,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.MaxMin;
+import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 import org.junit.Test;
 
@@ -65,15 +66,6 @@ public class JDFrameTest {
 
     }
 
-    @Test
-    public void testRank(){
-        SDFrame<Student> sdf = SDFrame.read(studentList).cutRankingSameAsc(Student::getAge, 3);
-        JDFrame<Student> df = JDFrame.read(studentList).cutRankingSameAsc(Student::getAge, 3);
-        SDFrame<Student> union = sdf.union(df);
-        //
-        List<Student> students = union.toLists();
-        System.out.println();
-    }
 
     @Test
     public void test1() {
@@ -178,8 +170,6 @@ public class JDFrameTest {
 
         //List<FT2<Student, Integer>> ft2s = df.addRankingSameCol(Comparator.comparing(Student::getAge)).toLists();
 
-        List<Student> students2 = df.addRankingSameColAsc(Student::getAge, Student::setRank).toLists();
-
 
         //SDFrame<Student> students = df.addSortNoCol(Student::setRank);
         //List<Student> students1 = students.toLists();
@@ -260,16 +250,6 @@ public class JDFrameTest {
         SDFrame<Student> map2 = SDFrame.read(studentList).mapPercent(Student::getScore, Student::setScore,2);
     }
 
-    // 序号列
-    @Test
-    public void testNo(){
-        //List<Student> students = SDFrame.read(studentList).sortDesc(Student::getAge).addSortNoCol(Student::setRank).toLists();
-        //System.out.println();
-
-        SDFrame<Student> df = SDFrame.read(studentList).addRankingSameColDesc(Student::getAge, Student::setRank);
-        df.show(20);
-    }
-
     @Test
     public void testReplenish(){
         List<String> allDim = Arrays.asList("一中","二中","三中","四中");
@@ -342,5 +322,18 @@ public class JDFrameTest {
         //SDFrame<FI2<Integer, Integer>> map = sdFrame.overLag(overParam, Student::getId, 1).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
         //SDFrame<FI2<Integer, Integer>> map = sdFrame.overLead(overParam, Student::getId, 1).map(e -> new FI2<>(e.getC1().getAge(), e.getC2()));
         //map.show(30);
+    }
+
+    @Test
+    public void testAddCol2(){
+        JDFrame.read(studentList)
+                //.addRowNumberCol()
+                .addRowNumberCol(Sorter.sortDescBy(Student::getAge),Student::setRank)
+                //.addRowNumberCol(Student::setRank)
+                //.addRowNumberCol(Sorter.sortAscBy(Student::getAge),Student::setRank)
+                //.addRowNumberCol(Sorter.sortAscBy(Student::getAge))
+                //.addRankCol(Sorter.sortAscBy(Student::getAge),Student::setRank)
+                //.addRankCol(Sorter.sortAscBy(Student::getAge))
+                .show(30);
     }
 }

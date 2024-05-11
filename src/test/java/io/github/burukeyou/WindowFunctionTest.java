@@ -1,6 +1,7 @@
 package io.github.burukeyou;
 
 import io.github.burukeyou.data.WebPvDto;
+import io.github.burukeyou.dataframe.iframe.JDFrame;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.iframe.window.round.Range;
@@ -18,7 +19,6 @@ public class WindowFunctionTest {
         dataList.add(new WebPvDto("a",0,1));
         dataList.add(new WebPvDto("a",1,5));
         dataList.add(new WebPvDto("a",2,7));
-        dataList.add(new WebPvDto("a",7,7));
         dataList.add(new WebPvDto("a",3,3));
         dataList.add(new WebPvDto("a",4,2));
         dataList.add(new WebPvDto("a",5,4));
@@ -54,7 +54,7 @@ public class WindowFunctionTest {
      */
     @Test
     public void testOverSum(){
-        SDFrame.read(dataList)
+        JDFrame.read(dataList)
                 //.window()
                 //.window(Window.roundStartRow2CurrentRowBy())
                 //.window(Window.roundCurrentRow2EndRowBy())
@@ -185,6 +185,9 @@ public class WindowFunctionTest {
                 .window(Window.groupBy(WebPvDto::getType).sortDesc(WebPvDto::getPvCount))
                 .overCumeDist()
                 .show(30);
+    }
 
+    public static void main(String[] args) {
+        SDFrame.read(dataList).cutPage(2, 3).show(30);
     }
 }

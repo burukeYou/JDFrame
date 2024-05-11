@@ -50,6 +50,14 @@ public interface Window<T>  {
     }
 
     /**
+     * open a Window by Sorter
+     * @param sorter                  window sorter
+     */
+    static <T> Window<T> sortBy(Sorter<T> sorter){
+        return new WindowBuilder<>(sorter);
+    }
+
+    /**
      * open a Window by window range
      *      this range is form start to end
      * @param start                 start range

@@ -6,6 +6,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
+import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.util.FrameUtil;
 
@@ -219,57 +220,41 @@ public interface JDFrame<T> extends IFrame<T> {
      * ddd ordinal column
      * @return                      FI2(T,Number)
      */
-    JDFrame<FI2<T,Integer>> addSortNoCol();
+    JDFrame<FI2<T,Integer>> addRowNumberCol();
 
     /**
      * Sort by comparator first, then add ordinal columns
-     * @param comparator    the sort comparator
+     * @param sorter    the sort comparator
      */
-    JDFrame<FI2<T,Integer>> addSortNoCol(Comparator<T> comparator);
-
-    /**
-     * Sort by Field value first, then add ordinal columns
-     * @param function    the sort field
-     *
-     */
-    <R extends Comparable<R>>  JDFrame<FI2<T,Integer>> addSortNoCol(Function<T, R> function);
+    JDFrame<FI2<T,Integer>> addRowNumberCol(Sorter<T> sorter);
 
     /**
      * Add a numbered column to a specific column
      * @param set           specific column
      */
-    JDFrame<T> addSortNoCol(SetFunction<T,Integer> set);
+    JDFrame<T> addRowNumberCol(SetFunction<T,Integer> set);
+
+    /**
+     * Add a numbered column to a specific column
+     * @param sorter    the sorter
+     * @param set           specific column
+     */
+    JDFrame<T> addRowNumberCol(Sorter<T> sorter,SetFunction<T,Integer> set);
 
     /**
      * Add ranking columns by comparator
-     *      Ranking logic, the same value means the Ranking is the same. This is different from {@link #addSortNoCol}
-     * @param comparator    the ranking  comparator
+     *      Ranking logic, the same value means the Ranking is the same. This is different from {@link #addRowNumberCol}
+     * @param Sorter    the ranking  comparator
      */
-    JDFrame<FI2<T,Integer>> addRankingSameCol(Comparator<T> comparator);
-
-    /**
-     * Add ranking columns by field
-     * @param function          the sort field
-     */
-    <R extends Comparable<R>> JDFrame<FI2<T,Integer>> addRankingSameColAsc(Function<T, R> function);
-
+    JDFrame<FI2<T,Integer>> addRankCol(Sorter<T> Sorter);
 
     /**
      * Add ranking column to a certain column by Comparator
-     * @param comparator            the ranking  comparator
+     * @param Sorter            the ranking  comparator
      * @param set                   certain column
      */
-    JDFrame<T> addRankingSameCol(Comparator<T> comparator,SetFunction<T,Integer> set);
+    JDFrame<T> addRankCol(Sorter<T> Sorter, SetFunction<T,Integer> set);
 
-    /**
-     *  Add ranking column to a certain column by field
-     */
-    <R extends Comparable<R>>  JDFrame<T> addRankingSameColAsc(Function<T, R> function, SetFunction<T,Integer> set);
-
-    /**
-     *  Add ranking column to a certain column by field
-     */
-    <R extends Comparable<R>>  JDFrame<T> addRankingSameColDesc(Function<T, R> function, SetFunction<T,Integer> set);
 
 
     /**
@@ -329,36 +314,12 @@ public interface JDFrame<T> extends IFrame<T> {
     JDFrame<T> cutPage(int page,int pageSize);
 
     /**
-     * Cut the top n by ranking value, by comparator to ranking asc
+     * Cut the top N rankings data
      *          The same value is considered to have the same ranking
-     * @param comparator            the ranking comparator
+     * @param sorter                the ranking sorter
      * @param n                     the top n
      */
-    JDFrame<T> cutRankingSameAsc(Comparator<T> comparator, int n);
-
-    /**
-     * Cut the top n by ranking value, by field  to ranking asc
-     *          The same value is considered to have the same ranking
-     * @param function              the ranking field
-     * @param n                     the top n
-     */
-    <R extends Comparable<R>> JDFrame<T> cutRankingSameAsc(Function<T, R> function, int n);
-
-    /**
-     * Cut the top n by ranking value, by comparator to ranking desc
-     *          The same value is considered to have the same ranking
-     * @param comparator            the ranking comparator
-     * @param n                     the top n
-     */
-    JDFrame<T> cutRankingSameDesc(Comparator<T> comparator, int n);
-
-    /**
-     * Cut the top n by ranking value, by field  to ranking desc
-     *          The same value is considered to have the same ranking
-     * @param function              the ranking field
-     * @param n                     the top n
-     */
-    <R extends Comparable<R>> JDFrame<T> cutRankingSameDesc(Function<T, R> function, int n);
+    JDFrame<T> cutFirstRank(Sorter<T> sorter, int n);
 
 
     /** ===========================   View Frame  ===================================== **/

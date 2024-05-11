@@ -6,6 +6,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
+import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 import io.github.burukeyou.dataframe.util.FrameUtil;
 
@@ -220,58 +221,40 @@ public interface SDFrame<T> extends IFrame<T> {
      * ddd ordinal column
      * @return                      FI2(T,Number)
      */
-    SDFrame<FI2<T,Integer>> addSortNoCol();
+    SDFrame<FI2<T,Integer>> addRowNumberCol();
 
     /**
      * Sort by comparator first, then add ordinal columns
-     * @param comparator    the sort comparator
+     * @param sorter    the sort
      */
-    SDFrame<FI2<T,Integer>> addSortNoCol(Comparator<T> comparator);
-
-    /**
-     * Sort by Field value first, then add ordinal columns
-     * @param function    the sort field
-     *
-     */
-    <R extends Comparable<R>>  SDFrame<FI2<T,Integer>> addSortNoCol(Function<T, R> function);
+    SDFrame<FI2<T,Integer>> addRowNumberCol(Sorter<T> sorter);
 
     /**
      * Add a numbered column to a specific column
      * @param set           specific column
      */
-    SDFrame<T> addSortNoCol(SetFunction<T,Integer> set);
+    SDFrame<T> addRowNumberCol(SetFunction<T,Integer> set);
+
+    /**
+     * Add a numbered column to a specific column
+     * @param sorter    the sorter
+     * @param set           specific column
+     */
+    SDFrame<T> addRowNumberCol(Sorter<T> sorter,SetFunction<T,Integer> set);
 
     /**
      * Add ranking columns by comparator
-     *      Ranking logic, the same value means the Ranking is the same. This is different from {@link #addSortNoCol}
-     * @param comparator    the ranking  comparator
+     *      Ranking logic, the same value means the Ranking is the same. This is different from {@link #addRowNumberCol}
+     * @param sorter    the ranking  sorter
      */
-    SDFrame<FI2<T,Integer>> addRankingSameCol(Comparator<T> comparator);
-
-    /**
-     * Add ranking columns by field
-     * @param function          the sort field
-     */
-    <R extends Comparable<R>> SDFrame<FI2<T,Integer>> addRankingSameColAsc(Function<T, R> function);
-
+    SDFrame<FI2<T,Integer>> addRankCol(Sorter<T> sorter);
 
     /**
      * Add ranking column to a certain column by Comparator
-     * @param comparator            the ranking  comparator
+     * @param sorter            the ranking  comparator
      * @param set                   certain column
      */
-    SDFrame<T> addRankingSameCol(Comparator<T> comparator,SetFunction<T,Integer> set);
-
-    /**
-     *  Add ranking column to a certain column by field
-     */
-    <R extends Comparable<R>>  SDFrame<T> addRankingSameColAsc(Function<T, R> function, SetFunction<T,Integer> set);
-
-
-    /**
-     *  Add ranking column to a certain column by field
-     */
-    <R extends Comparable<R>>  SDFrame<T> addRankingSameColDesc(Function<T, R> function, SetFunction<T,Integer> set);
+    SDFrame<T> addRankCol(Sorter<T> sorter, SetFunction<T,Integer> set);
 
 
     /**
@@ -331,37 +314,15 @@ public interface SDFrame<T> extends IFrame<T> {
      */
     SDFrame<T> cutPage(int page,int pageSize);
 
-    /**
-     * Cut the top n by ranking value, by comparator to ranking asc
-     *          The same value is considered to have the same ranking
-     * @param comparator            the ranking comparator
-     * @param n                     the top n
-     */
-    SDFrame<T> cutRankingSameAsc(Comparator<T> comparator, int n);
 
     /**
-     * Cut the top n by ranking value, by field  to ranking asc
+     * Cut the top N rankings data
      *          The same value is considered to have the same ranking
-     * @param function              the ranking field
+     * @param sorter                the ranking sorter
      * @param n                     the top n
      */
-    <R extends Comparable<R>> SDFrame<T> cutRankingSameAsc(Function<T, R> function, int n);
+    SDFrame<T> cutFirstRank(Sorter<T> sorter, int n);
 
-    /**
-     * Cut the top n by ranking value, by comparator to ranking desc
-     *          The same value is considered to have the same ranking
-     * @param comparator            the ranking comparator
-     * @param n                     the top n
-     */
-    SDFrame<T> cutRankingSameDesc(Comparator<T> comparator, int n);
-
-    /**
-     * Cut the top n by ranking value, by field  to ranking desc
-     *          The same value is considered to have the same ranking
-     * @param function              the ranking field
-     * @param n                     the top n
-     */
-    <R extends Comparable<R>> SDFrame<T> cutRankingSameDesc(Function<T, R> function, int n);
 
 
     /** ===========================   View Frame  ===================================== **/
