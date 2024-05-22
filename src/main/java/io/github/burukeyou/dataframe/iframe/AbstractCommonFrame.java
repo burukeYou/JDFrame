@@ -20,34 +20,31 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
     protected int defaultScale = 2;
     protected RoundingMode defaultRoundingMode = RoundingMode.HALF_UP;
 
-    protected static Field oldModeField;
-
-
-    static {
-        updateOldModelField();
-    }
-
-    private static void updateOldModelField() {
-        try {
-            oldModeField = RoundingMode.class.getDeclaredField("oldMode");
-            oldModeField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     protected int getOldRoundingMode(){
-        try {
-            return oldModeField.getInt(defaultRoundingMode);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+            switch (defaultRoundingMode){
+                case UP:
+                    return BigDecimal.ROUND_UP;
+                case DOWN:
+                    return BigDecimal.ROUND_DOWN;
+                case CEILING:
+                    return BigDecimal.ROUND_CEILING;
+                case FLOOR:
+                    return BigDecimal.ROUND_FLOOR;
+                case HALF_UP:
+                    return BigDecimal.ROUND_HALF_UP;
+                case HALF_DOWN:
+                    return BigDecimal.ROUND_HALF_DOWN;
+                case HALF_EVEN:
+                    return BigDecimal.ROUND_HALF_EVEN;
+                case UNNECESSARY:
+                    return BigDecimal.ROUND_UNNECESSARY;
+            }
+            throw new IllegalArgumentException("can not find round mode for " + defaultRoundingMode);
     }
 
     protected void initDefaultScale(int scale,RoundingMode roundingMode){
         this.defaultScale = scale;
         this.defaultRoundingMode = roundingMode;
-        updateOldModelField();
     }
 
     protected  void transmitMember(AbstractCommonFrame<?> from, AbstractCommonFrame<?> toFrame) {
