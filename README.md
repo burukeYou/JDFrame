@@ -1,5 +1,5 @@
 
-# JDFrmae
+# JDFrame
 
 -------
 ![travis](https://travis-ci.org/nRo/DataFrame.svg?branch=master)
