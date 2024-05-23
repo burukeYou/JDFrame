@@ -72,7 +72,8 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - subList()    - 范围截取
 - replenish()   -补充缺失条目
 - distinct()   -去重
-== 筛选 == 
+  
+==== 筛选 == ======
 - where()       -自定义筛选
 - whereNull()   -筛选Null值。如果是字符串兼容了空字符串的处理
 - whereNotNull()  -筛选非Null值。
@@ -97,7 +98,7 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - whereLikeLeft() - 前缀匹配
 - whereLikeRight() - 后缀匹配
 
- == 汇总 == 
+ ===== 汇总 ==== 
 - sum()      -对某列求和
 - avg()    -对某列求平均值
 - maxMin()   -获取最大和最小对象
@@ -110,7 +111,7 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - countDistinct()  -去重后获取行数
 
 
-== 分组 ==
+==== 分组 ====
 - group()   -分组
 - groupBySum()   -分组求和
 - groupByCount()   -分组求数量
@@ -123,7 +124,7 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - groupByMaxMinValue()   -分组求最大值和最小值
 - groupByMaxMin()    -分组求最大对象和最小对象
 
-== 窗口函数 ==  
+==== 窗口函数 ====  
 - window()   -打开窗口函数
 - overRowNumber()   -生成行号
 - overRank()        -生成排名号。排名不连续
