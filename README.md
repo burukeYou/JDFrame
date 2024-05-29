@@ -1,4 +1,15 @@
 
+# JDFrame
+
+-------
+![travis](https://travis-ci.org/nRo/DataFrame.svg?branch=master)
+[![License](http://img.shields.io/badge/license-apache%202-brightgreen.svg)](https://github.com/burukeYou/fast-retry/blob/main/LICENSE)
+
+# Documentation
+
+-------
+[![Javadocs](http://javadoc.io/badge/de.unknownreality/dataframe.svg?color=blue)](http://javadoc.io/doc/io.github.burukeyou/jdframe)
+
 
 # 背景
 burukeyou的私房工具， 由于经常记不住stream的一些api每次要复制来复制去，想要更加语意化的api
@@ -39,7 +50,7 @@ https://central.sonatype.com/artifact/io.github.burukeyou/jdframe/versions
 其他具体API见 IFrame接口
 JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的 
 
-# Frame（矩阵）的API列表
+# Frame的API列表
 - read()  -读取成Frame进行数据处理
 - from()   -从其他流读取成Frame进行数据处理
 - toLists() -转换成普通列表
