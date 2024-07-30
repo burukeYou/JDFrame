@@ -607,7 +607,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * Group list
      * @param key        group field
      */
-    <K> JDFrame<FI2<K,List<T>>> group(Function<T, K> key);
+    <K> JDFrame<FI2<K,List<T>>> group(Function<? super T, ? extends K> key);
 
     /**
      * Group summation

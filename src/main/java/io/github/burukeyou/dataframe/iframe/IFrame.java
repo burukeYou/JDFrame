@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -30,6 +31,21 @@ public interface IFrame<T> extends Iterable<T>{
      * @return      the list
      */
     List<T> toLists();
+
+    /**
+     * Convert to Map
+     * @param keyMapper       a mapping function to produce keys
+     * @param valueMapper     a mapping function to produce values
+     */
+    <K,V> Map<K,V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper);
+
+    /**
+     * Convert to Map
+     * @param keyMapper       a mapping function to produce first keys
+     * @param key2Mapper      a mapping function to produce second keys
+     * @param valueMapper     a mapping function to produce values
+     */
+    <K,K2,V> Map<K,Map<K2,V>> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends K2> key2Mapper,Function<? super T, ? extends V> valueMapper);
 
     /**
      * get stream
@@ -604,7 +620,7 @@ public interface IFrame<T> extends Iterable<T>{
      * Group list
      * @param key        group field
      */
-    <K> IFrame<FI2<K,List<T>>> group(Function<T, K> key);
+    <K> IFrame<FI2<K,List<T>>> group(Function<? super T, ? extends K> key);
 
     /**
      * Group summation

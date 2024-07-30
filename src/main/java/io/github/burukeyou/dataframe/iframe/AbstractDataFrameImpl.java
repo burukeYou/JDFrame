@@ -34,6 +34,28 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     }
 
+    @Override
+    public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+        // 原生stream 的 toMap存在两个问题。 1-value不能为null否则空指针异常 2-不能重复key，否则 Duplicate key 异常
+        List<T> list = toLists();
+        if (ListUtils.isEmpty(list)){
+            return Collections.emptyMap();
+        }
+        Map<K, V> map = new HashMap<>(list.size());
+        for (T t : list) {
+            map.put(keyMapper.apply(t),valueMapper.apply(t));
+        }
+        return map;
+    }
+
+    @Override
+    public <K, K2, V> Map<K, Map<K2, V>> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends K2> key2Mapper, Function<? super T, ? extends V> valueMapper) {
+        Map<? extends K, List<T>> oldMap = stream().collect(groupingBy(keyMapper));
+        Map<K, Map<K2, V>> map = new HashMap<>(oldMap.size());
+        oldMap.forEach((key,list) -> map.put(key,from(list.stream()).toMap(key2Mapper, valueMapper)));
+        return map;
+    }
+
     protected  <R> Stream<T> whereNullStream(Function<T, R> function) {
         return stream().filter(item -> {
             R r = function.apply(item);
@@ -258,7 +280,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
 
-    protected  <K> List<FI2<K, List<T>>> groupKey(Function<T, K> K) {
+    protected  <K> List<FI2<K, List<T>>> groupKey(Function<? super T, ? extends K> K) {
         return FrameUtil.toListFI2(stream().collect(groupingBy(K)));
     }
 

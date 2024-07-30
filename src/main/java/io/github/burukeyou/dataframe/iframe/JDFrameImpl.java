@@ -446,7 +446,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <K> JDFrame<FI2<K, List<T>>> group(Function<T, K> key) {
+    public <K> JDFrame<FI2<K, List<T>>> group(Function<? super T, ? extends K> key) {
         return returnDF(groupKey(key));
     }
 
@@ -512,7 +512,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI2<K, BigDecimal>> sumList = returnDF(dataList).groupKey(key, tBigDecimalCollector);
         List<FI2<K, Long>> countList =  from(dataList).groupByCount(key).toLists();
-        Map<K, Long> countMap = countList.stream().collect(toMap(FI2::getC1, FI2::getC2));
+        Map<K, Long> countMap = countList.stream().collect(Collectors.toMap(FI2::getC1, FI2::getC2));
         List<FI3<K, BigDecimal, Long>> collect = sumList.stream().map(e -> new FI3<>(e.getC1(), e.getC2(), countMap.get(e.getC1()))).collect(Collectors.toList());
         return returnDF(collect);
     }
@@ -526,7 +526,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         List<FI3<K, J, BigDecimal>> sumList = returnDF(dataList).groupKey(key, key2, tBigDecimalCollector);
         List<FI3<K, J, Long>> countList =  from(dataList).groupByCount(key, key2).toLists();
         // 合并sum和count字段
-        Map<String, FI3<K, J, Long>> countMap = countList.stream().collect(toMap(e -> e.getC1() + "_" + e.getC2(), Function.identity()));
+        Map<String, FI3<K, J, Long>> countMap = countList.stream().collect(Collectors.toMap(e -> e.getC1() + "_" + e.getC2(), Function.identity()));
         List<FI4<K, J, BigDecimal, Long>> collect = sumList.stream().map(e -> {
             FI3<K, J, Long> countItem = countMap.get(e.getC1() + "_" + e.getC2());
             return new FI4<>(e.getC1(), e.getC2(), e.getC3(), countItem.getC3());

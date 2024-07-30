@@ -336,4 +336,15 @@ public class JDFrameTest {
                 //.addRankCol(Sorter.sortAscBy(Student::getAge))
                 .show(30);
     }
+
+    @Test
+    public void testToMap(){
+        // 原生stream toMap value 不能为null， key可以为null. Frame的toMap 不会
+        Map<String, Integer> stringIntegerMap = SDFrame.read(studentList).toMap(Student::getName, Student::getId);
+        Map<Integer, String> toMap = SDFrame.read(studentList).toMap(Student::getId, Student::getName);
+
+        //
+        Map<String, Map<String, Integer>> multiMap = SDFrame.read(studentList).toMap(Student::getSchool, Student::getName, Student::getId);
+        System.out.println();
+    }
 }

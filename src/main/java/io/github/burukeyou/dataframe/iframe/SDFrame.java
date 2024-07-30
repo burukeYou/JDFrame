@@ -611,7 +611,7 @@ public interface SDFrame<T> extends IFrame<T> {
      * Group list
      * @param key        group field
      */
-    <K> SDFrame<FI2<K,List<T>>> group(Function<T, K> key);
+    <K> SDFrame<FI2<K,List<T>>> group(Function<? super T, ? extends K> key);
 
     /**
      * Group summation
