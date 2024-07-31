@@ -613,6 +613,15 @@ public interface IFrame<T> extends Iterable<T>{
      */
     long count();
 
+    /**
+     * If the number of rows is 0, it is empty
+     */
+    boolean isEmpty();
+
+    /**
+     * If the number of rows is greater than 0, it is not empty
+     */
+    boolean isNotEmpty();
 
     /** ===========================   Group Frame  ===================================== **/
 

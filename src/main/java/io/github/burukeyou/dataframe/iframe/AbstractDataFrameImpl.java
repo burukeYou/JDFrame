@@ -279,6 +279,15 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return stream().count();
     }
 
+    @Override
+    public boolean isEmpty() {
+        return count() <= 0;
+    }
+
+    @Override
+    public boolean isNotEmpty() {
+        return count() > 0;
+    }
 
     protected  <K> List<FI2<K, List<T>>> groupKey(Function<? super T, ? extends K> K) {
         return FrameUtil.toListFI2(stream().collect(groupingBy(K)));

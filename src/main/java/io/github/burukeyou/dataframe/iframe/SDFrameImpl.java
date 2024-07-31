@@ -40,6 +40,9 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     public SDFrameImpl(List<T> list) {
+        if (list == null){
+            list = Collections.emptyList();
+        }
         this.data = list.stream();
         if (!list.isEmpty()){
             fieldList = buildFieldList(list.get(0));

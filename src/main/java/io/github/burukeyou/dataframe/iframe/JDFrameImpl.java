@@ -32,11 +32,15 @@ import static java.util.stream.Collectors.*;
  */
 public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<T> {
 
-    public List<T> dataList;
+    protected List<T> dataList;
 
     public JDFrameImpl(List<T> list) {
+        if (list == null){
+            list = Collections.emptyList();
+        }
+
         dataList = list;
-        if (dataList != null && !dataList.isEmpty()){
+        if (!dataList.isEmpty()){
             fieldList = buildFieldList(dataList.get(0));
         }
     }
