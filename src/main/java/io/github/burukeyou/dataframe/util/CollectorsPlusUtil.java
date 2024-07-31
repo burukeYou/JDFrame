@@ -1,7 +1,7 @@
 package io.github.burukeyou.dataframe.util;
 
 import io.github.burukeyou.dataframe.iframe.function.BigDecimalFunction;
-import io.github.burukeyou.dataframe.iframe.support.NumberFunction;
+import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

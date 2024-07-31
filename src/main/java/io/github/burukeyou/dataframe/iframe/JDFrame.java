@@ -1,5 +1,7 @@
 package io.github.burukeyou.dataframe.iframe;
 
+import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
+import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
@@ -60,6 +62,12 @@ public interface JDFrame<T> extends IFrame<T> {
      * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
      */
     JDFrame<T> forEachDo(Consumer<? super T> action);
+
+
+    /**
+     * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+     */
+    JDFrame<T> forEachDo(ConsumerIndex<? super T> action);
 
 
     /**

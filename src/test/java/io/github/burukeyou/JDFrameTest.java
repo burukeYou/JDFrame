@@ -340,19 +340,24 @@ public class JDFrameTest {
 
     @Test
     public void testToMap(){
-        Student[] students = SDFrame.read(studentList).toArray();
-        System.out.println();
-
-
         // 原生stream toMap value 不能为null， key可以为null. Frame的toMap 不会
         Map<String, Integer> stringIntegerMap = SDFrame.read(studentList).toMap(Student::getName, Student::getId);
         Map<Integer, String> toMap = SDFrame.read(studentList).toMap(Student::getId, Student::getName);
 
         //
-
-
-        //
         Map<String, Map<String, Integer>> multiMap = SDFrame.read(studentList).toMap(Student::getSchool, Student::getName, Student::getId);
         System.out.println();
+    }
+
+    @Test
+    public void testForEachDo(){
+        SDFrame.read(studentList).forEachDo((index,student) -> {
+            student.setRank(index);
+            System.out.println(index + "------>" + student.getName());
+        }).show();
+
+        SDFrame.read(studentList).forEachDo((student) -> {
+            System.out.println("------>" + student.getName());
+        });
     }
 }

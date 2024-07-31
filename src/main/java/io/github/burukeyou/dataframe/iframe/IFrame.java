@@ -1,5 +1,7 @@
 package io.github.burukeyou.dataframe.iframe;
 
+import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
+import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
@@ -75,6 +77,13 @@ public interface IFrame<T> extends Iterable<T>{
      * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
      */
     IFrame<T> forEachDo(Consumer<? super T> action);
+
+
+    /**
+     * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+     */
+    IFrame<T> forEachDo(ConsumerIndex<? super T> action);
+
 
     /**
      * Returns <tt>true</tt> if this list contains the specified element.

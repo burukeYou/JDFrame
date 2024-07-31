@@ -1,6 +1,8 @@
 package io.github.burukeyou.dataframe.iframe;
 
 
+import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
+import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
@@ -61,6 +63,15 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public SDFrameImpl<T> forEachDo(Consumer<? super T> action) {
         this.forEach(action);
+        return this;
+    }
+
+    @Override
+    public SDFrameImpl<T> forEachDo(ConsumerIndex<? super T> action) {
+        int index = 0;
+        for (T t : this) {
+            action.accept(index++,t);
+        }
         return this;
     }
 
