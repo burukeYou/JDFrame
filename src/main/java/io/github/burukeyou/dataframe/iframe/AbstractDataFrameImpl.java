@@ -37,12 +37,29 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public T[] toArray() {
-        List<T> lists = toLists();
-        if (lists.isEmpty() && fieldClass == null){
+        List<T> ts = toLists();
+        if (ts.isEmpty() && fieldClass == null){
             // 为空拿不到泛型先返回null
             return null;
         }
-        return (T[]) Array.newInstance(fieldClass, lists.size());
+        T[] arr = (T[]) Array.newInstance(fieldClass, ts.size());
+        for (int i = 0; i < ts.size(); i++) {
+            arr[i] = ts.get(i);
+        }
+        return arr;
+    }
+
+    @Override
+    public T[] toArray(Class<T> elementClass) {
+        List<T> ts = toLists();
+        if (ts == null || ts.isEmpty()) {
+            return (T[]) Array.newInstance(elementClass, 0);
+        }
+        T[] array = (T[]) Array.newInstance(elementClass, ts.size());
+        for (int i = 0; i < ts.size(); i++) {
+            array[i] = ts.get(i);
+        }
+        return array;
     }
 
     @Override
@@ -394,15 +411,6 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return toLists().iterator();
     }
 
-    protected  <F> List<String> buildFieldList(F f){
-        fieldClass = f.getClass();
-        List<String> filedList = new ArrayList<>();
-        Arrays.stream(f.getClass().getDeclaredFields()).forEach(field -> {
-            field.setAccessible(true);
-            filedList.add(field.getName());
-        });
-        return filedList;
-    }
 
     @Override
     public List<String> columns() {

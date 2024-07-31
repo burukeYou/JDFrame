@@ -39,6 +39,13 @@ public interface IFrame<T> extends Iterable<T>{
     T[] toArray();
 
     /**
+     * Convert to Array
+     * @param  elementClass         the array element class type
+     * @return      the Array， Even if the Frame is empty, it will return an empty array instead of null
+     */
+    T[] toArray(Class<T> elementClass);
+
+    /**
      * Convert to Map
      * @param keyMapper       a mapping function to produce keys
      * @param valueMapper     a mapping function to produce values

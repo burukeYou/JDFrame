@@ -1,14 +1,20 @@
 package io.github.burukeyou.dataframe.iframe;
 
 import io.github.burukeyou.dataframe.iframe.item.FI2;
+import io.github.burukeyou.dataframe.util.ClassUtil;
 import lombok.Getter;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.lang.Character.UnicodeBlock.*;
 
 @Getter
 public abstract class AbstractCommonFrame<T> implements IFrame<T> {
@@ -16,6 +22,9 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
     protected static final String MSG = "****";
 
     protected List<String> fieldList = new ArrayList<>();
+
+    private  Map<String,Field> fieldNameMap = new HashMap<>();
+
     protected Class<?> fieldClass;
 
     protected int defaultScale = 2;
@@ -53,11 +62,29 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
         toFrame.defaultRoundingMode = from.defaultRoundingMode;
     }
 
+    public List<String> getFieldList() {
+        if (!fieldList.isEmpty()){
+            return fieldList;
+        }
+        if (fieldClass == null){
+            return Collections.emptyList();
+        }
+
+        List<Field> allFiled = ClassUtil.findAllFiled(fieldClass);
+        for (Field field : allFiled) {
+            String name = field.getName();
+            fieldNameMap.put(name,field);
+            fieldList.add(name);
+        }
+        return fieldList;
+    }
+
     protected String[][] buildPrintDataArr(int limit) {
         List<T> dataList = toLists();
         if (dataList.isEmpty()){
             return null;
         }
+
         List<String> filedList = getFieldList();
         int rowLen =  (Math.min(limit, dataList.size())) + 1;
         int colLen = filedList.size() * 2 + 1;
@@ -89,12 +116,12 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
             int tmpIndex = 0;
             for (String fieldName : filedList) {
                 try {
-                    Field field = t.getClass().getDeclaredField(fieldName);
+                    Field field = fieldNameMap.get(fieldName);
                     field.setAccessible(true);
                     Object o = field.get(t);
                     dataArr[row][tmpIndex++] = o == null ? "" : o.toString();
                     dataArr[row][tmpIndex++] = MSG;
-                } catch (NoSuchFieldException | IllegalAccessException e) {
+                } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -110,12 +137,12 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
                     continue;
                 }
                 if (dataArr[j][i].length() > maxStrLen) {
-                    maxStrLen = dataArr[j][i].length();
+                    maxStrLen = getStrLength(dataArr[j][i]);
                 }
             }
             if (maxStrLen != -1) {
                 for (int j = 0; j < rowLen; j++) {
-                    int need = maxStrLen - dataArr[j][i].length();
+                    int need = maxStrLen - getStrLength(dataArr[j][i]);
                     if (need > 0 ) {
                         dataArr[j][i] = dataArr[j][i] + getSpace(need);
                     }
@@ -132,6 +159,29 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
         }
         return sb.toString();
     }
+
+    public static int getStrLength(String str) {
+        int count = 0;
+        for (char c : str.toCharArray()) {
+            if (isChineseChar(c)){
+                count += 2;
+            }else {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    private static boolean isChineseChar(char checkChar) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(checkChar);
+        if (CJK_UNIFIED_IDEOGRAPHS == ub||CJK_COMPATIBILITY_IDEOGRAPHS==ub||
+                CJK_COMPATIBILITY_FORMS == ub|| CJK_RADICALS_SUPPLEMENT == ub||
+                CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A == ub||CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B==ub) {
+            return true;
+        }
+        return false;
+    }
+
 
     protected Type[] getSuperClassActualTypeArguments(Class<?> clz){
         Type superclass = clz.getGenericSuperclass();
