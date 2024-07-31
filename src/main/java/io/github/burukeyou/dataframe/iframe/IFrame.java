@@ -33,6 +33,12 @@ public interface IFrame<T> extends Iterable<T>{
     List<T> toLists();
 
     /**
+     * Convert to Array
+     * @return      the Array， if Frame is empty will return null rather than empty array
+     */
+    T[] toArray();
+
+    /**
      * Convert to Map
      * @param keyMapper       a mapping function to produce keys
      * @param valueMapper     a mapping function to produce values
@@ -62,6 +68,19 @@ public interface IFrame<T> extends Iterable<T>{
      * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
      */
     IFrame<T> forEachDo(Consumer<? super T> action);
+
+    /**
+     * Returns <tt>true</tt> if this list contains the specified element.
+     * More formally, returns <tt>true</tt> if and only if this list contains
+     * at least one element <tt>e</tt> such that
+     * <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt>.
+     *
+     * @param other element whose presence in this list is to be tested
+     * @return <tt>true</tt> if this list contains the specified element
+     */
+    boolean contains(T other);
+
+
 
     /**
      * ===========================   Frame Setting =====================================

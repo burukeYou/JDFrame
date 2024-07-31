@@ -13,6 +13,7 @@ import io.github.burukeyou.dataframe.iframe.window.Window;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -339,9 +340,16 @@ public class JDFrameTest {
 
     @Test
     public void testToMap(){
+        Student[] students = SDFrame.read(studentList).toArray();
+        System.out.println();
+
+
         // 原生stream toMap value 不能为null， key可以为null. Frame的toMap 不会
         Map<String, Integer> stringIntegerMap = SDFrame.read(studentList).toMap(Student::getName, Student::getId);
         Map<Integer, String> toMap = SDFrame.read(studentList).toMap(Student::getId, Student::getName);
+
+        //
+
 
         //
         Map<String, Map<String, Integer>> multiMap = SDFrame.read(studentList).toMap(Student::getSchool, Student::getName, Student::getId);

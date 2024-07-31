@@ -16,6 +16,7 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
     protected static final String MSG = "****";
 
     protected List<String> fieldList = new ArrayList<>();
+    protected Class<?> fieldClass;
 
     protected int defaultScale = 2;
     protected RoundingMode defaultRoundingMode = RoundingMode.HALF_UP;
