@@ -385,4 +385,11 @@ public class JDFrameTest {
         boolean e = SDFrame.read(studentList).containsValue(Student::getName, "e");
         System.out.println(e);
     }
+
+    @Test
+    public void testJoining(){
+        String joining = SDFrame.read(studentList).joining(Student::getName, ",");
+        String joining2 = SDFrame.read(studentList).joining(Student::getName, ",","[","]");
+        System.out.println();
+    }
 }

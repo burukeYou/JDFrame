@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
@@ -88,6 +89,15 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         });
     }
 
+    @Override
+    public <U> String joining(Function<T, U> joinField,CharSequence delimiter, CharSequence prefix, CharSequence suffix) {
+        return stream().map(joinField).filter(Objects::nonNull).map(Object::toString).collect(Collectors.joining(delimiter,prefix,suffix));
+    }
+
+    @Override
+    public <U> String joining(Function<T, U> joinField, CharSequence delimiter) {
+        return joining(joinField,delimiter,"","");
+    }
 
     @Override
     public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {

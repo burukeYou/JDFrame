@@ -98,6 +98,26 @@ public interface IFrame<T> extends Iterable<T>{
     <U> boolean containsValue(Function<T,U> valueFunction, U value);
 
     /**
+     * Concatenate the values of the fields according to the specified delimiter and  prefix ,suffix
+     * @param joinField     splicing fields
+     * @param delimiter     the delimiter to be used between each element
+     * @param prefix        the sequence of characters to be used at the beginning of the joined result
+     * @param suffix        the sequence of characters to be used at the end  of the joined result
+     *
+     */
+    <U> String joining(Function<T,U> joinField,CharSequence delimiter, CharSequence prefix, CharSequence suffix);
+
+
+    /**
+     * Concatenate the values of the fields according to the specified delimiter
+     * @param joinField     splicing fields
+     * @param delimiter     the delimiter to be used between each element
+     *
+     */
+    <U> String joining(Function<T,U> joinField,CharSequence delimiter);
+
+
+    /**
      * ===========================   Frame Setting =====================================
      **/
     /**
