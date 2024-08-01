@@ -239,7 +239,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <R extends Comparable<? super R>> SDFrameImpl<T> sortDesc(Function<T, R> function) {
-        sortDesc(NullEndComparator.comparing(function));
+        sortDesc(NullLastComparator.comparing(function));
         return this;
     }
 
@@ -251,7 +251,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <R extends Comparable<R>> SDFrameImpl<T> sortAsc(Function<T, R> function) {
-        sortAsc(NullEndComparator.comparing(function));
+        sortAsc(NullFirstComparator.comparing(function));
         return this;
     }
 

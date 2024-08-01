@@ -8,7 +8,6 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.MaxMin;
-import io.github.burukeyou.dataframe.iframe.support.NullEndComparator;
 import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 import lombok.extern.slf4j.Slf4j;
@@ -372,9 +371,9 @@ public class JDFrameTest {
         studentList.get(3).setCreateTime(LocalDateTime.now().plusDays(3));
 
         // 兼容 null值 情况， 并将null排序到最后
-        SDFrame.read(studentList).sortDesc(Student::getCreateTime).show(30);
+        SDFrame.read(studentList).sortAsc(Student::getCreateTime).show(30);
 
-        SDFrame.read(studentList).sortAsc(NullEndComparator.comparing(Student::getCreateTime)).show(30);
+        SDFrame.read(studentList).sortDesc(Student::getCreateTime).show(30);
 
         System.out.println();
     }

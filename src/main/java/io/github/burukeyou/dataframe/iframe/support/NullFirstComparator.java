@@ -5,12 +5,14 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * support null value to compare.  if values is null sort to the end
+ * support null value to compare.
+ *          if values is null sort to the end in sort asc
+ *          if values is null sort to the start in sort desc
  *
  * @author  caizhihao
  * @param <T>
  */
-public interface NullEndComparator<T> extends Comparator<T> {
+public interface NullFirstComparator<T> extends Comparator<T> {
 
     /**
      *  simplify build  Comparator by keyExtractor
@@ -22,10 +24,10 @@ public interface NullEndComparator<T> extends Comparator<T> {
                 return 0;
             }
             if (t1 == null){
-                return -1;
+                return 1;
             }
             if (t2 == null){
-                return 1;
+                return -1;
             }
             U t1Value = keyExtractor.apply(t1);
             U t2Value = keyExtractor.apply(t2);
@@ -33,10 +35,10 @@ public interface NullEndComparator<T> extends Comparator<T> {
                 return 0;
             }
             if (t1Value == null){
-                return -1;
+                return 1;
             }
             if (t2Value == null){
-                return 1;
+                return -1;
             }
             return t1Value.compareTo(t2Value);
         };

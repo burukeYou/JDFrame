@@ -219,7 +219,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R extends Comparable<? super R>> JDFrameImpl<T> sortDesc(Function<T, R> function) {
-        return sortDesc(NullEndComparator.comparing(function));
+        return sortDesc(NullLastComparator.comparing(function));
     }
 
     @Override
@@ -230,7 +230,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R extends Comparable<R>> JDFrameImpl<T> sortAsc(Function<T, R> function) {
-        return sortAsc(NullEndComparator.comparing(function));
+        return sortAsc(NullLastComparator.comparing(function));
     }
 
     @Override
