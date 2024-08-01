@@ -1,6 +1,8 @@
 package io.github.burukeyou.dataframe.iframe;
 
 
+import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
+import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
@@ -34,15 +36,18 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     public SDFrameImpl(Stream<T> data) {
         List<T> tmp = data.collect(toList());
         if (ListUtils.isNotEmpty(tmp)){
-            this.fieldList = buildFieldList(tmp.get(0));
+            fieldClass = tmp.get(0).getClass();
         }
         this.data = tmp.stream();
     }
 
     public SDFrameImpl(List<T> list) {
+        if (list == null){
+            list = Collections.emptyList();
+        }
         this.data = list.stream();
         if (!list.isEmpty()){
-            fieldList = buildFieldList(list.get(0));
+            fieldClass = list.get(0).getClass();
         }
     }
 
@@ -58,6 +63,15 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public SDFrameImpl<T> forEachDo(Consumer<? super T> action) {
         this.forEach(action);
+        return this;
+    }
+
+    @Override
+    public SDFrameImpl<T> forEachDo(ConsumerIndex<? super T> action) {
+        int index = 0;
+        for (T t : this) {
+            action.accept(index++,t);
+        }
         return this;
     }
 
@@ -225,7 +239,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <R extends Comparable<? super R>> SDFrameImpl<T> sortDesc(Function<T, R> function) {
-        sortDesc(Comparator.comparing(function));
+        sortDesc(NullEndComparator.comparing(function));
         return this;
     }
 
@@ -237,7 +251,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <R extends Comparable<R>> SDFrameImpl<T> sortAsc(Function<T, R> function) {
-        sortAsc(Comparator.comparing(function));
+        sortAsc(NullEndComparator.comparing(function));
         return this;
     }
 
@@ -394,9 +408,6 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
 
     public <R> SDFrame<T> whereEq(Function<T, R> function, R value) {
-        if (null == value) {
-            return this;
-        }
         return  returnThis(whereEqStream(function,value));
     }
 

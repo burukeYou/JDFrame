@@ -1,6 +1,8 @@
 package io.github.burukeyou.dataframe.iframe;
 
 
+import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
+import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
@@ -32,12 +34,16 @@ import static java.util.stream.Collectors.*;
  */
 public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<T> {
 
-    public List<T> dataList;
+    protected List<T> dataList;
 
     public JDFrameImpl(List<T> list) {
+        if (list == null){
+            list = Collections.emptyList();
+        }
+
         dataList = list;
-        if (dataList != null && !dataList.isEmpty()){
-            fieldList = buildFieldList(dataList.get(0));
+        if (!dataList.isEmpty()){
+            fieldClass = dataList.get(0).getClass();
         }
     }
 
@@ -59,6 +65,15 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public JDFrameImpl<T> forEachDo(Consumer<? super T> action) {
         this.forEach(action);
+        return this;
+    }
+
+    @Override
+    public JDFrameImpl<T> forEachDo(ConsumerIndex<? super T> action) {
+        int index = 0;
+        for (T t : this) {
+            action.accept(index++,t);
+        }
         return this;
     }
 
@@ -204,7 +219,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R extends Comparable<? super R>> JDFrameImpl<T> sortDesc(Function<T, R> function) {
-        return sortDesc(Comparator.comparing(function));
+        return sortDesc(NullEndComparator.comparing(function));
     }
 
     @Override
@@ -215,7 +230,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R extends Comparable<R>> JDFrameImpl<T> sortAsc(Function<T, R> function) {
-        return sortAsc(Comparator.comparing(function));
+        return sortAsc(NullEndComparator.comparing(function));
     }
 
     @Override
@@ -367,9 +382,6 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
 
     public <R> JDFrame<T> whereEq(Function<T, R> function, R value) {
-        if (null == value) {
-            return this;
-        }
         return  returnDF(whereEqStream(function,value));
     }
 

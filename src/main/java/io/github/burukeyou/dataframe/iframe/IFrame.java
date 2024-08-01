@@ -1,5 +1,7 @@
 package io.github.burukeyou.dataframe.iframe;
 
+import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
+import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
@@ -33,6 +35,19 @@ public interface IFrame<T> extends Iterable<T>{
     List<T> toLists();
 
     /**
+     * Convert to Array
+     * @return      the Array， if Frame is empty will return null rather than empty array
+     */
+    T[] toArray();
+
+    /**
+     * Convert to Array
+     * @param  elementClass         the array element class type
+     * @return      the Array， Even if the Frame is empty, it will return an empty array instead of null
+     */
+    T[] toArray(Class<T> elementClass);
+
+    /**
      * Convert to Map
      * @param keyMapper       a mapping function to produce keys
      * @param valueMapper     a mapping function to produce values
@@ -62,6 +77,25 @@ public interface IFrame<T> extends Iterable<T>{
      * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
      */
     IFrame<T> forEachDo(Consumer<? super T> action);
+
+
+    /**
+     * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+     */
+    IFrame<T> forEachDo(ConsumerIndex<? super T> action);
+
+
+    /**
+     * traverse each element determine whether the specified object is included
+     * @param other         specified object
+     */
+    boolean contains(T other);
+
+    /**
+     * traverse each element determine whether the specified object value is included
+     * @param valueFunction     field value
+     */
+    <U> boolean containsValue(Function<T,U> valueFunction, U value);
 
     /**
      * ===========================   Frame Setting =====================================
@@ -613,6 +647,15 @@ public interface IFrame<T> extends Iterable<T>{
      */
     long count();
 
+    /**
+     * If the number of rows is 0, it is empty
+     */
+    boolean isEmpty();
+
+    /**
+     * If the number of rows is greater than 0, it is not empty
+     */
+    boolean isNotEmpty();
 
     /** ===========================   Group Frame  ===================================== **/
 

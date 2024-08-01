@@ -14,6 +14,7 @@ import io.github.burukeyou.dataframe.util.ListUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
@@ -35,8 +36,62 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     @Override
+    public T[] toArray() {
+        List<T> ts = toLists();
+        if (ts.isEmpty() && fieldClass == null){
+            // 为空拿不到泛型先返回null
+            return null;
+        }
+        T[] arr = (T[]) Array.newInstance(fieldClass, ts.size());
+        for (int i = 0; i < ts.size(); i++) {
+            arr[i] = ts.get(i);
+        }
+        return arr;
+    }
+
+    @Override
+    public T[] toArray(Class<T> elementClass) {
+        List<T> ts = toLists();
+        if (ts == null || ts.isEmpty()) {
+            return (T[]) Array.newInstance(elementClass, 0);
+        }
+        T[] array = (T[]) Array.newInstance(elementClass, ts.size());
+        for (int i = 0; i < ts.size(); i++) {
+            array[i] = ts.get(i);
+        }
+        return array;
+    }
+
+    @Override
+    public boolean contains(T other) {
+        return toLists().contains(other);
+    }
+
+    @Override
+    public  <U> boolean containsValue(Function<T,U> valueFunction, U value) {
+        return stream().anyMatch(e -> {
+            if (e == null) {
+                return false;
+            }
+
+            U fieldValue = valueFunction.apply(e);
+            if (fieldValue == null && value == null) {
+                return true;
+            }
+
+            if (value != null) {
+                return value.equals(fieldValue);
+            } else {
+                // value is null ,fieldValue is not null
+                return false;
+            }
+        });
+    }
+
+
+    @Override
     public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
-        // 原生stream 的 toMap存在两个问题。 1-value不能为null否则空指针异常 2-不能重复key，否则 Duplicate key 异常
+        // 原生stream 的 toMap存在两个问题。 1-value不能为null否则空指针异常 2-不能重复key，否则 Duplicate key 异常所以宁愿手写
         List<T> list = toLists();
         if (ListUtils.isEmpty(list)){
             return Collections.emptyMap();
@@ -154,7 +209,23 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
 
     public <R> Stream<T> whereEqStream(Function<T, R> function, R value) {
-        return stream().filter(e -> value.equals(function.apply(e)));
+        return stream().filter(e -> {
+            if (e == null) {
+                return false;
+            }
+
+            R fieldValue = function.apply(e);
+            if (fieldValue == null && value == null) {
+                return true;
+            }
+
+            if (value != null) {
+                return value.equals(fieldValue);
+            } else {
+                // value is null ,fieldValue is not null
+                return false;
+            }
+        });
     }
 
     public <R> Stream<T> whereNotEqStream(Function<T, R> function, R value) {
@@ -279,6 +350,15 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return stream().count();
     }
 
+    @Override
+    public boolean isEmpty() {
+        return count() <= 0;
+    }
+
+    @Override
+    public boolean isNotEmpty() {
+        return count() > 0;
+    }
 
     protected  <K> List<FI2<K, List<T>>> groupKey(Function<? super T, ? extends K> K) {
         return FrameUtil.toListFI2(stream().collect(groupingBy(K)));
@@ -369,14 +449,6 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return toLists().iterator();
     }
 
-    protected  <F> List<String> buildFieldList(F f){
-        List<String> filedList = new ArrayList<>();
-        Arrays.stream(f.getClass().getDeclaredFields()).forEach(field -> {
-            field.setAccessible(true);
-            filedList.add(field.getName());
-        });
-        return filedList;
-    }
 
     @Override
     public List<String> columns() {
