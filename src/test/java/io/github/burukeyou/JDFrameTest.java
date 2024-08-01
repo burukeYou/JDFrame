@@ -8,6 +8,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.MaxMin;
+import io.github.burukeyou.dataframe.iframe.support.NullEndComparator;
 import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import io.github.burukeyou.dataframe.iframe.window.Window;
 import org.junit.Test;
@@ -25,15 +26,15 @@ public class JDFrameTest {
     static {
         studentList.add(new Student(1,"a","一中","一年级",11, new BigDecimal(1)));
         studentList.add(new Student(2,"a","一中","一年级",11, new BigDecimal(1)));
-        studentList.add(new Student(1,"d","二中","一年级",14, new BigDecimal(4)));
-        studentList.add(new Student(1,"b","一中","三年级",12, new BigDecimal(2)));
-        studentList.add(new Student(1,"c","二中","一年级",13, new BigDecimal(3)));
+        studentList.add(new Student(3,"d","二中","一年级",14, new BigDecimal(4)));
+        studentList.add(new Student(4,"b","一中","三年级",12, new BigDecimal(2)));
+        studentList.add(new Student(5,"c","二中","一年级",13, new BigDecimal(3)));
         studentList.add(new Student(6,"e","三中","一年级",14, new BigDecimal(5)));
         studentList.add(new Student(7,"e","三中","二年级",14, new BigDecimal(5)));
         studentList.add(new Student(8,"e","三中","二年级",14, new BigDecimal(5)));
-        studentList.add(new Student(9,"e","三中","三年级",15, new BigDecimal(5)));
-        studentList.add(new Student(9,"e","三中","二年级",15, new BigDecimal(5)));
-        studentList.add(new Student(9,"e","三中","二年级",16, new BigDecimal(5)));
+        studentList.add(new Student(10,"e","三中","三年级",15, new BigDecimal(5)));
+        studentList.add(new Student(11,"e","三中","二年级",15, new BigDecimal(5)));
+        studentList.add(new Student(12,"e","三中","二年级",16, new BigDecimal(5)));
     }
 
     /**
@@ -359,5 +360,21 @@ public class JDFrameTest {
         SDFrame.read(studentList).forEachDo((student) -> {
             System.out.println("------>" + student.getName());
         });
+    }
+
+    @Test
+    public void testSortNullValue(){
+        // 原生sort， 如果字段值为null会空指针异常
+        //studentList.sort(Comparator.comparing(Student::getCreateTime));
+
+        studentList.get(1).setCreateTime(LocalDateTime.now());
+        studentList.get(3).setCreateTime(LocalDateTime.now().plusDays(3));
+
+        // 兼容 null值 情况， 并将null排序到最后
+        SDFrame.read(studentList).sortDesc(Student::getCreateTime).show(30);
+
+        SDFrame.read(studentList).sortAsc(NullEndComparator.comparing(Student::getCreateTime)).show(30);
+
+        System.out.println();
     }
 }
