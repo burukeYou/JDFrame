@@ -30,7 +30,7 @@ https://central.sonatype.com/artifact/io.github.burukeyou/jdframe/versions
 <dependency>
     <groupId>io.github.burukeyou</groupId>
     <artifactId>jdframe</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
 </dependency>
 ```
 
@@ -54,9 +54,12 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - read()  -读取成Frame进行数据处理
 - from()   -从其他流读取成Frame进行数据处理
 - toLists() -转换成普通列表
+- toArray(): 转成数组， 支持无需手动指定数组类型
 - toMap()    - 转换成Map。 支持多层级Map转换。 如 Map<K,Map<K2,V>>
+- isEmpty(): 判断集合是否为空
+- containsValue(): 集合是否包含指定值
 - stream()  -获取Frame的流.
-- forEachDo()  -迭代处理每个元素等价于forEach
+- forEachDo()  -迭代处理每个元素等价于forEach。 也支持迭代下标index
 - defaultScale()  -设置统计的数值为小数时的保留精度
 - show()   -打印Frame成表到控制台
 - columns()  -获取表头列名
