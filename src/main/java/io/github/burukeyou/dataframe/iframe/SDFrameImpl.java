@@ -408,9 +408,6 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
 
     public <R> SDFrame<T> whereEq(Function<T, R> function, R value) {
-        if (null == value) {
-            return this;
-        }
         return  returnThis(whereEqStream(function,value));
     }
 

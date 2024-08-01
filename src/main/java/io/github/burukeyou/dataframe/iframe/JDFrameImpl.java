@@ -382,9 +382,6 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
 
     public <R> JDFrame<T> whereEq(Function<T, R> function, R value) {
-        if (null == value) {
-            return this;
-        }
         return  returnDF(whereEqStream(function,value));
     }
 

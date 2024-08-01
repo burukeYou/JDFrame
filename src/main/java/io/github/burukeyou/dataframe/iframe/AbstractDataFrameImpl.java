@@ -68,6 +68,28 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     @Override
+    public  <U> boolean containsValue(Function<T,U> valueFunction, U value) {
+        return stream().anyMatch(e -> {
+            if (e == null) {
+                return false;
+            }
+
+            U fieldValue = valueFunction.apply(e);
+            if (fieldValue == null && value == null) {
+                return true;
+            }
+
+            if (value != null) {
+                return value.equals(fieldValue);
+            } else {
+                // value is null ,fieldValue is not null
+                return false;
+            }
+        });
+    }
+
+
+    @Override
     public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
         // 原生stream 的 toMap存在两个问题。 1-value不能为null否则空指针异常 2-不能重复key，否则 Duplicate key 异常所以宁愿手写
         List<T> list = toLists();
@@ -187,7 +209,23 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
 
     public <R> Stream<T> whereEqStream(Function<T, R> function, R value) {
-        return stream().filter(e -> value.equals(function.apply(e)));
+        return stream().filter(e -> {
+            if (e == null) {
+                return false;
+            }
+
+            R fieldValue = function.apply(e);
+            if (fieldValue == null && value == null) {
+                return true;
+            }
+
+            if (value != null) {
+                return value.equals(fieldValue);
+            } else {
+                // value is null ,fieldValue is not null
+                return false;
+            }
+        });
     }
 
     public <R> Stream<T> whereNotEqStream(Function<T, R> function, R value) {

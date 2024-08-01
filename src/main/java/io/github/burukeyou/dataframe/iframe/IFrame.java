@@ -86,17 +86,16 @@ public interface IFrame<T> extends Iterable<T>{
 
 
     /**
-     * Returns <tt>true</tt> if this list contains the specified element.
-     * More formally, returns <tt>true</tt> if and only if this list contains
-     * at least one element <tt>e</tt> such that
-     * <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt>.
-     *
-     * @param other element whose presence in this list is to be tested
-     * @return <tt>true</tt> if this list contains the specified element
+     * traverse each element determine whether the specified object is included
+     * @param other         specified object
      */
     boolean contains(T other);
 
-
+    /**
+     * traverse each element determine whether the specified object value is included
+     * @param valueFunction     field value
+     */
+    <U> boolean containsValue(Function<T,U> valueFunction, U value);
 
     /**
      * ===========================   Frame Setting =====================================

@@ -377,4 +377,12 @@ public class JDFrameTest {
 
         System.out.println();
     }
+
+    @Test
+    public void eqContain(){
+        SDFrame.read(studentList).whereEq(Student::getName,"e").show(30);
+
+        boolean e = SDFrame.read(studentList).containsValue(Student::getName, "e");
+        System.out.println(e);
+    }
 }
