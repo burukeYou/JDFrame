@@ -207,6 +207,47 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return dataList;
     }
 
+    @Override
+    public JDFrameImpl<FI2<T, String>> explodeString(Function<T, String> getFunction, String delimiter) {
+        return returnDF(explodeStringStream(getFunction, delimiter));
+    }
+
+    @Override
+    public JDFrameImpl<T> explodeString(Function<T, String> getFunction, SetFunction<T, String> setFunction, String delimiter) {
+        return returnDF(fi2Stream(explodeStringStream(getFunction,delimiter),setFunction));
+    }
+
+    @Override
+    public JDFrameImpl<FI2<T, String>> explodeJsonArray(Function<T, String> getFunction) {
+        return returnDF(explodeJsonArrayStream(getFunction));
+    }
+
+    @Override
+    public JDFrameImpl<T> explodeJsonArray(Function<T, String> getFunction, SetFunction<T, String> setFunction) {
+        return returnDF(fi2Stream(explodeJsonArrayStream(getFunction),setFunction));
+    }
+
+
+    @Override
+    public <E> JDFrameImpl<FI2<T, E>> explodeCollection(Function<T, ? extends Collection<E>> getFunction) {
+        return returnDF(explodeCollectionStream(getFunction));
+    }
+
+    @Override
+    public <E> JDFrame<T> explodeCollection(Function<T, ? extends Collection<E>> getFunction, SetFunction<T, E> setFunction) {
+        return returnDF(fi2Stream(explodeCollectionStream(getFunction),setFunction));
+    }
+
+    @Override
+    public <E> JDFrameImpl<FI2<T, E>> explodeCollectionArray(Function<T, ?> getFunction, Class<E> elementClass) {
+        return returnDF(explodeCollectionArrayStream(getFunction, elementClass));
+    }
+
+    @Override
+    public <E> JDFrame<T> explodeCollectionArray(Function<T, ?> getFunction, SetFunction<T, E> setFunction, Class<E> elementClass) {
+        return returnDF(fi2Stream(explodeCollectionArrayStream(getFunction, elementClass),setFunction));
+    }
+
     /**
      * ===========================   排序相关  =====================================
      **/

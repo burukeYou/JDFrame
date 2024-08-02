@@ -12,9 +12,7 @@ import io.github.burukeyou.dataframe.iframe.window.Sorter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -316,6 +314,105 @@ public interface IFrame<T> extends Iterable<T>{
      * @param set                   certain column
      */
     IFrame<T> addRankCol(Sorter<T> sorter, SetFunction<T,Integer> set);
+
+    /**
+     *  Convert columns to multiple rows, to expand fields of arrays or complex types by element, generating multiple rows of data
+     *  Cut the string into multiple lines according to the specified delimiter
+     *  support string text format "a,b,c,d" or "[a,b,c,d]"
+     *
+     *
+     * @param getFunction        wait to explode field
+     * @param delimiter          split delimiter, support regex
+     * @return                   FI2<Element,A text after cutting>
+     */
+    IFrame<FI2<T,String>> explodeString(Function<T,String> getFunction, String delimiter);
+
+
+    /**
+     *  Convert columns to multiple rows, to expand fields of arrays or complex types by element, generating multiple rows of data
+     *  Cut the string into multiple lines according to the specified delimiter
+     *
+     *
+     * @param getFunction        wait to explode field
+     * @param setFunction        accept the value after explode
+     * @param delimiter          split delimiter, support regex
+     * @return                   FI2<Element,A text after cutting>
+     */
+    IFrame<T> explodeString(Function<T,String> getFunction, SetFunction<T,String> setFunction,String delimiter);
+
+    /**
+     *  Convert columns to multiple rows, to expand fields of arrays or complex types by element, generating multiple rows of data
+     *  Cut the string into multiple lines according to the specified delimiter
+     *
+     *  Support explode field value type is JSON string array
+     *
+     * @param getFunction        wait to explode field
+     * @return                   FI2<Element,JSON Array Element>
+     */
+    IFrame<FI2<T,String>> explodeJsonArray(Function<T,String> getFunction);
+
+
+    /**
+     *  Convert columns to multiple rows, to expand fields of arrays or complex types by element, generating multiple rows of data
+     *  Cut the string into multiple lines according to the specified delimiter
+     *
+     *  Support explode field value type is JSON string array
+     *
+     * @param getFunction        wait to explode field
+     * @param setFunction        accept the value after explode
+     * @return                   FI2<Element,JSON Array Element>
+     */
+    IFrame<T> explodeJsonArray(Function<T,String> getFunction,SetFunction<T,String> setFunction);
+
+    /**
+     *  Convert columns to multiple rows, to expand fields of arrays or complex types by element, generating multiple rows of data
+     *  Cut the string into multiple lines according to the specified delimiter
+     *
+     *  Support explode field value type is collection
+     *
+     * @param getFunction        wait to explode field
+     * @return                   FI2<Element, collection element>
+     */
+    <E> IFrame<FI2<T,E>> explodeCollection(Function<T,? extends Collection<E>> getFunction);
+
+
+    /**
+     *  Convert columns to multiple rows, to expand fields of arrays or complex types by element, generating multiple rows of data
+     *  Cut the string into multiple lines according to the specified delimiter
+     *
+     *  Support explode field value type is collection
+     *
+     * @param getFunction        wait to explode field
+     * @param setFunction        accept the value after explode
+     * @return                   FI2<Element, collection element>
+     */
+    <E> IFrame<T> explodeCollection(Function<T,? extends Collection<E>> getFunction,SetFunction<T,E> setFunction);
+
+    /**
+     *  Convert columns to multiple rows, to expand fields of arrays or complex types by element, generating multiple rows of data
+     *  Cut the string into multiple lines according to the specified delimiter
+     *
+     *  Support explode field value type is array or collection
+     *
+     * @param getFunction        wait to explode field
+     * @param elementClass       the array or collection element class
+     * @return                   FI2<Element,  array or collection element>
+     */
+    <E> IFrame<FI2<T,E>> explodeCollectionArray(Function<T,?> getFunction,Class<E> elementClass);
+
+
+    /**
+     *  Convert columns to multiple rows, to expand fields of arrays or complex types by element, generating multiple rows of data
+     *  Cut the string into multiple lines according to the specified delimiter
+     *
+     *  Support explode field value type is array or collection
+     *
+     * @param getFunction        wait to explode field
+     * @param setFunction        accept the value after explode
+     * @param elementClass       the array or collection element class
+     * @return                   FI2<Element,  array or collection element>
+     */
+    <E> IFrame<T> explodeCollectionArray(Function<T,?> getFunction,SetFunction<T,E> setFunction,Class<E> elementClass);
 
 
     /**

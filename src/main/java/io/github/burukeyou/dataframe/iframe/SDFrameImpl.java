@@ -56,7 +56,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R> SDFrame<R> from(Stream<R> data) {
+    public <R> SDFrameImpl<R> from(Stream<R> data) {
         return new SDFrameImpl<>(data);
     }
 
@@ -201,6 +201,47 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return fi2Frame(this.addRankCol(sorter),set);
     }
 
+
+    @Override
+    public SDFrameImpl<FI2<T, String>> explodeString(Function<T, String> getFunction, String delimiter) {
+       return returnDF(explodeStringStream(getFunction, delimiter));
+    }
+
+    @Override
+    public  SDFrameImpl<T> explodeString(Function<T, String> getFunction, SetFunction<T, String> setFunction, String delimiter) {
+         return returnDF(fi2Stream(explodeStringStream(getFunction, delimiter),setFunction));
+    }
+
+    @Override
+    public SDFrameImpl<FI2<T, String>> explodeJsonArray(Function<T, String> getFunction) {
+        return returnDF(explodeJsonArrayStream(getFunction));
+    }
+
+    @Override
+    public SDFrameImpl<T> explodeJsonArray(Function<T, String> getFunction, SetFunction<T, String> setFunction) {
+        return returnDF(fi2Stream(explodeJsonArrayStream(getFunction),setFunction));
+    }
+
+    @Override
+    public <E> SDFrameImpl<FI2<T, E>> explodeCollection(Function<T, ? extends Collection<E>> getFunction) {
+        return returnDF(explodeCollectionStream(getFunction));
+    }
+
+    @Override
+    public <E> SDFrame<T> explodeCollection(Function<T, ? extends Collection<E>> getFunction, SetFunction<T, E> setFunction) {
+        return returnDF(fi2Stream(explodeCollectionStream(getFunction),setFunction));
+    }
+
+    @Override
+    public <E> SDFrameImpl<FI2<T, E>> explodeCollectionArray(Function<T, ?> getFunction, Class<E> elementClass) {
+        return returnDF(explodeCollectionArrayStream(getFunction, elementClass));
+    }
+
+
+    @Override
+    public <E> SDFrameImpl<T> explodeCollectionArray(Function<T, ?> getFunction, SetFunction<T, E> setFunction, Class<E> elementClass) {
+        return returnDF(fi2Stream(explodeCollectionArrayStream(getFunction, elementClass),setFunction));
+    }
 
     @Override
     public List<T> toLists() {
@@ -672,6 +713,9 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(FrameUtil.toListFI3(map));
     }
 
+    /** ===========================   Window Function  ===================================== **/
+
+
     @Override
     public WindowSDFrame<T> window(Window<T> window) {
         WindowSDFrameImpl<T> frame = new WindowSDFrameImpl<>(window, stream());
@@ -689,6 +733,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     public <F> SDFrameImpl<T> fi2Frame(SDFrameImpl<FI2<T, F>> frame,SetFunction<T, F> setFunction){
         return frame.forEachDo(e -> setFunction.accept(e.getC1(),e.getC2())).map(FI2::getC1);
     }
+
 
     @Override
     public  SDFrameImpl<FI2<T, Integer>> overRowNumber(Window<T> overParam) {
@@ -999,6 +1044,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         transmitMember(this,frame);
         return frame;
     }
-    
-    
+
+    protected <R> SDFrameImpl<R> returnDF(Stream<R> stream) {
+        SDFrameImpl<R> frame = new SDFrameImpl<>(stream);
+        transmitMember(this,frame);
+        return frame;
+    }
+
+
 }

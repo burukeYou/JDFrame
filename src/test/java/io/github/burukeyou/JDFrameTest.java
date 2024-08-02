@@ -24,15 +24,15 @@ public class JDFrameTest {
     static List<Student> studentList = new ArrayList<>();
 
     static {
-        studentList.add(new Student(1,"a","一中","一年级",11, new BigDecimal(1)));
+        studentList.add(new Student(1,"a","一中","\"生活\",日子",11, new BigDecimal(1)));
         studentList.add(new Student(2,"a","一中","一年级",11, new BigDecimal(1)));
         studentList.add(new Student(3,"d","二中","一年级",14, new BigDecimal(4)));
         studentList.add(new Student(4,"b","一中","三年级",12, new BigDecimal(2)));
         studentList.add(new Student(5,"c","二中","一年级",13, new BigDecimal(3)));
-        studentList.add(new Student(6,"e","三中","一年级",14, new BigDecimal(5)));
+        studentList.add(new Student(6,"e","三中","[\"a\",\"b\"]",14, new BigDecimal(5)));
         studentList.add(new Student(7,"e","三中","二年级",14, new BigDecimal(5)));
-        studentList.add(new Student(8,"e","三中","二年级",14, new BigDecimal(5)));
-        studentList.add(new Student(10,"e","三中","三年级",15, new BigDecimal(5)));
+        studentList.add(new Student(8,"e","三中","[{\"a\":1},{\"b\":2}]",14, new BigDecimal(5)));
+        studentList.add(new Student(10,"e","三中","[爱好,奇怪，懂得]",15, new BigDecimal(5)));
         studentList.add(new Student(11,"e","三中","二年级",15, new BigDecimal(5)));
         studentList.add(new Student(12,"e","三中","二年级",16, new BigDecimal(5)));
     }
@@ -390,6 +390,60 @@ public class JDFrameTest {
     public void testJoining(){
         String joining = SDFrame.read(studentList).joining(Student::getName, ",");
         String joining2 = SDFrame.read(studentList).joining(Student::getName, ",","[","]");
+        System.out.println();
+    }
+
+    @Test
+    public void testExplodeString(){
+        //SDFrame.read(studentList).explodeString(Student::getLevel,"[,，]").show(30);
+
+        //SDFrame.read(studentList).explodeString(Student::getLevel, Student::setName, "[,，]").show(30);
+        List<Student> ax = SDFrame.read(studentList).explodeString(Student::getLevel, Student::setName, "[,，]").toLists();
+
+        //SDFrame.read(studentList).explodeString(Student::getLevel,(t,v) -> t.setRank(Integer.parseInt(v)),"[,，]").show(30);
+
+        System.out.println();
+    }
+
+
+    @Test
+    public void testExplodeJsonArray(){
+        SDFrame.read(studentList).explodeJsonArray(Student::getLevel, Student::setName).show(30);
+
+        System.out.println();
+    }
+
+    @Test
+    public void testExplodeCollection(){
+        // 1
+        studentList.get(1).setStringList(Arrays.asList("哈哈1","哈哈2"));
+        studentList.get(5).setStringList(Arrays.asList("牛逼1","牛逼2"));
+        List<FI2<Student, String>> fi2s = SDFrame.read(studentList).explodeCollection(Student::getStringList).toLists();
+
+
+        SDFrame.read(studentList).explodeCollection(Student::getStringList,Student::setName).show(30);
+
+        // 2
+        studentList.get(3).setUserInfoList(Arrays.asList(new UserInfo("a1",1),new UserInfo("a1",2)));
+        studentList.get(7).setUserInfoList(Arrays.asList(new UserInfo("b1",1),new UserInfo("b1",2)));
+        List<FI2<Student, UserInfo>> fi2s1 = SDFrame.read(studentList).explodeCollection(Student::getUserInfoList).toLists();
+
+        System.out.println();
+    }
+
+    @Test
+    public void testExplodeArray(){
+        // 1、
+        studentList.get(1).setStringArray(new String[]{"哈哈1","哈哈2"});
+        studentList.get(5).setStringArray(new String[]{"牛逼1","牛逼2"});
+        List<FI2<Student, String>> a1 = SDFrame.read(studentList).explodeCollectionArray(Student::getStringArray, String.class).toLists();
+        System.out.println();
+
+        // 2、
+        studentList.get(3).setUserInfoArray(new UserInfo[]{new UserInfo("哈哈",1),new UserInfo("哈哈",2)});
+        studentList.get(7).setUserInfoArray(new UserInfo[]{new UserInfo("牛逼",1),new UserInfo("牛逼",2)});
+        List<FI2<Student, UserInfo>> a2 = SDFrame.read(studentList).explodeCollectionArray(Student::getUserInfoArray, UserInfo.class).toLists();
+
         System.out.println();
     }
 }

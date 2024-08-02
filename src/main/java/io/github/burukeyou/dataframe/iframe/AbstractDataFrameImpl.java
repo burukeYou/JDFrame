@@ -1,18 +1,23 @@
 package io.github.burukeyou.dataframe.iframe;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
+import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.Join;
 import io.github.burukeyou.dataframe.iframe.support.JoinOn;
 import io.github.burukeyou.dataframe.iframe.support.MaxMin;
+import io.github.burukeyou.dataframe.util.BeanCopyUtil;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import io.github.burukeyou.dataframe.util.FrameUtil;
 import io.github.burukeyou.dataframe.util.ListUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -687,7 +692,103 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return obj == null ? null : fun.apply(obj);
     }
 
+    protected  <F> Stream<T> fi2Stream(Stream<FI2<T, F>> stream, SetFunction<T, F> setFunction){
+        return stream.map(e -> {
+            setFunction.accept(e.getC1(),e.getC2());
+            return e.getC1();
+        });
+    }
 
+    protected Stream<FI2<T, String>> explodeStringStream(Function<T, String> getFunction, String delimiter){
+        return stream().flatMap(e -> {
+            String fieldValue = getFunction.apply(e);
+            if (StringUtils.isBlank(fieldValue)) {
+                return Stream.of(new FI2<>(e, fieldValue));
+            }
+            fieldValue = fieldValue.trim();
+            fieldValue = StringUtils.strip(fieldValue, "[]");
+            String[] arrText = fieldValue.split(delimiter);
+            int length = arrText.length;
+            if (length <= 1){
+                return Stream.of(new FI2<>(e, getFunction.apply(e)));
+            }
+            return  Arrays.stream(arrText).map(text -> new FI2<>(BeanCopyUtil.copyProperties(e, (Class<T>)e.getClass()),  StringUtils.strip(text, "\""))).collect(toList()).stream();
+        });
+    }
+
+    protected Stream<FI2<T, String>> explodeJsonArrayStream(Function<T, String> getFunction){
+        return stream().flatMap(e -> {
+            String fieldValue = getFunction.apply(e);
+            if (StringUtils.isBlank(fieldValue) || !JSON.isValidArray(fieldValue)) {
+                return Stream.of(new FI2<>(e, fieldValue));
+            }
+            JSONArray objects = JSON.parseArray(fieldValue);
+            if(objects.isEmpty()){
+                return Stream.of(new FI2<>(e, fieldValue));
+            }
+            if (objects.size() == 1){
+                return Stream.of(new FI2<>(e, objects.get(0).toString()));
+            }
+            return  objects.stream().map(text -> new FI2<>(BeanCopyUtil.copyProperties(e, (Class<T>)e.getClass()), text.toString())).collect(toList()).stream();
+        });
+    }
+
+    protected  <E> Stream<FI2<T,E>> explodeCollectionStream(Function<T, ? extends Collection<E>> getFunction){
+        return stream().flatMap(e -> {
+            Object fieldValue = getFunction.apply(e);
+            if (fieldValue == null) {
+                return Stream.of(new FI2<>(e, null));
+            }
+
+            Class<?> fieldValueClass = fieldValue.getClass();
+            if (!Collection.class.isAssignableFrom(fieldValueClass)) {
+                return Stream.of(new FI2<>(e, null));
+            }
+            Collection<Object> objects = (Collection<Object>) fieldValue;
+            if (objects.isEmpty()) {
+                return Stream.of(new FI2<>(e, null));
+            } else if (objects.size() == 1) {
+                return Stream.of(new FI2<>(e, (E)objects.iterator().next()));
+            }
+            return objects.stream().map(text -> new FI2<>(BeanCopyUtil.copyProperties(e, (Class<T>) e.getClass()), (E) text)).collect(toList()).stream();
+        });
+    }
+
+
+    protected  <E> Stream<FI2<T,E>> explodeCollectionArrayStream(Function<T,?> getFunction,Class<E> elementClass){
+        return stream().flatMap(e -> {
+            Object fieldValue = getFunction.apply(e);
+            if (fieldValue == null) {
+                return Stream.of(new FI2<>(e, null));
+            }
+
+            Class<?> fieldValueClass = fieldValue.getClass();
+            if (!fieldValueClass.isArray() && !Collection.class.isAssignableFrom(fieldValueClass)) {
+                return Stream.of(new FI2<>(e, null));
+            }
+
+            Stream<Object> stream = null;
+            if (fieldValueClass.isArray()) {
+                Object[] objects = (Object[]) fieldValue;
+                stream = Arrays.stream(objects);
+
+                if (objects.length == 0) {
+                    return Stream.of(new FI2<>(e, null));
+                } else if (objects.length == 1) {
+                    return Stream.of(new FI2<>(e, elementClass.cast(objects[0])));
+                }
+            }else if (Collection.class.isAssignableFrom(fieldValueClass)) {
+                Collection<Object> objects = (Collection<Object>) fieldValue;
+                if (objects.isEmpty()) {
+                    return Stream.of(new FI2<>(e, null));
+                } else if (objects.size() == 1) {
+                    return Stream.of(new FI2<>(e, elementClass.cast(objects.iterator().next())));
+                }
+                stream = objects.stream();
+            }
+            return stream.map(text -> new FI2<>(BeanCopyUtil.copyProperties(e, (Class<T>) e.getClass()), elementClass.cast(text))).collect(toList()).stream();
+        });
+    }
 
 
 }

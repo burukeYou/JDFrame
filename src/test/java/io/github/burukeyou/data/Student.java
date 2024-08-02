@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -23,6 +25,13 @@ public class Student {
 
     private Integer rank;
 
+    private List<String> stringList = new ArrayList<>();
+
+    private List<UserInfo> userInfoList = new ArrayList<>();
+
+    private String[] stringArray;
+
+    private UserInfo[] userInfoArray;
 
     public Student(String school) {
         this.school = school;
