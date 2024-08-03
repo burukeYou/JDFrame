@@ -30,7 +30,7 @@ https://central.sonatype.com/artifact/io.github.burukeyou/jdframe/versions
 <dependency>
     <groupId>io.github.burukeyou</groupId>
     <artifactId>jdframe</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
 </dependency>
 ```
 
