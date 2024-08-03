@@ -275,7 +275,6 @@ public interface SDFrame<T> extends IFrame<T> {
      *
      * @param getFunction        wait to explode field
      * @param delimiter          split delimiter, support regex
-     * @return                   FI2<Element,A text after cutting>
      */
     SDFrame<FI2<T,String>> explodeString(Function<T,String> getFunction, String delimiter);
 
@@ -288,7 +287,6 @@ public interface SDFrame<T> extends IFrame<T> {
      * @param getFunction        wait to explode field
      * @param setFunction        Fill in the fields of the segmented text.
      * @param delimiter          split delimiter, support regex
-     * @return                   FI2<Element,A text after cutting>
      */
     SDFrame<T> explodeString(Function<T,String> getFunction, SetFunction<T,String> setFunction,String delimiter);
 
@@ -299,7 +297,6 @@ public interface SDFrame<T> extends IFrame<T> {
      *  Support explode field value type is JSON string array
      *
      * @param getFunction        wait to explode field
-     * @return                   FI2<Element,JSON Array Element>
      */
     SDFrame<FI2<T,String>> explodeJsonArray(Function<T,String> getFunction);
 
@@ -311,7 +308,6 @@ public interface SDFrame<T> extends IFrame<T> {
      *  Support explode field value type is JSON string array
      *
      * @param getFunction        wait to explode field
-     * @return                   FI2<Element,JSON Array Element>
      */
     SDFrame<T> explodeJsonArray(Function<T,String> getFunction,SetFunction<T,String> setFunction);
 
@@ -323,7 +319,6 @@ public interface SDFrame<T> extends IFrame<T> {
      *  Support explode field value type is collection
      *
      * @param getFunction        wait to explode field
-     * @return                   FI2<Element, collection element>
      */
     <E> SDFrame<FI2<T,E>> explodeCollection(Function<T,? extends Collection<E>> getFunction);
 
@@ -336,7 +331,6 @@ public interface SDFrame<T> extends IFrame<T> {
      *
      * @param getFunction        wait to explode field
      * @param setFunction        accept the value after explode
-     * @return                   FI2<Element, collection element>
      */
     <E> SDFrame<T> explodeCollection(Function<T,? extends Collection<E>> getFunction,SetFunction<T,E> setFunction);
 
@@ -349,7 +343,6 @@ public interface SDFrame<T> extends IFrame<T> {
      *
      * @param getFunction        wait to explode field
      * @param elementClass       the array or collection element class
-     * @return                   FI2<Element,  array or collection element>
      */
     <E> SDFrame<FI2<T,E>> explodeCollectionArray(Function<T,?> getFunction,Class<E> elementClass);
 
@@ -363,7 +356,6 @@ public interface SDFrame<T> extends IFrame<T> {
      * @param getFunction        wait to explode field
      * @param setFunction        accept the value after explode
      * @param elementClass       the array or collection element class
-     * @return                   FI2<Element,  array or collection element>
      */
     <E> SDFrame<T> explodeCollectionArray(Function<T,?> getFunction,SetFunction<T,E> setFunction,Class<E> elementClass);
 

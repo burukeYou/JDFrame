@@ -323,7 +323,6 @@ public interface IFrame<T> extends Iterable<T>{
      *
      * @param getFunction        wait to explode field
      * @param delimiter          split delimiter, support regex
-     * @return                   FI2<Element,A text after cutting>
      */
     IFrame<FI2<T,String>> explodeString(Function<T,String> getFunction, String delimiter);
 
@@ -336,7 +335,6 @@ public interface IFrame<T> extends Iterable<T>{
      * @param getFunction        wait to explode field
      * @param setFunction        accept the value after explode
      * @param delimiter          split delimiter, support regex
-     * @return                   FI2<Element,A text after cutting>
      */
     IFrame<T> explodeString(Function<T,String> getFunction, SetFunction<T,String> setFunction,String delimiter);
 
@@ -347,7 +345,6 @@ public interface IFrame<T> extends Iterable<T>{
      *  Support explode field value type is JSON string array
      *
      * @param getFunction        wait to explode field
-     * @return                   FI2<Element,JSON Array Element>
      */
     IFrame<FI2<T,String>> explodeJsonArray(Function<T,String> getFunction);
 
@@ -360,7 +357,6 @@ public interface IFrame<T> extends Iterable<T>{
      *
      * @param getFunction        wait to explode field
      * @param setFunction        accept the value after explode
-     * @return                   FI2<Element,JSON Array Element>
      */
     IFrame<T> explodeJsonArray(Function<T,String> getFunction,SetFunction<T,String> setFunction);
 
@@ -371,7 +367,6 @@ public interface IFrame<T> extends Iterable<T>{
      *  Support explode field value type is collection
      *
      * @param getFunction        wait to explode field
-     * @return                   FI2<Element, collection element>
      */
     <E> IFrame<FI2<T,E>> explodeCollection(Function<T,? extends Collection<E>> getFunction);
 
@@ -384,7 +379,6 @@ public interface IFrame<T> extends Iterable<T>{
      *
      * @param getFunction        wait to explode field
      * @param setFunction        accept the value after explode
-     * @return                   FI2<Element, collection element>
      */
     <E> IFrame<T> explodeCollection(Function<T,? extends Collection<E>> getFunction,SetFunction<T,E> setFunction);
 
@@ -396,7 +390,6 @@ public interface IFrame<T> extends Iterable<T>{
      *
      * @param getFunction        wait to explode field
      * @param elementClass       the array or collection element class
-     * @return                   FI2<Element,  array or collection element>
      */
     <E> IFrame<FI2<T,E>> explodeCollectionArray(Function<T,?> getFunction,Class<E> elementClass);
 
@@ -410,7 +403,6 @@ public interface IFrame<T> extends Iterable<T>{
      * @param getFunction        wait to explode field
      * @param setFunction        accept the value after explode
      * @param elementClass       the array or collection element class
-     * @return                   FI2<Element,  array or collection element>
      */
     <E> IFrame<T> explodeCollectionArray(Function<T,?> getFunction,SetFunction<T,E> setFunction,Class<E> elementClass);
 
