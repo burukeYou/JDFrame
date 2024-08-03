@@ -92,6 +92,8 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - explodeJsonArray()  -爆炸函数一列转多行，将json字符串数组生成多行
 - explodeCollection()  -爆炸函数一列转多行，将集合生成多行
 - explodeCollectionArray()   -爆炸函数一列转多行，将数组生成多行
+
+
 ==== 筛选 == ======
 - where()       -自定义筛选
 - whereNull()   -筛选Null值。如果是字符串兼容了空字符串的处理
