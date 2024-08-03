@@ -1,5 +1,6 @@
 package io.github.burukeyou.dataframe.iframe;
 
+import com.alibaba.fastjson.JSON;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.util.ClassUtil;
 import lombok.Getter;
@@ -74,6 +75,28 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
             fieldList.add(name);
         }
         return fieldList;
+    }
+
+    protected StringBuilder getShowString(int n) {
+        if (fieldClass == null){
+            return new StringBuilder();
+        }
+
+        if (isNormalType(fieldClass)) {
+            return new StringBuilder(JSON.toJSONString(toLists()));
+        }
+
+        String[][] dataArr = buildPrintDataArr(n);
+        if (dataArr == null || dataArr.length <= 0){
+            return new StringBuilder("\n");
+        }
+        StringBuilder sb = new StringBuilder("\n");
+        for (int i = 0; i < dataArr.length; i++) {
+            for (int j = 0; j < dataArr[0].length; j++) {
+                sb.append(dataArr[i][j].replace(MSG, "\t"));
+            }
+        }
+        return sb;
     }
 
     protected String[][] buildPrintDataArr(int limit) {
@@ -179,6 +202,29 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
         return false;
     }
 
+
+    protected boolean isNormalType(Class<?> fieldClass) {
+        if (fieldClass.isPrimitive()){
+            return true;
+        }
+        if (String.class.equals(fieldClass)){
+            return true;
+        }
+        List<?> classes = Arrays.asList(Integer.class, Boolean.class, Double.class,
+                Float.class, BigDecimal.class, Long.class,
+                Byte.class, Short.class, Character.class
+        );
+        if (classes.contains(fieldClass)){
+            return true;
+        }
+        if (fieldClass.isArray() || Collection.class.isAssignableFrom(fieldClass) || Map.class.isAssignableFrom(fieldClass)){
+            return false;
+        }
+        if (fieldClass.getClassLoader().equals(this.getClass().getClassLoader())){
+            return false;
+        }
+        return false;
+    }
 
     protected Type[] getSuperClassActualTypeArguments(Class<?> clz){
         Type superclass = clz.getGenericSuperclass();

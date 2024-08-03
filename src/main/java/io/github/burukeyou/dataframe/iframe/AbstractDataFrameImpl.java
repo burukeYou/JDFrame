@@ -496,32 +496,18 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public String toString() {
-        return getShowString(10).toString();
+        return getShowString(15).toString();
     }
 
     @Override
     public void show(){
-        show(10);
+        show(15);
     }
 
     @Override
     public void show(int n){
         StringBuilder sb = getShowString(n);
         System.out.println(sb);
-    }
-
-    private StringBuilder getShowString(int n) {
-        String[][] dataArr = buildPrintDataArr(n);
-        if (dataArr == null || dataArr.length <= 0){
-            return new StringBuilder("\n");
-        }
-        StringBuilder sb = new StringBuilder("\n");
-        for (int i = 0; i < dataArr.length; i++) {
-            for (int j = 0; j < dataArr[0].length; j++) {
-                sb.append(dataArr[i][j].replace(MSG, "\t"));
-            }
-        }
-        return sb;
     }
 
 

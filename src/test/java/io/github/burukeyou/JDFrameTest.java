@@ -446,4 +446,8 @@ public class JDFrameTest {
 
         System.out.println();
     }
+
+    public static void main(String[] args) {
+        SDFrame.read(Arrays.asList("1","2")).show();
+    }
 }
