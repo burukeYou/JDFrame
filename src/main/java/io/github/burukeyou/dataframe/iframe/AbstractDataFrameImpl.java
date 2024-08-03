@@ -467,7 +467,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public List<String> columns() {
-        return fieldList;
+        return getFieldList();
     }
 
 
