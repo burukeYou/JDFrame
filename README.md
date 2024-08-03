@@ -87,7 +87,11 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - subList()    - 范围截取
 - replenish()   -补充缺失条目
 - distinct()   -去重
-  
+- joining()    -将字段值按照指定分隔符拼接起来
+- explodeString()   -爆炸函数一列转多行，将字符串按照分隔符(支持正则)切割后生成多行
+- explodeJsonArray()  -爆炸函数一列转多行，将json字符串数组生成多行
+- explodeCollection()  -爆炸函数一列转多行，将集合生成多行
+- explodeCollectionArray()   -爆炸函数一列转多行，将数组生成多行
 ==== 筛选 == ======
 - where()       -自定义筛选
 - whereNull()   -筛选Null值。如果是字符串兼容了空字符串的处理
