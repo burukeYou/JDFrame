@@ -60,6 +60,7 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - containsValue(): 集合是否包含指定值
 - stream()  -获取Frame的流.
 - forEachDo()  -迭代处理每个元素等价于forEach。 也支持迭代下标index
+- forEachParallel()        并行的forEach
 - defaultScale()  -设置统计的数值为小数时的保留精度
 - show()   -打印Frame成表到控制台
 - columns()  -获取表头列名
@@ -67,10 +68,8 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - page()  -获取分页数据
 - append()  -添加元素
 - union()   -合并其他Frame
-- join()    -内连接
-- leftJoin()  -左边接
-- rightJoin()  -右连接
 - map()      -矩阵转换
+- mapParallel()    并行的map
 - mapPercent()  -百分数转换
 - partition()  -分区
 - addRowNumberCol() -添加序号列（从1开始）
@@ -164,6 +163,22 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - overCount()   -生成数量
 - overNtile()  -分桶，生成桶编号
 
+==== 连接 == ======
+
+- join()    -内连接 (与SQL语义一致)
+- joinVoid()        执行连接操作，不改变矩阵内容 
+- joinOnce()         只会内连接一次
+- joinOnceVoid()        执行连接操作并只会连接一次，不改变矩阵内容
+
+- leftJoin()  -左边接 (与SQL语义一致)
+- leftJoinVoid()                执行左连接操作，不改变矩阵内容
+- leftJoinOnce()                  只会左连接一次
+- leftJoinOnceVoid()        执行左连接操作并只会左连接一次，不改变矩阵内容
+
+- rightJoin()  -右连接 (与SQL语义一致)
+- rightJoinVoid()                  执行右连接操作，不改变矩阵内容
+- rightJoinOnce()                 只会右连接一次
+- rightJoinOnceVoid()        执行右连接操作并只会右连接一次，不改变矩阵内容
 
 
 # 其他
