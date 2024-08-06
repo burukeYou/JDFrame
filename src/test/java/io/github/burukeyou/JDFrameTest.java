@@ -466,29 +466,42 @@ public class JDFrameTest {
 
 
     @Test
-    public void testJoinLink(){
+    public void testVoidJoin(){
         SDFrame<Student> frame1 = SDFrame.read(studentList);
 
-        List<UserInfo> userInfos = Arrays.asList(new UserInfo("a", 99), new UserInfo("b", 4));
+        List<UserInfo> userInfos = Arrays.asList(new UserInfo("a", 99), new UserInfo("a", 4), new UserInfo("b", 4));
         SDFrame<UserInfo> frame2 = SDFrame.read(userInfos);
 
-        frame1.leftJoinLink(frame2,(a,b) -> a.getName().equals(b.getKey1()),(a,b) -> {
+        frame1.leftJoin(frame2,(a, b) -> a.getName().equals(b.getKey1()),(a, b) -> {
             if (b == null){
                 return;
             }
-            log.info("name【{}】对应的key【{}】",a.getName(),b.getKey2());
+            log.info("id【{}】name【{}】对应的key【{}】",a.getId(),a.getName(),b.getKey2());
         });
 
         System.out.println("===========");
 
         JoinOn<Student, UserInfo> joinOn = JoinOn.on(Student::getName, UserInfo::getKey1).thenOn(Student::getId, UserInfo::getKey2);
-        frame1.leftJoinLink(frame2,joinOn,(stu, user) -> {
+        frame1.leftJoin(frame2,joinOn,(stu, user) -> {
             if (user == null){
                 // 未关联上
                 return;
             }
             // 关联上了
             log.info("name【{}】对应的key【{}】",stu.getName(),user.getKey2());
+        });
+    }
+
+    @Test
+    public void testJoinOnce(){
+        SDFrame<Student> frame1 = SDFrame.read(studentList);
+        List<UserInfo> userInfos = Arrays.asList(new UserInfo("a", 99), new UserInfo("a", 4), new UserInfo("b", 4));
+        SDFrame<UserInfo> frame2 = SDFrame.read(userInfos);
+        frame1.leftJoinOnce(frame2,(a, b) -> a.getName().equals(b.getKey1()),(a, b) -> {
+            if (b == null){
+                return;
+            }
+            log.info("id【{}】name【{}】对应的key【{}】",a.getId(),a.getName(),b.getKey2());
         });
 
     }

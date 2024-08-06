@@ -162,14 +162,14 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <K> JDFrameImpl<T> joinLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> JDFrameImpl<T> join(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         joinListLink(other,on,join);
         return this;
     }
 
 
     @Override
-    public <K> JDFrameImpl<T> joinLinkOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> JDFrameImpl<T> joinOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         joinListLink(other,on,join,true);
         return this;
     }
@@ -190,13 +190,13 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <K> JDFrameImpl<T> leftJoinLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> JDFrameImpl<T> leftJoin(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         leftJoinListLink(other,on,join);
         return this;
     }
 
     @Override
-    public <K> JDFrameImpl<T> leftJoinLinkOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> JDFrameImpl<T> leftJoinOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         leftJoinListLink(other,on,join,true);
         return this;
     }
@@ -217,13 +217,13 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <K> JDFrameImpl<T> rightJoinLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> JDFrameImpl<T> rightJoin(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         rightJoinListLink(other,on,join);
         return this;
     }
 
     @Override
-    public <K> JDFrame<T> rightJoinLinkOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> JDFrame<T> rightJoinOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         rightJoinListLink(other,on,join,true);
         return this;
     }

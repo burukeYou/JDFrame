@@ -218,7 +218,7 @@ public interface IFrame<T> extends Iterable<T>{
      * @param on            connection conditions
      * @param <K>           other Frame type
      */
-    <K> IFrame<T> joinLink(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> IFrame<T> join(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
 
     /**
@@ -228,7 +228,7 @@ public interface IFrame<T> extends Iterable<T>{
      * @param on            connection conditions
      * @param <K>           other Frame type
      */
-    <K> IFrame<T> joinLinkOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> IFrame<T> joinOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
      * left join Frame
@@ -271,7 +271,7 @@ public interface IFrame<T> extends Iterable<T>{
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> IFrame<T> leftJoinLink(IFrame<K> other, JoinOn<T,K> on,  VoidJoin<T,K> join);
+    <K> IFrame<T> leftJoin(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
 
     /**
@@ -283,7 +283,7 @@ public interface IFrame<T> extends Iterable<T>{
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> IFrame<T> leftJoinLinkOnce(IFrame<K> other, JoinOn<T,K> on,  VoidJoin<T,K> join);
+    <K> IFrame<T> leftJoinOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
      * right join Frame
@@ -328,7 +328,7 @@ public interface IFrame<T> extends Iterable<T>{
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> IFrame<T> rightJoinLink(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> IFrame<T> rightJoin(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
      * right join Frame
@@ -339,7 +339,7 @@ public interface IFrame<T> extends Iterable<T>{
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> IFrame<T> rightJoinLinkOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> IFrame<T> rightJoinOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
 
     /**

@@ -171,7 +171,7 @@ public interface SDFrame<T> extends IFrame<T> {
      * @param on            connection conditions
      * @param <K>           other Frame type
      */
-    <K> SDFrame<T> joinLink(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> SDFrame<T> join(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
      * inner join Frame
@@ -180,7 +180,7 @@ public interface SDFrame<T> extends IFrame<T> {
      * @param on            connection conditions
      * @param <K>           other Frame type
      */
-    <K> SDFrame<T> joinLinkOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> SDFrame<T> joinOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
 
     /**
@@ -225,7 +225,7 @@ public interface SDFrame<T> extends IFrame<T> {
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> SDFrame<T> leftJoinLink(IFrame<K> other, JoinOn<T,K> on,  VoidJoin<T,K> join);
+    <K> SDFrame<T> leftJoin(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
      * left join Frame
@@ -236,7 +236,7 @@ public interface SDFrame<T> extends IFrame<T> {
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> SDFrame<T> leftJoinLinkOnce(IFrame<K> other, JoinOn<T,K> on,  VoidJoin<T,K> join);
+    <K> SDFrame<T> leftJoinOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
      * right join Frame
@@ -280,7 +280,7 @@ public interface SDFrame<T> extends IFrame<T> {
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> SDFrame<T> rightJoinLink(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> SDFrame<T> rightJoin(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
 
     /**
@@ -292,7 +292,7 @@ public interface SDFrame<T> extends IFrame<T> {
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> SDFrame<T> rightJoinLinkOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> SDFrame<T> rightJoinOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
 
     /**
