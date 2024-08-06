@@ -67,6 +67,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public SDFrameImpl<T> forEachParallel(Consumer<? super T> action) {
+        toLists().stream().parallel().forEach(action);
+        return this;
+    }
+
+    @Override
     public SDFrameImpl<T> forEachDo(ConsumerIndex<? super T> action) {
         int index = 0;
         for (T t : this) {

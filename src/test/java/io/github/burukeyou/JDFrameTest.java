@@ -358,7 +358,11 @@ public class JDFrameTest {
         }).show();
 
         SDFrame.read(studentList).forEachDo((student) -> {
-            System.out.println("------>" + student.getName());
+            System.out.println("------>" + student.getId());
+        });
+
+        SDFrame.read(studentList).forEachParallel((student) -> {
+            System.out.println("------>>>>" + student.getId());
         });
     }
 
@@ -447,7 +451,8 @@ public class JDFrameTest {
         System.out.println();
     }
 
-    public static void main(String[] args) {
-        SDFrame.read(Arrays.asList("1","2")).show();
+    @Test
+    public void testforEachParallel(){
+
     }
 }
