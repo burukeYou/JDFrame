@@ -7,6 +7,7 @@ import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
+import io.github.burukeyou.dataframe.iframe.support.JoinOn;
 import io.github.burukeyou.dataframe.iframe.support.MaxMin;
 import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import io.github.burukeyou.dataframe.iframe.window.Window;
@@ -463,23 +464,31 @@ public class JDFrameTest {
         }).whereNotEq(Function.identity(), 0).show();
     }
 
-   
+
     @Test
     public void testJoinLink(){
         SDFrame<Student> frame1 = SDFrame.read(studentList);
 
-        Map<String,String> map = new HashMap<>();
-        map.put("a","哈哈");
-        map.put("b","牛逼");
-        SDFrame<FI2<String, String>> frame2 = SDFrame.read(map);
+        List<UserInfo> userInfos = Arrays.asList(new UserInfo("a", 99), new UserInfo("b", 4));
+        SDFrame<UserInfo> frame2 = SDFrame.read(userInfos);
 
-        frame1.leftJoinLink(frame2,(a,b) -> a.getName().equals(b.getC1()),(a,b) -> {
+        frame1.leftJoinLink(frame2,(a,b) -> a.getName().equals(b.getKey1()),(a,b) -> {
             if (b == null){
+                return;
+            }
+            log.info("name【{}】对应的key【{}】",a.getName(),b.getKey2());
+        });
+
+        System.out.println("===========");
+
+        JoinOn<Student, UserInfo> joinOn = JoinOn.on(Student::getName, UserInfo::getKey1).thenOn(Student::getId, UserInfo::getKey2);
+        frame1.leftJoinLink(frame2,joinOn,(stu, user) -> {
+            if (user == null){
                 // 未关联上
                 return;
             }
             // 关联上了
-            log.info("name【{}】对应的key【{}】",a.getName(),b.getC2());
+            log.info("name【{}】对应的key【{}】",stu.getName(),user.getKey2());
         });
 
     }

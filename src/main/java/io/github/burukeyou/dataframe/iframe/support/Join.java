@@ -1,19 +1,21 @@
 package io.github.burukeyou.dataframe.iframe.support;
 
 /**
- * Connection operation
+ * Custom Connection operation to return a new Element
+ *
+ * @param <L>        left table element
+ * @param <R>        right  table element
+ * @param <V>        new element
+ *
  * @author  caizhihao
- * @param <T>
- * @param <K>
- * @param <R>
  */
-public interface Join<T,K,R> {
+public interface Join<L,R,V> {
 
     /**
-     *
-     * @param t     If it is a right connection, it may be null
-     * @param k     If it is a left connection, it may be null
-     * @return      Build a new element with t and k
+     * Join Operation
+     * @param left     left table element,  If it is a right connection, it may be null
+     * @param right    right table element,  If it is a left connection, it may be null
+     * @return         Build a new element with left and right element
      */
-    R join(T t, K k);
+    V join(L left, R right);
 }

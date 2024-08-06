@@ -1,19 +1,21 @@
 package io.github.burukeyou.dataframe.iframe.support;
 
 /**
- * Connection operation
+ * Custom Connection operation
+ *
+ * @param <L>           left table element
+ * @param <R>           right  table element
+ *
  * @author  caizhihao
- * @param <T>
- * @param <K>
  */
 @FunctionalInterface
-public interface VoidJoin<T,K> {
+public interface VoidJoin<L,R> {
 
     /**
      * Join Operation
-     * @param t     If it is a right connection, it may be null
-     * @param k     If it is a left connection, it may be null
+     * @param left      If it is a right connection, it may be null
+     * @param right     If it is a left connection, it may be null
      */
-    void join(T t, K k);
+    void join(L left, R right);
 
 }
