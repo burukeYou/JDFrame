@@ -492,6 +492,15 @@ public class JDFrameTest {
         });
     }
 
+
+    /**
+     *  Once：
+     *      在SQL语言里默认的join语义是： 主表一条记录可能会关联副表多条记录。
+     *      而Once就是只会关联其中一个。
+     *
+     *  Void：
+     *      只是执行连结操作的回调。不会改变Frame的数据和行数
+     */
     @Test
     public void testJoinOnce(){
         SDFrame<Student> frame1 = SDFrame.read(studentList);
