@@ -59,7 +59,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R> JDFrameImpl<R> from(Stream<R> stream){
-        return from(stream.collect(toList()));
+        return  new JDFrameImpl<>(stream.collect(toList()));
     }
 
     public <R> JDFrameImpl<R> from(List<R> list) {
@@ -126,7 +126,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrameImpl<List<T>> partition(int n) {
-        return from(new PartitionList<>(toLists(), n));
+        return returnDF(new PartitionList<>(toLists(), n));
     }
 
 
@@ -147,7 +147,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R, K> JDFrameImpl<R> join(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
-        return from(joinList(other,on,join));
+        return returnDF(joinList(other,on,join));
     }
 
     @Override
@@ -157,7 +157,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R, K> JDFrameImpl<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
-        return from(leftJoinList(other,on,join));
+        return returnDF(leftJoinList(other,on,join));
     }
 
     @Override
@@ -167,7 +167,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R, K> JDFrameImpl<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
-        return from(rightJoinList(other,on,join));
+        return returnDF(rightJoinList(other,on,join));
     }
 
     @Override
@@ -182,7 +182,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         for (T t : this) {
             result.add(new FI2<>(t,index++));
         }
-        return from(result);
+        return returnDF(result);
     }
 
     @Override
@@ -299,28 +299,28 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public JDFrameImpl<T> cutFirst(int n) {
         DFList<T> first = new DFList<>(toLists()).first(n);
-        return from(first.build());
+        return returnThis(first.build());
     }
 
 
     @Override
     public JDFrameImpl<T> cutLast(int n) {
         DFList<T> first = new DFList<>(toLists()).last(n);
-        return from(first.build());
+        return returnThis(first.build());
     }
 
     @Override
     public JDFrameImpl<T> cut(Integer startIndex, Integer endIndex) {
-        return returnDF(subList(startIndex, endIndex));
+        return returnThis(subList(startIndex, endIndex));
     }
 
     @Override
     public JDFrame<T> cutPage(int page, int pageSize) {
-        return returnDF(page(page,pageSize));
+        return returnThis(page(page,pageSize));
     }
     @Override
     public JDFrameImpl<T> distinct() {
-        return returnDF(stream().distinct());
+        return returnThis(stream().distinct());
     }
 
     @Override
@@ -331,12 +331,12 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public <R extends Comparable<R>> JDFrameImpl<T> distinct(Comparator<T> comparator) {
         ArrayList<T> tmp = stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparator)), ArrayList::new));
-        return returnDF(tmp);
+        return returnThis(tmp);
     }
 
     @Override
     public JDFrameImpl<T> where(Predicate<? super T> predicate) {
-        return from(stream().filter(predicate));
+        return returnThis(stream().filter(predicate));
     }
 
     @Override
@@ -354,18 +354,18 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
      **/
     @Override
     public <R> JDFrameImpl<T> whereNull(Function<T, R> function) {
-        return returnDF(whereNullStream(function));
+        return returnThis(whereNullStream(function));
     }
 
     public <R> JDFrameImpl<T> whereNotNull(Function<T, R> function) {
-        return returnDF(whereNotNullStream(function));
+        return returnThis(whereNotNullStream(function));
     }
 
     public <R extends Comparable<R>> JDFrameImpl<T> whereBetween(Function<T, R> function, R start, R end) {
         if (start == null && end == null) {
             return this;
         }
-        return returnDF(whereBetweenStream(function,start,end));
+        return returnThis(whereBetweenStream(function,start,end));
     }
 
     @Override
@@ -373,7 +373,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (start == null && end == null) {
             return this;
         }
-        return returnDF(whereBetweenNStream(function,start,end));
+        return returnThis(whereBetweenNStream(function,start,end));
     }
 
 
@@ -381,7 +381,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (start == null && end == null) {
             return this;
         }
-        return returnDF(whereBetweenRStream(function,start,end));
+        return returnThis(whereBetweenRStream(function,start,end));
     }
 
     @Override
@@ -389,7 +389,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (start == null && end == null) {
             return this;
         }
-        return returnDF(whereBetweenLStream(function,start,end));
+        return returnThis(whereBetweenLStream(function,start,end));
     }
 
 
@@ -397,7 +397,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (start == null || end == null) {
             return this;
         }
-        return returnDF(whereNotBetweenStream(function,start,end));
+        return returnThis(whereNotBetweenStream(function,start,end));
     }
 
     @Override
@@ -405,14 +405,14 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (start == null || end == null) {
             return this;
         }
-        return returnDF(whereNotBetweenNStream(function,start,end));
+        return returnThis(whereNotBetweenNStream(function,start,end));
     }
 
     public <R> JDFrame<T> whereIn(Function<T, R> function, List<R> list) {
         if (list == null || list.isEmpty()) {
             return this;
         }
-        return returnDF(whereInStream(function,list));
+        return returnThis(whereInStream(function,list));
     }
 
 
@@ -420,11 +420,11 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (list == null || list.isEmpty()) {
             return this;
         }
-        return returnDF(whereNotInStream(function,list));
+        return returnThis(whereNotInStream(function,list));
     }
 
     public JDFrame<T> whereTrue(Predicate<T> predicate) {
-        return returnDF(stream().filter(predicate));
+        return returnThis(stream().filter(predicate));
     }
 
 
@@ -434,7 +434,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
 
     public <R> JDFrame<T> whereEq(Function<T, R> function, R value) {
-        return  returnDF(whereEqStream(function,value));
+        return  returnThis(whereEqStream(function,value));
     }
 
 
@@ -442,7 +442,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (value == null) {
             return this;
         }
-        return returnDF(whereNotEqStream(function,value));
+        return returnThis(whereNotEqStream(function,value));
     }
 
 
@@ -450,7 +450,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (value == null) {
             return this;
         }
-        return returnDF(whereGtStream(function,value));
+        return returnThis(whereGtStream(function,value));
     }
 
 
@@ -458,7 +458,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (value == null) {
             return this;
         }
-        return returnDF(whereGeStream(function,value));
+        return returnThis(whereGeStream(function,value));
     }
 
 
@@ -466,7 +466,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (value == null) {
             return this;
         }
-        return returnDF(whereLtStream(function,value));
+        return returnThis(whereLtStream(function,value));
     }
 
 
@@ -474,7 +474,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (value == null) {
             return this;
         }
-        return returnDF(whereLeStream(function,value));
+        return returnThis(whereLeStream(function,value));
     }
 
 
@@ -482,7 +482,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (value == null) {
             return this;
         }
-        return returnDF(whereLikeStream(function,value));
+        return returnThis(whereLikeStream(function,value));
     }
 
 
@@ -490,7 +490,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (value == null) {
             return this;
         }
-        return returnDF(whereNotLikeStream(function,value));
+        return returnThis(whereNotLikeStream(function,value));
     }
 
 
@@ -498,7 +498,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (value == null) {
             return this;
         }
-        return returnDF(whereLikeLeftStream(function,value));
+        return returnThis(whereLikeLeftStream(function,value));
     }
 
 
@@ -506,7 +506,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (value == null) {
             return this;
         }
-        return returnDF(whereLikeRightStream(function,value));
+        return returnThis(whereLikeRightStream(function,value));
     }
 
     @Override
@@ -1023,6 +1023,15 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnDF(replenish(toLists(),groupDim,collectDim,getEmptyObject));
     }
 
+    protected JDFrameImpl<T> returnThis(Stream<T> stream) {
+        this.dataList = stream.collect(toList());
+        return this;
+    }
+
+    protected JDFrameImpl<T> returnThis(List<T> dataList) {
+        this.dataList = dataList;
+        return this;
+    }
 
     protected <R> JDFrameImpl<R> returnDF(Stream<R> stream) {
         JDFrameImpl<R> frame = new JDFrameImpl<>(stream.collect(toList()));
@@ -1031,7 +1040,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     protected <R> JDFrameImpl<R> returnDF(List<R> dataList) {
-        JDFrameImpl<R> frame = from(dataList);
+        JDFrameImpl<R> frame =new JDFrameImpl<>(dataList);
         transmitMember(this,frame);
         return frame;
     }

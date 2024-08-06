@@ -51,10 +51,6 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         }
     }
 
-    public <R> SDFrameImpl<R> read(List<R> list) {
-        return new SDFrameImpl<>(list);
-    }
-
     @Override
     public <R> SDFrameImpl<R> from(Stream<R> data) {
         return new SDFrameImpl<>(data);
@@ -139,7 +135,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         }
         List<T> ts = toLists();
         ts.addAll(other.toLists());
-        return returnDF(ts);
+        return returnThis(ts);
     }
 
     @Override
@@ -331,12 +327,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrame<T> cut(Integer startIndex, Integer endIndex) {
-        return returnDF(subList(startIndex,endIndex));
+        return returnThis(subList(startIndex,endIndex));
     }
 
     @Override
     public SDFrame<T> cutPage(int page, int pageSize) {
-        return returnDF(page(page,pageSize));
+        return returnThis(page(page,pageSize));
     }
 
     @Override
