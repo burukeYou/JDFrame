@@ -462,4 +462,25 @@ public class JDFrameTest {
             return e.getId();
         }).whereNotEq(Function.identity(), 0).show();
     }
+
+   
+    @Test
+    public void testJoinLink(){
+        SDFrame<Student> frame1 = SDFrame.read(studentList);
+
+        Map<String,String> map = new HashMap<>();
+        map.put("a","哈哈");
+        map.put("b","牛逼");
+        SDFrame<FI2<String, String>> frame2 = SDFrame.read(map);
+
+        frame1.leftJoinLink(frame2,(a,b) -> a.getName().equals(b.getC1()),(a,b) -> {
+            if (b == null){
+                // 未关联上
+                return;
+            }
+            // 关联上了
+            log.info("name【{}】对应的key【{}】",a.getName(),b.getC2());
+        });
+
+    }
 }

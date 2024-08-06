@@ -199,6 +199,15 @@ public interface IFrame<T> extends Iterable<T>{
      */
     <R,K> IFrame<R> join(IFrame<K> other, JoinOn<T,K> on);
 
+
+    /**
+     * inner join Frame
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param <K>           other Frame type
+     */
+    <K> IFrame<T> joinLink(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+
     /**
      * left join Frame
      *      if connection conditions false, The callback value K for Join will be null， always keep T
@@ -221,6 +230,16 @@ public interface IFrame<T> extends Iterable<T>{
     <R,K> IFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on);
 
     /**
+     * left join Frame
+     *      if connection conditions false, The callback value K for Join will be null， always keep T
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <K>           other Frame type
+     */
+    <K> IFrame<T> leftJoinLink(IFrame<K> other, JoinOn<T,K> on,  VoidJoin<T,K> join);
+
+    /**
      * right join Frame
      *      if connection conditions false, The callback value T for Join will be null， always keep K
      * @param other         other frame
@@ -240,6 +259,17 @@ public interface IFrame<T> extends Iterable<T>{
      * @param <K>           other Frame type
      */
     <R,K> IFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on);
+
+
+    /**
+     * right join Frame
+     *      if connection conditions false, The callback value T for Join will be null， always keep K
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <K>           other Frame type
+     */
+    <K> IFrame<T> rightJoinLink(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
      * ===========================   Frame Convert  =====================================

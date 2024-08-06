@@ -10,6 +10,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.Join;
 import io.github.burukeyou.dataframe.iframe.support.JoinOn;
+import io.github.burukeyou.dataframe.iframe.support.VoidJoin;
 import io.github.burukeyou.dataframe.iframe.support.MaxMin;
 import io.github.burukeyou.dataframe.util.BeanCopyUtil;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
@@ -523,6 +524,16 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return resultList;
     }
 
+    protected  <K> void joinListLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        for (T cur :this){
+            for (K k : other) {
+                if(on.on(cur,k)){
+                    join.join(cur,k);
+                }
+            }
+        }
+    }
+
     protected  <R, K> List<R> leftJoinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         List<R> resultList = new ArrayList<>();
         for (T cur :this){
@@ -537,6 +548,19 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return resultList;
     }
 
+
+    protected  <K> void leftJoinListLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        for (T cur :this){
+            for (K k : other) {
+                if(on.on(cur,k)){
+                   join.join(cur,k);
+                }else {
+                   join.join(cur,null);
+                }
+            }
+        }
+    }
+
     protected  <R, K> List<R> rightJoinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         List<R> resultList = new ArrayList<>();
         for (K k : other) {
@@ -549,6 +573,18 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
             }
         }
         return resultList;
+    }
+
+    protected  <K> void rightJoinListLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        for (K k : other) {
+            for (T cur :this){
+                if(on.on(cur,k)){
+                    join.join(cur,k);
+                }else {
+                    join.join(null,k);
+                }
+            }
+        }
     }
 
     @Override

@@ -5,15 +5,15 @@ package io.github.burukeyou.dataframe.iframe.support;
  * @author  caizhihao
  * @param <T>
  * @param <K>
- * @param <R>
  */
-public interface Join<T,K,R> {
+@FunctionalInterface
+public interface VoidJoin<T,K> {
 
     /**
-     *
+     * Join Operation
      * @param t     If it is a right connection, it may be null
      * @param k     If it is a left connection, it may be null
-     * @return      Build a new element with t and k
      */
-    R join(T t, K k);
+    void join(T t, K k);
+
 }

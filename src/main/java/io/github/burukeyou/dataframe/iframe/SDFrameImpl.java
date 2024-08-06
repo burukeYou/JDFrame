@@ -149,6 +149,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public <K> SDFrameImpl<T> joinLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        joinListLink(other,on,join);
+        return this;
+    }
+
+    @Override
     public <R, K> SDFrameImpl<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return returnDF(leftJoinList(other,on,join));
     }
@@ -159,6 +165,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public <K> SDFrameImpl<T> leftJoinLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        leftJoinListLink(other,on,join);
+        return this;
+    }
+
+    @Override
     public <R, K> SDFrameImpl<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return returnDF(rightJoinList(other,on,join));
     }
@@ -166,6 +178,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public <R, K> SDFrameImpl<R> rightJoin(IFrame<K> other, JoinOn<T, K> on) {
         return rightJoin(other,on,new DefaultJoin<>());
+    }
+
+    @Override
+    public <K> SDFrameImpl<T> rightJoinLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        rightJoinListLink(other,on,join);
+        return this;
     }
 
     @Override
