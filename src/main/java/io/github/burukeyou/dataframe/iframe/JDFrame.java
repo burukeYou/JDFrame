@@ -163,7 +163,7 @@ public interface JDFrame<T> extends IFrame<T> {
 
 
     /**
-     * inner join Frame
+     * just Execute inner join operation， will not change the data of the frame
      * @param other         other frame
      * @param on            connection conditions
      * @param <K>           other Frame type
@@ -172,7 +172,7 @@ public interface JDFrame<T> extends IFrame<T> {
 
 
     /**
-     * inner join Frame
+     *  just Execute inner join operation， will not change the data of the frame
      *      If successfully associated with other Frame record, it will only be associated once
      * @param other         other frame
      * @param on            connection conditions
@@ -214,7 +214,7 @@ public interface JDFrame<T> extends IFrame<T> {
     <R,K> JDFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on);
 
     /**
-     * left join Frame
+     *  just Execute left join operation， will not change the data of the frame
      *      if connection conditions false, The callback value K for Join will be null， always keep T
      * @param other         other frame
      * @param on            connection conditions
@@ -225,7 +225,7 @@ public interface JDFrame<T> extends IFrame<T> {
 
 
     /**
-     * left join Frame
+     *  just Execute left join operation， will not change the data of the frame
      *      if connection conditions false, The callback value K for Join will be null， always keep T
      *      If successfully associated with other Frame record, it will only be associated once
      * @param other         other frame
@@ -270,7 +270,7 @@ public interface JDFrame<T> extends IFrame<T> {
     <R,K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on);
 
     /**
-     * right join Frame
+     *  just Execute right join operation， will not change the data of the frame
      *      if connection conditions false, The callback value T for Join will be null， always keep K
      * @param other         other frame
      * @param on            connection conditions
@@ -280,7 +280,7 @@ public interface JDFrame<T> extends IFrame<T> {
     <K> JDFrame<T> rightJoinVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
-     * right join Frame
+     *  just Execute right join operation， will not change the data of the frame
      *      if connection conditions false, The callback value T for Join will be null， always keep K
      *      If successfully associated with other Frame record, it will only be associated once
      * @param other         other frame
