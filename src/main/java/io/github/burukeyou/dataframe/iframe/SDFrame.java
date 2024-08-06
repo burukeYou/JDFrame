@@ -207,6 +207,14 @@ public interface SDFrame<T> extends IFrame<T> {
     <R> SDFrame<R> map(Function<T,R> map);
 
     /**
+     * parallel convert  to the new Frame
+     * @param map           convert operation
+     * @return              the new Frame
+     * @param <R>           the new Frame type
+     */
+    <R> SDFrame<R> mapParallel(Function<T,R> map);
+
+    /**
      * Percentage convert
      *          you can convert the value of a certain field to a percentage,
      *          Then assign a value to a certain column through SetFunction

@@ -62,6 +62,10 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return from(stream.collect(toList()));
     }
 
+    public <R> JDFrameImpl<R> from(List<R> list) {
+        return new JDFrameImpl<>(list);
+    }
+
     @Override
     public JDFrameImpl<T> forEachDo(Consumer<? super T> action) {
         this.forEach(action);
@@ -95,13 +99,14 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return this;
     }
 
-    public <R> JDFrameImpl<R> from(List<R> list) {
-        return new JDFrameImpl<>(list);
+    @Override
+    public <R> JDFrameImpl<R> map(Function<T, R> map) {
+        return returnDF(stream().map(map));
     }
 
     @Override
-    public <R> JDFrameImpl<R> map(Function<T, R> map) {
-        return from(stream().map(map));
+    public <R> JDFrame<R> mapParallel(Function<T, R> map) {
+        return returnDF(stream().parallel().map(map));
     }
 
     @Override
@@ -1020,7 +1025,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
 
     protected <R> JDFrameImpl<R> returnDF(Stream<R> stream) {
-        JDFrameImpl<R> frame = from(stream);
+        JDFrameImpl<R> frame = new JDFrameImpl<>(stream.collect(toList()));
         transmitMember(this,frame);
         return frame;
     }

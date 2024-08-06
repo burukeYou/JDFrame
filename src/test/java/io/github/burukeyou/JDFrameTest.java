@@ -16,6 +16,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -453,6 +454,12 @@ public class JDFrameTest {
 
     @Test
     public void testforEachParallel(){
-
+        SDFrame.read(studentList).mapParallel(e -> {
+            System.out.println("---->" + e.getId());
+            if (e.getId() > 8){
+                return 0;
+            }
+            return e.getId();
+        }).whereNotEq(Function.identity(), 0).show();
     }
 }

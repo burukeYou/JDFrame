@@ -95,7 +95,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <R> SDFrameImpl<R> map(Function<T, R> map) {
-        return returnDF(stream().map(map).collect(toList()));
+        return returnDF(stream().map(map));
+    }
+
+    @Override
+    public <R> SDFrame<R> mapParallel(Function<T, R> map) {
+        return returnDF(stream().parallel().map(map));
     }
 
     @Override
