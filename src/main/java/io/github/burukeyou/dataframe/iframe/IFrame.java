@@ -188,6 +188,18 @@ public interface IFrame<T> extends Iterable<T>{
      */
     <R,K> IFrame<R> join(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
+
+    /**
+     * inner join Frame
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
+     */
+    <R,K> IFrame<R> joinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
     /**
      * inner join Frame
      *      such as {@link IFrame#join(IFrame, JoinOn, Join)}, but the default Join is {@link DefaultJoin},
@@ -208,6 +220,16 @@ public interface IFrame<T> extends Iterable<T>{
      */
     <K> IFrame<T> joinLink(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
+
+    /**
+     * inner join Frame
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param <K>           other Frame type
+     */
+    <K> IFrame<T> joinLinkOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+
     /**
      * left join Frame
      *      if connection conditions false, The callback value K for Join will be null， always keep T
@@ -218,6 +240,18 @@ public interface IFrame<T> extends Iterable<T>{
      * @param <K>           other Frame type
      */
     <R,K> IFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    /**
+     * left join Frame
+     *      if connection conditions false, The callback value K for Join will be null， always keep T
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
+     */
+    <R,K> IFrame<R> leftJoinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
     /**
      * left join Frame
@@ -239,6 +273,18 @@ public interface IFrame<T> extends Iterable<T>{
      */
     <K> IFrame<T> leftJoinLink(IFrame<K> other, JoinOn<T,K> on,  VoidJoin<T,K> join);
 
+
+    /**
+     * left join Frame
+     *      if connection conditions false, The callback value K for Join will be null， always keep T
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <K>           other Frame type
+     */
+    <K> IFrame<T> leftJoinLinkOnce(IFrame<K> other, JoinOn<T,K> on,  VoidJoin<T,K> join);
+
     /**
      * right join Frame
      *      if connection conditions false, The callback value T for Join will be null， always keep K
@@ -249,6 +295,19 @@ public interface IFrame<T> extends Iterable<T>{
      * @param <K>           other Frame type
      */
     <R,K> IFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    /**
+     * right join Frame
+     *      if connection conditions false, The callback value T for Join will be null， always keep K
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
+     */
+    <R,K> IFrame<R> rightJoinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
 
     /**
      * right join Frame
@@ -270,6 +329,18 @@ public interface IFrame<T> extends Iterable<T>{
      * @param <K>           other Frame type
      */
     <K> IFrame<T> rightJoinLink(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+
+    /**
+     * right join Frame
+     *      if connection conditions false, The callback value T for Join will be null， always keep K
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <K>           other Frame type
+     */
+    <K> IFrame<T> rightJoinLinkOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+
 
     /**
      * ===========================   Frame Convert  =====================================

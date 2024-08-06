@@ -512,34 +512,58 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
 
+    /**  ========================================= Join ========================================= */
+
     protected  <R, K> List<R> joinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return joinList(other,on,join,false);
+    }
+
+    protected  <R, K> List<R> joinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join,boolean isJoinOnce) {
         List<R> resultList = new ArrayList<>();
         for (T cur :this){
             for (K k : other) {
                 if(on.on(cur,k)){
                     resultList.add(join.join(cur,k));
+                    if (isJoinOnce){
+                        break;
+                    }
                 }
             }
         }
         return resultList;
     }
 
+
     protected  <K> void joinListLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        joinListLink(other,on,join,false);
+    }
+
+    protected  <K> void joinListLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join,boolean isJoinOnce) {
         for (T cur :this){
             for (K k : other) {
                 if(on.on(cur,k)){
                     join.join(cur,k);
+                    if (isJoinOnce){
+                        break;
+                    }
                 }
             }
         }
     }
 
     protected  <R, K> List<R> leftJoinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+       return leftJoinList(other,on,join,false);
+    }
+
+    protected  <R, K> List<R> leftJoinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join, boolean isJoinOnce) {
         List<R> resultList = new ArrayList<>();
         for (T cur :this){
             for (K k : other) {
                 if(on.on(cur,k)){
                     resultList.add(join.join(cur,k));
+                    if (isJoinOnce){
+                        break;
+                    }
                 }else {
                     resultList.add(join.join(cur,null));
                 }
@@ -550,23 +574,37 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
 
     protected  <K> void leftJoinListLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        leftJoinListLink(other,on,join,false);
+    }
+
+    protected  <K> void leftJoinListLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join, boolean isJoinOnce) {
         for (T cur :this){
             for (K k : other) {
                 if(on.on(cur,k)){
-                   join.join(cur,k);
+                    join.join(cur,k);
+                    if (isJoinOnce){
+                        break;
+                    }
                 }else {
-                   join.join(cur,null);
+                    join.join(cur,null);
                 }
             }
         }
     }
 
     protected  <R, K> List<R> rightJoinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+       return rightJoinList(other,on,join,false);
+    }
+
+    protected  <R, K> List<R> rightJoinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join,boolean isJoinOnce) {
         List<R> resultList = new ArrayList<>();
         for (K k : other) {
             for (T cur :this){
                 if(on.on(cur,k)){
                     resultList.add(join.join(cur,k));
+                    if (isJoinOnce){
+                        break;
+                    }
                 }else {
                     resultList.add(join.join(null,k));
                 }
@@ -576,16 +614,26 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     protected  <K> void rightJoinListLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        rightJoinListLink(other,on,join,false);
+    }
+
+    protected  <K> void rightJoinListLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join,boolean isJoinOnce) {
         for (K k : other) {
             for (T cur :this){
                 if(on.on(cur,k)){
                     join.join(cur,k);
+                    if (isJoinOnce){
+                        break;
+                    }
                 }else {
                     join.join(null,k);
                 }
             }
         }
     }
+
+    /** ===========================   View Frame  ===================================== **/
+
 
     @Override
     public List<T> head(int n) {

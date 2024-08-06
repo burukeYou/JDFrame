@@ -144,6 +144,11 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public <R, K> SDFrameImpl<R> joinOnce(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return returnDF(joinList(other,on,join,true));
+    }
+
+    @Override
     public <R, K> SDFrameImpl<R> join(IFrame<K> other, JoinOn<T, K> on) {
         return join(other,on,new DefaultJoin<>());
     }
@@ -155,8 +160,19 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public <K> SDFrameImpl<T> joinLinkOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        joinListLink(other,on,join,true);
+        return this;
+    }
+
+    @Override
     public <R, K> SDFrameImpl<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return returnDF(leftJoinList(other,on,join));
+    }
+
+    @Override
+    public <R, K> SDFrameImpl<R> leftJoinOnce(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return returnDF(leftJoinList(other,on,join,true));
     }
 
     @Override
@@ -171,8 +187,19 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public <K> SDFrame<T> leftJoinLinkOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        leftJoinListLink(other,on,join,true);
+        return this;
+    }
+
+    @Override
     public <R, K> SDFrameImpl<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return returnDF(rightJoinList(other,on,join));
+    }
+
+    @Override
+    public <R, K> SDFrameImpl<R> rightJoinOnce(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return returnDF(rightJoinList(other,on,join,true));
     }
 
     @Override
@@ -183,6 +210,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public <K> SDFrameImpl<T> rightJoinLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         rightJoinListLink(other,on,join);
+        return this;
+    }
+
+    @Override
+    public <K> SDFrame<T> rightJoinLinkOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        rightJoinListLink(other,on,join,true);
         return this;
     }
 

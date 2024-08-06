@@ -151,6 +151,12 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public <R, K> JDFrameImpl<R> joinOnce(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return returnDF(joinList(other,on,join,true));
+    }
+
+
+    @Override
     public <R, K> JDFrameImpl<R> join(IFrame<K> other, JoinOn<T, K> on) {
         return join(other,on,new DefaultJoin<>());
     }
@@ -161,9 +167,21 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return this;
     }
 
+
+    @Override
+    public <K> JDFrameImpl<T> joinLinkOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        joinListLink(other,on,join,true);
+        return this;
+    }
+
     @Override
     public <R, K> JDFrameImpl<R> leftJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return returnDF(leftJoinList(other,on,join));
+    }
+
+    @Override
+    public <R, K> JDFrameImpl<R> leftJoinOnce(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return returnDF(leftJoinList(other,on,join,true));
     }
 
     @Override
@@ -178,8 +196,19 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public <K> JDFrameImpl<T> leftJoinLinkOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        leftJoinListLink(other,on,join,true);
+        return this;
+    }
+
+    @Override
     public <R, K> JDFrameImpl<R> rightJoin(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
         return returnDF(rightJoinList(other,on,join));
+    }
+
+    @Override
+    public <R, K> JDFrameImpl<R> rightJoinOnce(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
+        return returnDF(rightJoinList(other,on,join,true));
     }
 
     @Override
@@ -190,6 +219,12 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public <K> JDFrameImpl<T> rightJoinLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         rightJoinListLink(other,on,join);
+        return this;
+    }
+
+    @Override
+    public <K> JDFrame<T> rightJoinLinkOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+        rightJoinListLink(other,on,join,true);
         return this;
     }
 

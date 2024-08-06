@@ -140,6 +140,18 @@ public interface JDFrame<T> extends IFrame<T> {
 
     /**
      * inner join Frame
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
+     */
+    <R,K> JDFrame<R> joinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+
+    /**
+     * inner join Frame
      *      such as {@link IFrame#join(IFrame, JoinOn, Join)}, but the default Join is {@link DefaultJoin},
      *      it will automatically map to a new Frame based on the same name
      * @param other         other frame
@@ -160,6 +172,15 @@ public interface JDFrame<T> extends IFrame<T> {
 
 
     /**
+     * inner join Frame
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param <K>           other Frame type
+     */
+    <K> JDFrame<T> joinLinkOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+
+    /**
      * left join Frame
      *      if connection conditions false, The callback value K for Join will be null， always keep T
      * @param other         other frame
@@ -169,6 +190,18 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param <K>           other Frame type
      */
     <R,K> JDFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    /**
+     * left join Frame
+     *      if connection conditions false, The callback value K for Join will be null， always keep T
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
+     */
+    <R,K> JDFrame<R> leftJoinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
     /**
      * left join Frame
@@ -190,6 +223,18 @@ public interface JDFrame<T> extends IFrame<T> {
      */
     <K> JDFrame<T> leftJoinLink(IFrame<K> other, JoinOn<T,K> on,  VoidJoin<T,K> join);
 
+
+    /**
+     * left join Frame
+     *      if connection conditions false, The callback value K for Join will be null， always keep T
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <K>           other Frame type
+     */
+    <K> JDFrame<T> leftJoinLinkOnce(IFrame<K> other, JoinOn<T,K> on,  VoidJoin<T,K> join);
+
     /**
      * right join Frame
      *      if connection conditions false, The callback value T for Join will be null， always keep K
@@ -200,6 +245,19 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param <K>           other Frame type
      */
     <R,K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
+    /**
+     * right join Frame
+     *      if connection conditions false, The callback value T for Join will be null， always keep K
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <R>           new Frame type
+     * @param <K>           other Frame type
+     */
+    <R,K> JDFrame<R> rightJoinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
 
     /**
      * right join Frame
@@ -220,6 +278,18 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param <K>           other Frame type
      */
     <K> JDFrame<T> rightJoinLink(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+
+    /**
+     * right join Frame
+     *      if connection conditions false, The callback value T for Join will be null， always keep K
+     *      If successfully associated with other Frame record, it will only be associated once
+     * @param other         other frame
+     * @param on            connection conditions
+     * @param join          Connection logic
+     * @param <K>           other Frame type
+     */
+    <K> JDFrame<T> rightJoinLinkOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+
 
     /**
      * ===========================   Frame Convert  =====================================
