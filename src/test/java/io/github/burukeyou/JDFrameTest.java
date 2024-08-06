@@ -472,7 +472,7 @@ public class JDFrameTest {
         List<UserInfo> userInfos = Arrays.asList(new UserInfo("a", 99), new UserInfo("a", 4), new UserInfo("b", 4));
         SDFrame<UserInfo> frame2 = SDFrame.read(userInfos);
 
-        frame1.leftJoin(frame2,(a, b) -> a.getName().equals(b.getKey1()),(a, b) -> {
+        frame1.leftJoinVoid(frame2,(a, b) -> a.getName().equals(b.getKey1()),(a, b) -> {
             if (b == null){
                 return;
             }
@@ -482,7 +482,7 @@ public class JDFrameTest {
         System.out.println("===========");
 
         JoinOn<Student, UserInfo> joinOn = JoinOn.on(Student::getName, UserInfo::getKey1).thenOn(Student::getId, UserInfo::getKey2);
-        frame1.leftJoin(frame2,joinOn,(stu, user) -> {
+        frame1.leftJoinVoid(frame2,joinOn,(stu, user) -> {
             if (user == null){
                 // 未关联上
                 return;
@@ -497,12 +497,12 @@ public class JDFrameTest {
         SDFrame<Student> frame1 = SDFrame.read(studentList);
         List<UserInfo> userInfos = Arrays.asList(new UserInfo("a", 99), new UserInfo("a", 4), new UserInfo("b", 4));
         SDFrame<UserInfo> frame2 = SDFrame.read(userInfos);
-        frame1.leftJoinOnce(frame2,(a, b) -> a.getName().equals(b.getKey1()),(a, b) -> {
+        frame1.leftJoinOnceVoid(frame2,(a, b) -> a.getName().equals(b.getKey1()),(a, b) -> {
             if (b == null){
                 return;
             }
             log.info("id【{}】name【{}】对应的key【{}】",a.getId(),a.getName(),b.getKey2());
-        });
+        }).show();
 
     }
 }

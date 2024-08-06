@@ -154,13 +154,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <K> SDFrameImpl<T> join(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> SDFrameImpl<T> joinVoid(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         joinListLink(other,on,join);
         return this;
     }
 
     @Override
-    public <K> SDFrameImpl<T> joinOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> SDFrameImpl<T> joinOnceVoid(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         joinListLink(other,on,join,true);
         return this;
     }
@@ -181,13 +181,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <K> SDFrameImpl<T> leftJoin(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> SDFrameImpl<T> leftJoinVoid(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         leftJoinListLink(other,on,join);
         return this;
     }
 
     @Override
-    public <K> SDFrame<T> leftJoinOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> SDFrame<T> leftJoinOnceVoid(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         leftJoinListLink(other,on,join,true);
         return this;
     }
@@ -208,13 +208,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <K> SDFrameImpl<T> rightJoin(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> SDFrameImpl<T> rightJoinVoid(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         rightJoinListLink(other,on,join);
         return this;
     }
 
     @Override
-    public <K> SDFrame<T> rightJoinOnce(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
+    public <K> SDFrame<T> rightJoinOnceVoid(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join) {
         rightJoinListLink(other,on,join,true);
         return this;
     }

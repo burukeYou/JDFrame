@@ -168,7 +168,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param on            connection conditions
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> join(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> JDFrame<T> joinVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
 
     /**
@@ -178,7 +178,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param on            connection conditions
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> joinOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> JDFrame<T> joinOnceVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
      * left join Frame
@@ -221,7 +221,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> leftJoin(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> JDFrame<T> leftJoinVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
 
     /**
@@ -233,7 +233,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> leftJoinOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> JDFrame<T> leftJoinOnceVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
      * right join Frame
@@ -277,7 +277,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> rightJoin(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> JDFrame<T> rightJoinVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
      * right join Frame
@@ -288,7 +288,7 @@ public interface JDFrame<T> extends IFrame<T> {
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> rightJoinOnce(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> JDFrame<T> rightJoinOnceVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
 
     /**
