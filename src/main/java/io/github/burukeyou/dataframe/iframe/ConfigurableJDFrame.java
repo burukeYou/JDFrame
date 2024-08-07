@@ -7,7 +7,8 @@ public interface ConfigurableJDFrame<T> extends IFrame<T>,
                                                 JoinJDFrame<T> ,
                                                 WhereJDFrame<T>,
                                                 GroupJDFrame<T>,
-                                                OverJDFrame<T> {
+                                                OverJDFrame<T> ,
+                                                OperationJDFrame<T> {
 
 
 }

@@ -524,4 +524,19 @@ public class JDFrameTest {
         }).show();
 
     }
+
+
+    @Test
+    public void testOper(){
+
+        List<UserInfo> us1 = Arrays.asList(new UserInfo("a", 99), new UserInfo("a", 4), new UserInfo("b", 4));
+        List<UserInfo> us2 = Arrays.asList(new UserInfo("a", 99), new UserInfo("b", 4), new UserInfo("c", 4));
+
+
+        SDFrame<UserInfo> frame1 = SDFrame.read(us1);
+        SDFrame<UserInfo> frame2 = SDFrame.read(us2);
+
+        SDFrame.read(us1).union(frame2).show();
+
+    }
 }

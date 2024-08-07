@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  *
  * @author caizhihao
  */
-public interface IFrame<T> extends SummaryFrame<T>,WhereIFrame<T>,JoinIFrame<T>,GroupIFrame<T>,Iterable<T>{
+public interface IFrame<T> extends SummaryFrame<T>,WhereIFrame<T>,JoinIFrame<T>,GroupIFrame<T>,OperationIFrame<T>,Iterable<T>{
 
     /**
      * Convert to list
@@ -473,7 +473,6 @@ public interface IFrame<T> extends SummaryFrame<T>,WhereIFrame<T>,JoinIFrame<T>,
      * @param comparator        the comparator
      */
     IFrame<T> distinct(Comparator<T> comparator);
-
 
     /**
      * distinct by  comparator

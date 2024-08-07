@@ -7,7 +7,8 @@ public interface ConfigurableSDFrame<T> extends IFrame<T>,
                                                 WhereSDFrame<T>,
                                                 JoinSDFrame<T>,
                                                 GroupSDFrame<T>,
-                                                OverSDFrame<T> {
+                                                OverSDFrame<T>,
+                                                OperationSDFrame<T> {
 
 
 }

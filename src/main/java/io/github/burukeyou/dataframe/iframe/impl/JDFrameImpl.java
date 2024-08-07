@@ -11,10 +11,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
 import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import io.github.burukeyou.dataframe.iframe.window.Window;
-import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
-import io.github.burukeyou.dataframe.util.FrameUtil;
-import io.github.burukeyou.dataframe.util.MathUtils;
-import io.github.burukeyou.dataframe.util.PartitionList;
+import io.github.burukeyou.dataframe.util.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1068,6 +1065,17 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return overNtileS(setFunction, emptyWindow,n);
     }
 
+    @Override
+    public JDFrameImpl<T> union(IFrame<T> other) {
+        List<T> otherList = other.toLists();
+        if (ListUtils.isEmpty(otherList)){
+            return this;
+        }
+
+        Set<T> set = new HashSet<>(this.toLists());
+        set.addAll(otherList);
+        return returnThis(set.stream());
+    }
 
     /**  ============================== Other =============== */
     @Override
