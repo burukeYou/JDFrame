@@ -532,11 +532,11 @@ public class JDFrameTest {
         List<UserInfo> us1 = Arrays.asList(new UserInfo("a", 99), new UserInfo("a", 4), new UserInfo("b", 4));
         List<UserInfo> us2 = Arrays.asList(new UserInfo("a", 99), new UserInfo("b", 4), new UserInfo("c", 4));
 
-        JDFrame<UserInfo> frame = JDFrame.read(us1);
+        SDFrame<UserInfo> frame = SDFrame.read(us1);
         SDFrame<UserInfo> frame2 = SDFrame.read(us2);
 
         frame.union(frame2).show();
-        //frame.intersection(frame2).show();
+        frame.intersection(frame2).show();
 
         frame.show();
 

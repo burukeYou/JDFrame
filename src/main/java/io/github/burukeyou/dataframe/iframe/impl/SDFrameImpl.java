@@ -1084,12 +1084,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrameImpl<T> union(IFrame<T> other) {
-        return returnThis(unionList(toLists(),other.toLists()));
+        return returnDF(unionList(toLists(),other.toLists()));
     }
 
     @Override
     public SDFrameImpl<T> intersection(IFrame<T> other) {
-        return returnThis(intersectionList(toLists(),other.toLists()));
+        return returnDF(intersectionList(toLists(),other.toLists()));
     }
 
     @Override
@@ -1107,6 +1107,10 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(replenish(toLists(),groupDim,collectDim,getEmptyObject));
     }
 
+    /**
+     * If the operation is on its own data, it can be return this
+     * But in the end, it cannot be controlled. It is recommended to reread
+     */
     protected SDFrameImpl<T> returnThis(Stream<T> stream) {
         this.data = stream;
         return this;
