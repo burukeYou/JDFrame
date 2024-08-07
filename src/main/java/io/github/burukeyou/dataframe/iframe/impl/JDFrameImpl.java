@@ -137,7 +137,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrameImpl<T> union(IFrame<T> other) {
+    public JDFrameImpl<T> append(IFrame<T> other) {
         if (other.count() <= 0){
             return this;
         }

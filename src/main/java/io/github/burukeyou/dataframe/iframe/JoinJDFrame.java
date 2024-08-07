@@ -18,7 +18,7 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * add other Frame to this
      * @param other         other Frame
      */
-    JDFrame<T> union(IFrame<T> other);
+    JDFrame<T> append(IFrame<T> other);
 
 
     /**

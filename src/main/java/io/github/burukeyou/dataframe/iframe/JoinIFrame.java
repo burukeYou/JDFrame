@@ -18,7 +18,7 @@ public interface JoinIFrame<T> {
      * add other Frame to this
      * @param other         other Frame
      */
-    IFrame<T> union(IFrame<T> other);
+    IFrame<T> append(IFrame<T> other);
 
     /**
      * inner join Frame

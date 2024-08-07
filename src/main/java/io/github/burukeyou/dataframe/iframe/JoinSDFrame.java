@@ -22,7 +22,7 @@ public interface JoinSDFrame<T> extends JoinIFrame<T> {
      * add other Frame to this
      * @param other         other Frame
      */
-    SDFrame<T> union(IFrame<T> other);
+    SDFrame<T> append(IFrame<T> other);
 
     /**
      * inner join Frame

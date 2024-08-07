@@ -129,7 +129,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrameImpl<T> union(IFrame<T> other) {
+    public SDFrameImpl<T> append(IFrame<T> other) {
         if (other.count() <= 0){
             return this;
         }
