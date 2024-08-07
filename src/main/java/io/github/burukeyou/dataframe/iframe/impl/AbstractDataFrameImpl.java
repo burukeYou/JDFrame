@@ -708,6 +708,29 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return ts.subList(startIndex,endIndex);
     }
 
+    protected List<T> unionList(List<T> leftList,List<T> rightList){
+        if (ListUtils.isEmpty(rightList)){
+            return leftList;
+        }
+        if (ListUtils.isEmpty(leftList)){
+            return rightList;
+        }
+        Set<T> set = new HashSet<>(leftList);
+        set.addAll(rightList);
+        return new ArrayList<>(set);
+    }
+
+    protected List<T> intersectionList(List<T> leftList,List<T> rightList){
+        if (ListUtils.isEmpty(rightList) || ListUtils.isEmpty(leftList)){
+            return Collections.emptyList();
+        }
+        Set<T> otherSet = new HashSet<>(rightList);
+        leftList = leftList.stream().filter(otherSet::contains).collect(toList());
+        return leftList;
+    }
+
+
+
     protected static <T, C> List<T> replenish(List<T> itemDTOList,
                                               Function<T, C> collectDim,
                                               List<C> allDim,

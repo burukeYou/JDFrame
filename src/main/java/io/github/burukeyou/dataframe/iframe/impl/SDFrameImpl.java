@@ -1084,13 +1084,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrameImpl<T> union(IFrame<T> other) {
-        List<T> otherList = other.toLists();
-        if (ListUtils.isEmpty(otherList)){
-            return this;
-        }
-        Set<T> set = new HashSet<>(this.toLists());
-        set.addAll(otherList);
-        return returnThis(set.stream());
+        return returnThis(unionList(toLists(),other.toLists()));
+    }
+
+    @Override
+    public SDFrameImpl<T> intersection(IFrame<T> other) {
+        return returnThis(intersectionList(toLists(),other.toLists()));
     }
 
     @Override

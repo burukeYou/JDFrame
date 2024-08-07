@@ -1067,14 +1067,12 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrameImpl<T> union(IFrame<T> other) {
-        List<T> otherList = other.toLists();
-        if (ListUtils.isEmpty(otherList)){
-            return this;
-        }
+        return returnDF(unionList(toLists(),other.toLists()));
+    }
 
-        Set<T> set = new HashSet<>(this.toLists());
-        set.addAll(otherList);
-        return returnThis(set.stream());
+    @Override
+    public JDFrameImpl<T> intersection(IFrame<T> other) {
+        return returnDF(intersectionList(toLists(),other.toLists()));
     }
 
     /**  ============================== Other =============== */
