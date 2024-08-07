@@ -1,8 +1,9 @@
-package io.github.burukeyou.dataframe.iframe;
+package io.github.burukeyou.dataframe.iframe.impl;
 
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import io.github.burukeyou.dataframe.iframe.IFrame;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
@@ -675,7 +676,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     @Override
-    public List<T> subList(Integer startIndex, Integer endIndex) {
+    public List<T> getList(Integer startIndex, Integer endIndex) {
         List<T> ts = toLists();
         if (startIndex == null || startIndex < 0){
             startIndex = 0;

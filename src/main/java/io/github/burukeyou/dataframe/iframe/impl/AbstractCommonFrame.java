@@ -1,6 +1,7 @@
-package io.github.burukeyou.dataframe.iframe;
+package io.github.burukeyou.dataframe.iframe.impl;
 
 import com.alibaba.fastjson.JSON;
+import io.github.burukeyou.dataframe.iframe.IFrame;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.util.ClassUtil;
 import lombok.Getter;

@@ -1,6 +1,9 @@
-package io.github.burukeyou.dataframe.iframe;
+package io.github.burukeyou.dataframe.iframe.impl;
 
 
+import io.github.burukeyou.dataframe.iframe.IFrame;
+import io.github.burukeyou.dataframe.iframe.JDFrame;
+import io.github.burukeyou.dataframe.iframe.WindowJDFrame;
 import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
 import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
@@ -364,7 +367,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrameImpl<T> cut(Integer startIndex, Integer endIndex) {
-        return returnThis(subList(startIndex, endIndex));
+        return returnThis(getList(startIndex, endIndex));
     }
 
     @Override
@@ -382,7 +385,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrameImpl<T> distinct(Comparator<T> comparator) {
+    public JDFrameImpl<T> distinct(Comparator<T> comparator) {
         ArrayList<T> tmp = stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparator)), ArrayList::new));
         return returnThis(tmp);
     }
@@ -562,25 +565,25 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnThis(whereLikeRightStream(function,value));
     }
 
-    @Override
-    public <K> JDFrame<FI2<K, List<T>>> group(Function<? super T, ? extends K> key) {
-        return returnDF(groupKey(key));
-    }
-
 
 
     /** ===========================   分组相关  ===================================== **/
 
+    @Override
+    public <K> JDFrameImpl<FI2<K, List<T>>> group(Function<? super T, ? extends K> key) {
+        return returnDF(groupKey(key));
+    }
 
-    public <K,R extends Number> JDFrame<FI2<K, BigDecimal>> groupBySum(Function<T, K> key,
+    @Override
+    public <K,R extends Number> JDFrameImpl<FI2<K, BigDecimal>> groupBySum(Function<T, K> key,
                                                       NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI2<K, BigDecimal>> collect = groupKey(key, tBigDecimalCollector);
         return returnDF(collect);
     }
 
-
-    public <K, J,R extends Number> JDFrame<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key,
+    @Override
+    public <K, J,R extends Number> JDFrameImpl<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key,
                                                             Function<T, J> key2,
                                                             NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
@@ -589,8 +592,8 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
 
-
-    public <K, J, H,R extends Number> JDFrame<FI4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
+    @Override
+    public <K, J, H,R extends Number> JDFrameImpl<FI4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
                                                                   Function<T, J> key2,
                                                                   Function<T, H> key3,
                                                                   NumberFunction<T,R> value) {
@@ -599,23 +602,23 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnDF(collect);
     }
 
-
-    public <K> JDFrame<FI2<K, Long>> groupByCount(Function<T, K> key) {
+    @Override
+    public <K> JDFrameImpl<FI2<K, Long>> groupByCount(Function<T, K> key) {
         Collector<Object, ?, Long> counting = counting();
         Map<K, Long> collect = stream().collect(groupingBy(key, counting));
         return returnDF(FrameUtil.toListFI2(collect));
     }
 
-
-    public <K, J> JDFrame<FI3<K, J, Long>> groupByCount(Function<T, K> key,
+    @Override
+    public <K, J> JDFrameImpl<FI3<K, J, Long>> groupByCount(Function<T, K> key,
                                                         Function<T, J> key2) {
         Collector<Object, ?, Long> counting = counting();
         Map<K, Map<J, Long>> collect = stream().collect(groupingBy(key, groupingBy(key2, counting)));
         return returnDF(FrameUtil.toListFI3(collect));
     }
 
-
-    public <K, J, H> JDFrame<FI4<K, J, H, Long>> groupByCount(Function<T, K> key,
+    @Override
+    public <K, J, H> JDFrameImpl<FI4<K, J, H, Long>> groupByCount(Function<T, K> key,
                                                               Function<T, J> key2,
                                                               Function<T, H> key3) {
         Collector<Object, ?, Long> counting = counting();
@@ -623,8 +626,8 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnDF(FrameUtil.toListFI4(collect));
     }
 
-
-    public <K,R extends Number> JDFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, NumberFunction<T,R> value) {
+    @Override
+    public <K,R extends Number> JDFrameImpl<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, NumberFunction<T,R> value) {
         List<T> dataList = toLists();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI2<K, BigDecimal>> sumList = returnDF(dataList).groupKey(key, tBigDecimalCollector);
@@ -634,8 +637,8 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnDF(collect);
     }
 
-
-    public <K, J,R extends Number> JDFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key,
+    @Override
+    public <K, J,R extends Number> JDFrameImpl<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key,
                                                                        Function<T, J> key2,
                                                                        NumberFunction<T,R> value) {
         List<T> dataList = toLists();
@@ -651,16 +654,16 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnDF(collect);
     }
 
-
-    public <K,R extends Number> JDFrame<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key,
+    @Override
+    public <K,R extends Number> JDFrameImpl<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key,
                                                       NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, defaultScale, getOldRoundingMode());
         List<FI2<K, BigDecimal>> collect = groupKey(key, tBigDecimalCollector);
         return returnDF(collect);
     }
 
-
-    public <K, J,R extends Number> JDFrame<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key,
+    @Override
+    public <K, J,R extends Number> JDFrameImpl<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key,
                                                             Function<T, J> key2,
                                                             NumberFunction<T,R> value) {
 
@@ -669,8 +672,8 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnDF(collect);
     }
 
-
-    public <K, J, H,R extends Number> JDFrame<FI4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
+    @Override
+    public <K, J, H,R extends Number> JDFrameImpl<FI4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
                                                                   Function<T, J> key2,
                                                                   Function<T, H> key3,
                                                                   NumberFunction<T,R> value) {
@@ -679,9 +682,8 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnDF(collect);
     }
 
-
-
-    public <K, V extends Comparable<? super V>> JDFrame<FI2<K, T>> groupByMax(Function<T, K> key,
+    @Override
+    public <K, V extends Comparable<? super V>> JDFrameImpl<FI2<K, T>> groupByMax(Function<T, K> key,
                                                                       Function<T, V> value) {
         Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), getListMaxFunction(value))));
         return returnDF(FrameUtil.toListFI2(collect));
@@ -690,69 +692,69 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
 
     @Override
-    public <K,J, V extends Comparable<? super V>> JDFrame<FI3<K,J,T>> groupByMax(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+    public <K,J, V extends Comparable<? super V>> JDFrameImpl<FI3<K,J,T>> groupByMax(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
         Map<K, Map<J, T>> collect = groupToMap(key, key2,getListMaxFunction(value));
         return returnDF(FrameUtil.toListFI3(collect));
     }
 
 
     @Override
-    public <K, V extends Comparable<? super V>> JDFrame<FI2<K, V>> groupByMaxValue(Function<T, K> key, Function<T, V> value) {
+    public <K, V extends Comparable<? super V>> JDFrameImpl<FI2<K, V>> groupByMaxValue(Function<T, K> key, Function<T, V> value) {
         return groupByMax(key, value).map(e -> new FI2<>(e.getC1(), getApplyValue(value,e.getC2())));
     }
 
     @Override
-    public <K, J, V extends Comparable<? super V>> JDFrame<FI3<K, J, V>> groupByMaxValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+    public <K, J, V extends Comparable<? super V>> JDFrameImpl<FI3<K, J, V>> groupByMaxValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
         return groupByMax(key, key2,value).map(e -> new FI3<>(e.getC1(),e.getC2(),getApplyValue(value,e.getC3())));
     }
 
 
-    public <K, V extends Comparable<? super V>> JDFrame<FI2<K, T>> groupByMin(Function<T, K> key,
+    public <K, V extends Comparable<? super V>> JDFrameImpl<FI2<K, T>> groupByMin(Function<T, K> key,
                                                                       Function<T, V> value) {
         Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), getListMinFunction(value))));
         return returnDF(FrameUtil.toListFI2(collect));
     }
 
     @Override
-    public <K, J, V extends Comparable<? super V>> JDFrame<FI3<K, J, T>> groupByMin(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+    public <K, J, V extends Comparable<? super V>> JDFrameImpl<FI3<K, J, T>> groupByMin(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
         Map<K, Map<J, T>> collect = groupToMap(key, key2,getListMinFunction(value));
         return returnDF(FrameUtil.toListFI3(collect));
     }
 
     @Override
-    public <K, V extends Comparable<? super V>> JDFrame<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value) {
+    public <K, V extends Comparable<? super V>> JDFrameImpl<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value) {
         return groupByMin(key, value).map(e -> new FI2<>(e.getC1(), getApplyValue(value,e.getC2())));
     }
 
     @Override
-    public <K, J, V extends Comparable<? super V>> JDFrame<FI3<K, J, V>> groupByMinValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+    public <K, J, V extends Comparable<? super V>> JDFrameImpl<FI3<K, J, V>> groupByMinValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
         return  groupByMin(key, key2,value).map(e -> new FI3<>(e.getC1(),e.getC2(),getApplyValue(value,e.getC3())));
     }
 
-
-    public <K, V extends Comparable<? super V>> JDFrame<FI2<K, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
+    @Override
+    public <K, V extends Comparable<? super V>> JDFrameImpl<FI2<K, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
                                                                                       Function<T, V> value) {
         Map<K, MaxMin<V>> map = stream().collect(groupingBy(key, collectingAndThen(toList(), getListGroupMaxMinValueFunction(value))));
         return returnDF(FrameUtil.toListFI2(map));
     }
 
-
-    public <K, J, V extends Comparable<? super V>> JDFrame<FI3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
+    @Override
+    public <K, J, V extends Comparable<? super V>> JDFrameImpl<FI3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
                                                                                             Function<T, J> key2,
                                                                                             Function<T, V> value) {
         Map<K, Map<J, MaxMin<V>>> map = stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListGroupMaxMinValueFunction(value)))));
         return returnDF(FrameUtil.toListFI3(map));
     }
 
-
-    public <K, V extends Comparable<? super V>> JDFrame<FI2<K, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
+    @Override
+    public <K, V extends Comparable<? super V>> JDFrameImpl<FI2<K, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                  Function<T, V> value) {
         Map<K, MaxMin<T>> map = stream().collect(groupingBy(key, collectingAndThen(toList(), getListGroupMaxMinFunction(value))));
         return returnDF(FrameUtil.toListFI2(map));
     }
 
-
-    public <K, J, V extends Comparable<? super V>> JDFrame<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
+    @Override
+    public <K, J, V extends Comparable<? super V>> JDFrameImpl<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                        Function<T, J> key2,
                                                                                        Function<T, V> value) {
         Map<K, Map<J, MaxMin<T>>> map = stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListGroupMaxMinFunction(value)))));

@@ -1,5 +1,6 @@
-package io.github.burukeyou.dataframe.iframe;
+package io.github.burukeyou.dataframe.iframe.impl;
 
+import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.window.SupplierFunction;
 import io.github.burukeyou.dataframe.iframe.window.Window;

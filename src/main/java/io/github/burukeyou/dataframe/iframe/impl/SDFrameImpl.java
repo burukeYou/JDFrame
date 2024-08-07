@@ -1,6 +1,9 @@
-package io.github.burukeyou.dataframe.iframe;
+package io.github.burukeyou.dataframe.iframe.impl;
 
 
+import io.github.burukeyou.dataframe.iframe.IFrame;
+import io.github.burukeyou.dataframe.iframe.SDFrame;
+import io.github.burukeyou.dataframe.iframe.WindowSDFrame;
 import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
 import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
@@ -320,12 +323,6 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return tmp.size();
     }
 
-    @Override
-    public <K> SDFrame<FI2<K, List<T>>> group(Function<? super T, ? extends K> key) {
-        return returnDF(groupKey(key));
-    }
-
-
     /**
      * ===========================   排序相关  =====================================
      **/
@@ -378,7 +375,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrame<T> cut(Integer startIndex, Integer endIndex) {
-        return returnThis(subList(startIndex,endIndex));
+        return returnThis(getList(startIndex,endIndex));
     }
 
     @Override
@@ -398,7 +395,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> distinct(Comparator<T> comparator) {
+    public SDFrame<T> distinct(Comparator<T> comparator) {
         ArrayList<T> tmp = stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparator)), ArrayList::new));
         data = tmp.stream();
         return this;
@@ -418,21 +415,22 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
      * ===========================   筛选相关  =====================================
      **/
     @Override
-    public SDFrame<T> where(Predicate<? super T> predicate) {
+    public SDFrameImpl<T> where(Predicate<? super T> predicate) {
         return returnThis(stream().filter(predicate));
     }
 
     @Override
-    public <R> SDFrame<T> whereNull(Function<T, R> function) {
-        return returnThis(whereNotNullStream(function));
+    public <R> SDFrameImpl<T> whereNull(Function<T, R> function) {
+        return returnThis(whereNullStream(function));
     }
 
-    public <R> SDFrame<T> whereNotNull(Function<T, R> function) {
+    @Override
+    public <R> SDFrameImpl<T> whereNotNull(Function<T, R> function) {
         return returnThis(whereNotNullStream(function));
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> whereBetween(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> SDFrameImpl<T> whereBetween(Function<T, R> function, R start, R end) {
         if (start == null && end == null) {
             return this;
         }
@@ -440,7 +438,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> whereBetweenN(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> SDFrameImpl<T> whereBetweenN(Function<T, R> function, R start, R end) {
         if (start == null && end == null) {
             return this;
         }
@@ -448,7 +446,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> whereBetweenR(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> SDFrameImpl<T> whereBetweenR(Function<T, R> function, R start, R end) {
         // 筛选条件都不存在默认不筛选
         if (start == null && end == null) {
             return this;
@@ -457,7 +455,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> whereBetweenL(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> SDFrameImpl<T> whereBetweenL(Function<T, R> function, R start, R end) {
         if (start == null && end == null) {
             return this;
         }
@@ -465,108 +463,108 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> whereNotBetween(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> SDFrameImpl<T> whereNotBetween(Function<T, R> function, R start, R end) {
         if (start == null || end == null) {
             return this;
         }
         return returnThis(whereNotBetweenStream(function,start,end));
     }
     @Override
-    public <R extends Comparable<R>> SDFrame<T> whereNotBetweenN(Function<T, R> function, R start, R end) {
+    public <R extends Comparable<R>> SDFrameImpl<T> whereNotBetweenN(Function<T, R> function, R start, R end) {
         if (start == null || end == null) {
             return this;
         }
         return returnThis(whereNotBetweenNStream(function,start,end));
     }
 
-
-    public <R> SDFrame<T> whereIn(Function<T, R> function, List<R> list) {
+    @Override
+    public <R> SDFrameImpl<T> whereIn(Function<T, R> function, List<R> list) {
         if (list == null || list.isEmpty()) {
             return this;
         }
         return returnThis(whereInStream(function,list));
     }
 
-
-    public <R> SDFrame<T> whereNotIn(Function<T, R> function, List<R> list) {
+    @Override
+    public <R> SDFrameImpl<T> whereNotIn(Function<T, R> function, List<R> list) {
         if (list == null || list.isEmpty()) {
             return this;
         }
         return returnThis(whereNotInStream(function,list));
     }
 
-
-    public SDFrame<T> whereTrue(Predicate<T> predicate) {
+    @Override
+    public SDFrameImpl<T> whereTrue(Predicate<T> predicate) {
         return returnThis(stream().filter(predicate));
     }
 
-
-    public SDFrame<T> whereNotTrue(Predicate<T> predicate) {
+    @Override
+    public SDFrameImpl<T> whereNotTrue(Predicate<T> predicate) {
         return whereTrue(predicate.negate());
     }
 
-
-    public <R> SDFrame<T> whereEq(Function<T, R> function, R value) {
+    @Override
+    public <R> SDFrameImpl<T> whereEq(Function<T, R> function, R value) {
         return  returnThis(whereEqStream(function,value));
     }
 
-
-    public <R> SDFrame<T> whereNotEq(Function<T, R> function, R value) {
+    @Override
+    public <R> SDFrameImpl<T> whereNotEq(Function<T, R> function, R value) {
         if (value == null) {
             return this;
         }
         return returnThis(whereNotEqStream(function,value));
     }
 
-
-    public <R extends Comparable<R>> SDFrame<T> whereGt(Function<T, R> function, R value) {
+    @Override
+    public <R extends Comparable<R>> SDFrameImpl<T> whereGt(Function<T, R> function, R value) {
         if (value == null) {
             return this;
         }
         return returnThis(whereGtStream(function,value));
     }
 
-
-    public <R extends Comparable<R>> SDFrame<T> whereGe(Function<T, R> function, R value) {
+    @Override
+    public <R extends Comparable<R>> SDFrameImpl<T> whereGe(Function<T, R> function, R value) {
         if (value == null) {
             return this;
         }
         return returnThis(whereGeStream(function,value));
     }
 
-
-    public <R extends Comparable<R>> SDFrame<T> whereLt(Function<T, R> function, R value) {
+    @Override
+    public <R extends Comparable<R>> SDFrameImpl<T> whereLt(Function<T, R> function, R value) {
         if (value == null) {
             return this;
         }
         return returnThis(whereLtStream(function,value));
     }
 
-
-    public <R extends Comparable<R>> SDFrame<T> whereLe(Function<T, R> function, R value) {
+    @Override
+    public <R extends Comparable<R>> SDFrameImpl<T> whereLe(Function<T, R> function, R value) {
         if (value == null) {
             return this;
         }
         return returnThis(whereLeStream(function,value));
     }
 
-
-    public <R> SDFrame<T> whereLike(Function<T, R> function, R value) {
+    @Override
+    public <R> SDFrameImpl<T> whereLike(Function<T, R> function, R value) {
         if (value == null) {
             return this;
         }
         return returnThis(whereLikeStream(function,value));
     }
 
-
-    public <R> SDFrame<T> whereNotLike(Function<T, R> function, R value) {
+    @Override
+    public <R> SDFrameImpl<T> whereNotLike(Function<T, R> function, R value) {
         if (value == null) {
             return this;
         }
         return returnThis(whereNotLikeStream(function,value));
     }
 
-
+    @Override
     public <R> SDFrame<T> whereLikeLeft(Function<T, R> function, R value) {
         if (value == null) {
             return this;
@@ -574,7 +572,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnThis(whereLikeLeftStream(function,value));
     }
 
-
+    @Override
     public <R> SDFrame<T> whereLikeRight(Function<T, R> function, R value) {
         if (value == null) {
             return this;
@@ -586,16 +584,21 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     /** ===========================   分组相关  ===================================== **/
 
+    @Override
+    public <K> SDFrameImpl<FI2<K, List<T>>> group(Function<? super T, ? extends K> key) {
+        return returnDF(groupKey(key));
+    }
 
 
-    public <K,R extends Number> SDFrame<FI2<K, BigDecimal>> groupBySum(Function<T, K> key, NumberFunction<T,R> value) {
+    @Override
+    public <K,R extends Number> SDFrameImpl<FI2<K, BigDecimal>> groupBySum(Function<T, K> key, NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI2<K, BigDecimal>> collect = groupKey(key, tBigDecimalCollector);
         return returnDF(collect);
     }
 
-
-    public <K, J,R extends Number> SDFrame<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key,
+    @Override
+    public <K, J,R extends Number> SDFrameImpl<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key,
                                                             Function<T, J> key2,
                                                             NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
@@ -604,8 +607,8 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
 
-
-    public <K, J, H,R extends Number> SDFrame<FI4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
+    @Override
+    public <K, J, H,R extends Number> SDFrameImpl<FI4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
                                                                   Function<T, J> key2,
                                                                   Function<T, H> key3,
                                                                   NumberFunction<T,R> value) {
@@ -614,23 +617,23 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(collect);
     }
 
-
-    public <K> SDFrame<FI2<K, Long>> groupByCount(Function<T, K> key) {
+    @Override
+    public <K> SDFrameImpl<FI2<K, Long>> groupByCount(Function<T, K> key) {
         Collector<Object, ?, Long> counting = counting();
         Map<K, Long> collect = stream().collect(groupingBy(key, counting));
         return returnDF(FrameUtil.toListFI2(collect));
     }
 
-
-    public <K, J> SDFrame<FI3<K, J, Long>> groupByCount(Function<T, K> key,
+    @Override
+    public <K, J> SDFrameImpl<FI3<K, J, Long>> groupByCount(Function<T, K> key,
                                                         Function<T, J> key2) {
         Collector<Object, ?, Long> counting = counting();
         Map<K, Map<J, Long>> collect = stream().collect(groupingBy(key, groupingBy(key2, counting)));
         return returnDF(FrameUtil.toListFI3(collect));
     }
 
-
-    public <K, J, H> SDFrame<FI4<K, J, H, Long>> groupByCount(Function<T, K> key,
+    @Override
+    public <K, J, H> SDFrameImpl<FI4<K, J, H, Long>> groupByCount(Function<T, K> key,
                                                               Function<T, J> key2,
                                                               Function<T, H> key3) {
         Collector<Object, ?, Long> counting = counting();
@@ -638,8 +641,8 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(FrameUtil.toListFI4(collect));
     }
 
-
-    public <K,R extends Number> SDFrame<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, NumberFunction<T,R> value) {
+    @Override
+    public <K,R extends Number> SDFrameImpl<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, NumberFunction<T,R> value) {
         List<T> dataList = toLists();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI2<K, BigDecimal>> sumList = returnDF(dataList).groupKey(key, tBigDecimalCollector);
@@ -649,8 +652,8 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(collect);
     }
 
-
-    public <K, J,R extends Number> SDFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key,
+    @Override
+    public <K, J,R extends Number> SDFrameImpl<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key,
                                                                        Function<T, J> key2,
                                                                        NumberFunction<T,R> value) {
         List<T> dataList = toLists();
@@ -666,16 +669,16 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(collect);
     }
 
-
-    public <K,R extends Number> SDFrame<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key,
+    @Override
+    public <K,R extends Number> SDFrameImpl<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key,
                                                       NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, defaultScale, getOldRoundingMode());
         List<FI2<K, BigDecimal>> collect = groupKey(key, tBigDecimalCollector);
         return returnDF(collect);
     }
 
-
-    public <K, J,R extends Number> SDFrame<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key,
+    @Override
+    public <K, J,R extends Number> SDFrameImpl<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key,
                                                             Function<T, J> key2,
                                                             NumberFunction<T,R> value) {
 
@@ -684,8 +687,8 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(collect);
     }
 
-
-    public <K, J, H,R extends Number> SDFrame<FI4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
+    @Override
+    public <K, J, H,R extends Number> SDFrameImpl<FI4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
                                                                   Function<T, J> key2,
                                                                   Function<T, H> key3,
                                                                   NumberFunction<T,R> value) {
@@ -696,60 +699,60 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
 
     @Override
-    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, T>> groupByMax(Function<T, K> key,
+    public <K, V extends Comparable<? super V>> SDFrameImpl<FI2<K, T>> groupByMax(Function<T, K> key,
                                                                       Function<T, V> value) {
         Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), getListMaxFunction(value))));
         return returnDF(FrameUtil.toListFI2(collect));
     }
 
     @Override
-    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, T>> groupByMax(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+    public <K, J, V extends Comparable<? super V>> SDFrameImpl<FI3<K, J, T>> groupByMax(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
         Map<K, Map<J, T>> collect = groupToMap(key, key2,getListMaxFunction(value));
         return returnDF(FrameUtil.toListFI3(collect));
     }
 
     @Override
-    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, V>> groupByMaxValue(Function<T, K> key, Function<T, V> value) {
+    public <K, V extends Comparable<? super V>> SDFrameImpl<FI2<K, V>> groupByMaxValue(Function<T, K> key, Function<T, V> value) {
         return groupByMax(key, value).map(e -> new FI2<>(e.getC1(), getApplyValue(value,e.getC2())));
     }
 
     @Override
-    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, V>> groupByMaxValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+    public <K, J, V extends Comparable<? super V>> SDFrameImpl<FI3<K, J, V>> groupByMaxValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
         return groupByMax(key, key2,value).map(e -> new FI3<>(e.getC1(),e.getC2(),getApplyValue(value,e.getC3())));
     }
 
     @Override
-    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, T>> groupByMin(Function<T, K> key,
+    public <K, V extends Comparable<? super V>> SDFrameImpl<FI2<K, T>> groupByMin(Function<T, K> key,
                                                                       Function<T, V> value) {
         Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), e -> e.stream().min(Comparator.comparing(value)).orElse(null))));
         return returnDF(FrameUtil.toListFI2(collect));
     }
 
     @Override
-    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, T>> groupByMin(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+    public <K, J, V extends Comparable<? super V>> SDFrameImpl<FI3<K, J, T>> groupByMin(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
         Map<K, Map<J, T>> collect = groupToMap(key, key2,getListMinFunction(value));
         return returnDF(FrameUtil.toListFI3(collect));
     }
 
     @Override
-    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value) {
+    public <K, V extends Comparable<? super V>> SDFrameImpl<FI2<K, V>> groupByMinValue(Function<T, K> key, Function<T, V> value) {
         return groupByMin(key, value).map(e -> new FI2<>(e.getC1(),getApplyValue(value,e.getC2())));
     }
 
     @Override
-    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, V>> groupByMinValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
+    public <K, J, V extends Comparable<? super V>> SDFrameImpl<FI3<K, J, V>> groupByMinValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) {
         return groupByMin(key, key2,value).map(e -> new FI3<>(e.getC1(),e.getC2(),getApplyValue(value,e.getC3())));
     }
 
     @Override
-    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
+    public <K, V extends Comparable<? super V>> SDFrameImpl<FI2<K, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
                                                                                       Function<T, V> value) {
         Map<K, MaxMin<V>> map = stream().collect(groupingBy(key, collectingAndThen(toList(), getListGroupMaxMinValueFunction(value))));
         return returnDF(FrameUtil.toListFI2(map));
     }
 
     @Override
-    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
+    public <K, J, V extends Comparable<? super V>> SDFrameImpl<FI3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
                                                                                             Function<T, J> key2,
                                                                                             Function<T, V> value) {
         Map<K, Map<J, MaxMin<V>>> map = stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListGroupMaxMinValueFunction(value)))));
@@ -757,14 +760,14 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <K, V extends Comparable<? super V>> SDFrame<FI2<K, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
+    public <K, V extends Comparable<? super V>> SDFrameImpl<FI2<K, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                  Function<T, V> value) {
         Map<K, MaxMin<T>> map = stream().collect(groupingBy(key, collectingAndThen(toList(), getListGroupMaxMinFunction(value))));
         return returnDF(FrameUtil.toListFI2(map));
     }
 
     @Override
-    public <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
+    public <K, J, V extends Comparable<? super V>> SDFrameImpl<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                        Function<T, J> key2,
                                                                                        Function<T, V> value) {
         Map<K, Map<J, MaxMin<T>>> map = stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListGroupMaxMinFunction(value)))));
