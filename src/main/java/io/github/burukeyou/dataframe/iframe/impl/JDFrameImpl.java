@@ -4,10 +4,7 @@ package io.github.burukeyou.dataframe.iframe.impl;
 import io.github.burukeyou.dataframe.iframe.IFrame;
 import io.github.burukeyou.dataframe.iframe.JDFrame;
 import io.github.burukeyou.dataframe.iframe.WindowJDFrame;
-import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
-import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
-import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
-import io.github.burukeyou.dataframe.iframe.function.SetFunction;
+import io.github.burukeyou.dataframe.iframe.function.*;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -385,9 +382,19 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public <R extends Comparable<R>> JDFrame<T> distinct(Function<T, R> function, ListToOneFunction<T> listOneFunction) {
+        return distinct(Comparator.comparing(function),listOneFunction);
+    }
+
+    @Override
     public JDFrameImpl<T> distinct(Comparator<T> comparator) {
         ArrayList<T> tmp = stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparator)), ArrayList::new));
         return returnThis(tmp);
+    }
+
+    @Override
+    public JDFrameImpl<T> distinct(Comparator<T> comparator, ListToOneFunction<T> function) {
+        return returnThis(distinctList(toLists(),comparator,function));
     }
 
     @Override

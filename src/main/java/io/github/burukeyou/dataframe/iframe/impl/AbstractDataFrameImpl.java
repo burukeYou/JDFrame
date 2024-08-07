@@ -4,6 +4,7 @@ package io.github.burukeyou.dataframe.iframe.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import io.github.burukeyou.dataframe.iframe.IFrame;
+import io.github.burukeyou.dataframe.iframe.function.ListToOneFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
@@ -11,8 +12,8 @@ import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.Join;
 import io.github.burukeyou.dataframe.iframe.support.JoinOn;
-import io.github.burukeyou.dataframe.iframe.support.VoidJoin;
 import io.github.burukeyou.dataframe.iframe.support.MaxMin;
+import io.github.burukeyou.dataframe.iframe.support.VoidJoin;
 import io.github.burukeyou.dataframe.util.BeanCopyUtil;
 import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
 import io.github.burukeyou.dataframe.util.FrameUtil;
@@ -510,6 +511,26 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     public void show(int n){
         StringBuilder sb = getShowString(n);
         System.out.println(sb);
+    }
+
+
+
+    protected List<T> distinctList(List<T> dataList, Comparator<T> comparator, ListToOneFunction<T> function){
+        if (ListUtils.isEmpty(dataList) || dataList.size() == 1){
+            return dataList;
+        }
+        TreeMap<T,List<T>> treeMap = new TreeMap<>(comparator);
+        for (T t : dataList) {
+            treeMap.putIfAbsent(t,new ArrayList<>());
+            List<T> tmpList = treeMap.get(t);
+            tmpList.add(t);
+        }
+        return treeMap.values().stream().map(list -> {
+            if (list.size() == 1){
+                return list.get(0);
+            }
+            return function.apply(list);
+        }).collect(toList());
     }
 
 

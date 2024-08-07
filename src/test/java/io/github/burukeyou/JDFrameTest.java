@@ -27,14 +27,14 @@ public class JDFrameTest {
 
     static {
         studentList.add(new Student(1,"a","一中","\"生活\",日子",11, new BigDecimal(1)));
-        studentList.add(new Student(2,"a","一中","一年级",11, new BigDecimal(1)));
+        studentList.add(new Student(2,"a","一中","一年级",13, new BigDecimal(1)));
         studentList.add(new Student(3,"d","二中","一年级",14, new BigDecimal(4)));
         studentList.add(new Student(4,"b","一中","三年级",12, new BigDecimal(2)));
         studentList.add(new Student(5,"c","二中","一年级",13, new BigDecimal(3)));
         studentList.add(new Student(6,"e","三中","[\"a\",\"b\"]",14, new BigDecimal(5)));
         studentList.add(new Student(7,"e","三中","二年级",14, new BigDecimal(5)));
         studentList.add(new Student(8,"e","三中","[{\"a\":1},{\"b\":2}]",14, new BigDecimal(5)));
-        studentList.add(new Student(10,"e","三中","[爱好,奇怪，懂得]",15, new BigDecimal(5)));
+        studentList.add(new Student(10,"e","一中","[爱好,奇怪，懂得]",15, new BigDecimal(5)));
         studentList.add(new Student(11,"e","三中","二年级",15, new BigDecimal(5)));
         studentList.add(new Student(12,"e","三中","二年级",16, new BigDecimal(5)));
     }
@@ -50,7 +50,19 @@ public class JDFrameTest {
         List<Student> students3 = SDFrame.read(studentList).distinct(Student::getSchool).distinct(Student::getLevel).toLists(); // 先根据学校名去除重复再根据级别去除重复
         System.out.println();
 
+        SDFrame.read(studentList).distinct(Student::getName,(list) -> {
+            // 重复元素里选择年龄最大那个
+            return SDFrame.read(list).max(Student::getAge);
+        }).show();
 
+
+        System.out.println();
+    }
+
+
+
+    @Test
+    public void testWhere(){
         SDFrame.read(studentList)
                 .whereBetween(Student::getAge,3,6) // 过滤年龄在[3，6]岁的
                 .whereBetweenR(Student::getAge,3,6) // 过滤年龄在(3，6]岁的, 不含3岁
@@ -66,8 +78,6 @@ public class JDFrameTest {
                 .whereLike(Student::getName,"jay") // 模糊查询，等价于 like "%jay%"
                 .whereLikeLeft(Student::getName,"jay") // 模糊查询，等价于 like "jay%"
                 .whereLikeRight(Student::getName,"jay"); // 模糊查询，等价于 like "%jay"
-
-
     }
 
 

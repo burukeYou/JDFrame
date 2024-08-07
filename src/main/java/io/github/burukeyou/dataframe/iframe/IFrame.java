@@ -1,6 +1,7 @@
 package io.github.burukeyou.dataframe.iframe;
 
 import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
+import io.github.burukeyou.dataframe.iframe.function.ListToOneFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
@@ -458,12 +459,28 @@ public interface IFrame<T> extends SummaryFrame<T>,WhereIFrame<T>,JoinIFrame<T>,
      */
     <R extends Comparable<R>> IFrame<T> distinct(Function<T, R> function);
 
+    /**
+     * distinct by field value
+     * @param function          the field
+     * @param listOneFunction          When there are more than one repeated element, this method will be called back, and customization will determine which element to choose
+     * @param <R>               field value type
+     */
+    <R extends Comparable<R>> IFrame<T> distinct(Function<T, R> function, ListToOneFunction<T> listOneFunction);
+
 
     /**
      * distinct by  comparator
      * @param comparator        the comparator
      */
     IFrame<T> distinct(Comparator<T> comparator);
+
+
+    /**
+     * distinct by  comparator
+     * @param comparator        the comparator
+     * @param function          When there are more than one repeated element, this method will be called back, and customization will determine which element to choose
+     */
+    IFrame<T> distinct(Comparator<T> comparator, ListToOneFunction<T> function);
 
 
     /** ===========================   Other  ===================================== **/

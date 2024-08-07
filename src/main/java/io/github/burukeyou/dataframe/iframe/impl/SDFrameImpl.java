@@ -4,10 +4,7 @@ package io.github.burukeyou.dataframe.iframe.impl;
 import io.github.burukeyou.dataframe.iframe.IFrame;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.WindowSDFrame;
-import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
-import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
-import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
-import io.github.burukeyou.dataframe.iframe.function.SetFunction;
+import io.github.burukeyou.dataframe.iframe.function.*;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -390,15 +387,25 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrame<T> distinct(Function<T, R> function) {
+    public <R extends Comparable<R>> SDFrameImpl<T> distinct(Function<T, R> function) {
         return distinct(Comparator.comparing(function));
     }
 
     @Override
-    public SDFrame<T> distinct(Comparator<T> comparator) {
+    public <R extends Comparable<R>> SDFrameImpl<T> distinct(Function<T, R> function, ListToOneFunction<T> listOneFunction) {
+        return distinct(Comparator.comparing(function),listOneFunction);
+    }
+
+    @Override
+    public SDFrameImpl<T> distinct(Comparator<T> comparator) {
         ArrayList<T> tmp = stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparator)), ArrayList::new));
         data = tmp.stream();
         return this;
+    }
+
+    @Override
+    public SDFrameImpl<T> distinct(Comparator<T> comparator, ListToOneFunction<T> function) {
+        return returnThis(distinctList(toLists(),comparator,function));
     }
 
     @Override
