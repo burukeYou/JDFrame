@@ -1,5 +1,7 @@
 package io.github.burukeyou.dataframe.iframe;
 
+import java.util.Collection;
+
 /**
  *
  * @author      caizhihao
@@ -24,6 +26,12 @@ public interface OperationIFrame<T> {
      * @return           other frame
      */
     IFrame<T> retainAll(IFrame<T> other);
+
+    /**
+     * Retains only the elements in this list that are contained in the specified collection
+     * @return           other collection
+     */
+    IFrame<T> retainAll(Collection<T> other);
 
     /**
      * different other frame

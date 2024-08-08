@@ -1,5 +1,7 @@
 package io.github.burukeyou.dataframe.iframe;
 
+import java.util.Collection;
+
 /**
  *
  * @author      caizhihao
@@ -25,6 +27,12 @@ public interface OperationSDFrame<T> extends OperationIFrame<T> {
      * @return           other frame
      */
     SDFrame<T> retainAll(IFrame<T> other);
+
+    /**
+     * Retains only the elements in this list that are contained in the specified collection
+     * @return           other collection
+     */
+    SDFrame<T> retainAll(Collection<T> other);
 
 
     /**
