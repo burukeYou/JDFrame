@@ -87,11 +87,27 @@ public interface OperationIFrame<T> {
     IFrame<T> intersection(IFrame<T> other);
 
     /**
+     * intersection other frame
+     *          get identical elements from two sets
+     * @param other     other frame
+     * @param comparator         repetitive judgment comparator
+     */
+    IFrame<T> intersection(IFrame<T> other,Comparator<T> comparator);
+
+    /**
      * intersection other collection
      *          get identical elements from two sets
      * @param other     other collection
      */
     IFrame<T> intersection(Collection<T> other);
+
+    /**
+     * intersection other collection
+     *          get identical elements from two sets
+     * @param other     other collection
+     * @param comparator         repetitive judgment comparator
+     */
+    IFrame<T> intersection(Collection<T> other,Comparator<T> comparator);
 
     /**
      * different other frame

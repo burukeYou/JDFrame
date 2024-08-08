@@ -84,11 +84,27 @@ public interface OperationJDFrame<T>  extends OperationIFrame<T> {
     JDFrame<T> intersection(IFrame<T> other);
 
     /**
+     * intersection other frame
+     *          get identical elements from two sets
+     * @param other     other frame
+     * @param comparator         repetitive judgment comparator
+     */
+    JDFrame<T> intersection(IFrame<T> other,Comparator<T> comparator);
+
+    /**
      * intersection other collection
      *          get identical elements from two sets
      * @param other     other collection
      */
     JDFrame<T> intersection(Collection<T> other);
+
+    /**
+     * intersection other collection
+     *          get identical elements from two sets
+     * @param other     other collection
+     * @param comparator         repetitive judgment comparator
+     */
+    JDFrame<T> intersection(Collection<T> other,Comparator<T> comparator);
 
     /**
      * different other frame

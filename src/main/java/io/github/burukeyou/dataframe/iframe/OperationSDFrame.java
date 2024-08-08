@@ -86,11 +86,27 @@ public interface OperationSDFrame<T> extends OperationIFrame<T> {
     SDFrame<T> intersection(IFrame<T> other);
 
     /**
+     * intersection other frame
+     *          get identical elements from two sets
+     * @param other     other frame
+     * @param comparator         repetitive judgment comparator
+     */
+    SDFrame<T> intersection(IFrame<T> other,Comparator<T> comparator);
+
+    /**
      * intersection other collection
      *          get identical elements from two sets
      * @param other     other collection
      */
     SDFrame<T> intersection(Collection<T> other);
+
+    /**
+     * intersection other collection
+     *          get identical elements from two sets
+     * @param other     other collection
+     * @param comparator         repetitive judgment comparator
+     */
+    SDFrame<T> intersection(Collection<T> other,Comparator<T> comparator);
 
     /**
      * different other frame

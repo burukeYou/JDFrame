@@ -1132,8 +1132,18 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public JDFrame<T> intersection(IFrame<T> other, Comparator<T> comparator) {
+        return returnDF(intersectionList(viewList(),other.toLists(),comparator));
+    }
+
+    @Override
     public JDFrameImpl<T> intersection(Collection<T> other) {
         return returnDF(intersectionList(viewList(),other));
+    }
+
+    @Override
+    public JDFrameImpl<T> intersection(Collection<T> other, Comparator<T> comparator) {
+        return returnDF(intersectionList(viewList(),other,comparator));
     }
 
     @Override
