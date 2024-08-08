@@ -63,12 +63,6 @@ public class JDFrameTest {
 
     @Test
     public void testWhere(){
-        SDFrame<Student> frame = SDFrame.read(studentList);
-
-        List<Student> students1 = frame.append(new Student("六中","3")).whereBetween(Student::getAge, 10, 18).toLists();
-
-        List<Student> students = frame.toLists();
-
         SDFrame.read(studentList)
                 .whereBetween(Student::getAge,3,6) // 过滤年龄在[3，6]岁的
                 .whereBetweenR(Student::getAge,3,6) // 过滤年龄在(3，6]岁的, 不含3岁
