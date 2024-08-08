@@ -4,7 +4,6 @@ import io.github.burukeyou.data.Student;
 import io.github.burukeyou.data.UserInfo;
 import io.github.burukeyou.dataframe.iframe.JDFrame;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
-import io.github.burukeyou.dataframe.iframe.function.NullComparator;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -17,10 +16,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -565,16 +561,24 @@ public class JDFrameTest {
 
     @Test
     public void testOper2(){
-        List<UserInfo> us1 = Arrays.asList(new UserInfo("a", 1,"99"), new UserInfo("a", 2,"99"),new UserInfo("a",3,"4"), new UserInfo("b", 4,"77"));
-        List<UserInfo> us2 = Arrays.asList(new UserInfo(null, 5,"99"), new UserInfo("b",6,null), new UserInfo("c", 7,"4"));
+        List<UserInfo> us1 = Arrays.asList(new UserInfo("a", 1,"99"), new UserInfo("a", 2,"99"),new UserInfo("c",3,"88"), new UserInfo("b", 4,"77"));
+        List<UserInfo> us2 = Arrays.asList(new UserInfo("a", 5,"99"), new UserInfo("b",6,"77"), new UserInfo("c", 7,"4"));
 
         SDFrame<UserInfo> frame1 = SDFrame.read(us1);
         SDFrame<UserInfo> frame2 = SDFrame.read(us2);
 
-        //frame1.union(frame2, NullComparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+        System.out.println("------- 并集 -----");
+        frame1.union(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
 
-        frame1.union(us2, NullComparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+        System.out.println("------- 交集 -----");
+        frame1.intersection(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
 
-        frame1.show();
+        System.out.println("------- retainAll -----");
+        frame1.retainAll(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+
+        System.out.println("------- 差集 -----");
+        frame1.different(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+
+        System.out.println();
     }
 }
