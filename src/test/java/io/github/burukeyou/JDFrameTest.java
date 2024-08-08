@@ -63,6 +63,12 @@ public class JDFrameTest {
 
     @Test
     public void testWhere(){
+        SDFrame<Student> frame = SDFrame.read(studentList);
+
+        List<Student> students1 = frame.append(new Student("六中","3")).whereBetween(Student::getAge, 10, 18).toLists();
+
+        List<Student> students = frame.toLists();
+
         SDFrame.read(studentList)
                 .whereBetween(Student::getAge,3,6) // 过滤年龄在[3，6]岁的
                 .whereBetweenR(Student::getAge,3,6) // 过滤年龄在(3，6]岁的, 不含3岁
@@ -526,17 +532,30 @@ public class JDFrameTest {
     }
 
 
+
+
     @Test
     public void testOper(){
 
-        List<UserInfo> us1 = Arrays.asList(new UserInfo("a", 99), new UserInfo("a", 4), new UserInfo("b", 4));
+        List<UserInfo> us1 = Arrays.asList(new UserInfo("a", 99), new UserInfo("a", 99),new UserInfo("a", 4), new UserInfo("b", 4));
         List<UserInfo> us2 = Arrays.asList(new UserInfo("a", 99), new UserInfo("b", 4), new UserInfo("c", 4));
 
         SDFrame<UserInfo> frame = SDFrame.read(us1);
         SDFrame<UserInfo> frame2 = SDFrame.read(us2);
 
-        frame.union(frame2).show();
+        System.out.println("----- 并集(不去重)------");
+        frame.unionAll(frame2).show();
+
+        List<UserInfo> userInfos = frame.toLists();
+
+//        System.out.println("----- 并集(去重)------");
+//        frame.union(frame2).show();
+
+        System.out.println("----- 交集------");
         frame.intersection(frame2).show();
+
+        System.out.println("----- 差集------");
+        frame.different(frame2).show();
 
         frame.show();
 

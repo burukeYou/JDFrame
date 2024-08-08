@@ -725,10 +725,21 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
             return Collections.emptyList();
         }
         Set<T> otherSet = new HashSet<>(rightList);
-        leftList = leftList.stream().filter(otherSet::contains).collect(toList());
+        leftList = leftList.stream().filter(otherSet::contains).collect(Collectors.toList());
         return leftList;
     }
 
+    protected List<T> differentList(List<T> leftList, List<T> rightList) {
+        if (ListUtils.isEmpty(leftList)){
+            return leftList;
+        }
+        if (ListUtils.isEmpty(rightList)){
+            return leftList;
+        }
+        Set<T> otherSet = new HashSet<>(rightList);
+        leftList = leftList.stream().filter(e -> !otherSet.contains(e)).collect(toList());
+        return leftList;
+    }
 
 
     protected static <T, C> List<T> replenish(List<T> itemDTOList,

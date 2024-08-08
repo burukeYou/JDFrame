@@ -44,6 +44,9 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     public SDFrameImpl(List<T> list) {
         if (list == null){
             list = Collections.emptyList();
+        }else {
+            // update reference ，don't let the original list affect the current flow
+            list = new ArrayList<>(list);
         }
         this.data = list.stream();
         if (!list.isEmpty()){
@@ -304,7 +307,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public List<T> toLists() {
         List<T> tmp = data.collect(toList());
-        data = tmp.stream();
+        data = new ArrayList<>(tmp).stream();
         return tmp;
     }
 
@@ -399,8 +402,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public SDFrameImpl<T> distinct(Comparator<T> comparator) {
         ArrayList<T> tmp = stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparator)), ArrayList::new));
-        data = tmp.stream();
-        return this;
+        return returnThis(tmp);
     }
 
     @Override
@@ -1083,6 +1085,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public SDFrameImpl<T> unionAll(IFrame<T> other) {
+        List<T> ts = toLists();
+        ts.addAll(other.toLists());
+        return returnDF(ts);
+    }
+
+    @Override
     public SDFrameImpl<T> union(IFrame<T> other) {
         return returnDF(unionList(toLists(),other.toLists()));
     }
@@ -1091,6 +1100,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     public SDFrameImpl<T> intersection(IFrame<T> other) {
         return returnDF(intersectionList(toLists(),other.toLists()));
     }
+
+    @Override
+    public SDFrameImpl<T> different(IFrame<T> other) {
+        return returnDF(differentList(toLists(),other.toLists()));
+    }
+
 
     @Override
     public <G, C> SDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G, C, T> getEmptyObject) {

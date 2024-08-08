@@ -36,6 +36,9 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     public JDFrameImpl(List<T> list) {
         if (list == null){
             list = Collections.emptyList();
+        }else {
+            // update reference ，do not affect the original list
+            list = new ArrayList<>(list);
         }
 
         dataList = list;
@@ -1066,6 +1069,13 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public JDFrameImpl<T> unionAll(IFrame<T> other) {
+        ArrayList<T> ts = new ArrayList<>(toLists());
+        ts.addAll(other.toLists());
+        return returnDF(ts);
+    }
+
+    @Override
     public JDFrameImpl<T> union(IFrame<T> other) {
         return returnDF(unionList(toLists(),other.toLists()));
     }
@@ -1073,6 +1083,11 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public JDFrameImpl<T> intersection(IFrame<T> other) {
         return returnDF(intersectionList(toLists(),other.toLists()));
+    }
+
+    @Override
+    public JDFrameImpl<T> different(IFrame<T> other) {
+        return returnDF(differentList(toLists(),other.toLists()));
     }
 
     /**  ============================== Other =============== */

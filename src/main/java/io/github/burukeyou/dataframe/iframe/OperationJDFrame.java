@@ -8,7 +8,13 @@ package io.github.burukeyou.dataframe.iframe;
 public interface OperationJDFrame<T>  extends OperationIFrame<T> {
 
     /**
-     * union frame
+     * union other frame
+     * @param other         other frame
+     */
+    JDFrame<T> unionAll(IFrame<T> other);
+
+    /**
+     * union frame,union other frame, will delete duplicates
      * @param other         other frame
      */
     JDFrame<T> union(IFrame<T> other);
@@ -19,4 +25,11 @@ public interface OperationJDFrame<T>  extends OperationIFrame<T> {
      * @return           other frame
      */
     JDFrame<T> intersection(IFrame<T> other);
+
+    /**
+     * different other frame
+     *      Elements that are not within the other frame
+     * @return           other frame
+     */
+    JDFrame<T> different(IFrame<T> other);
 }
