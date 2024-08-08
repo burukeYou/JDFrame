@@ -32,7 +32,7 @@ public abstract class AbstractWindowDataFrame<T> extends AbstractCommonFrame<T>{
     protected  <V> List<FI2<T, V>> overAbject(Window<T> overParam,
                                               SupplierFunction<T,V> supplier) {
         ((WindowBuilder<T>)overParam).initDefault();
-        List<T> windowList = dataList();
+        List<T> windowList = viewList();
         List<FI2<T, V>> result = new ArrayList<>();
         if (ListUtils.isEmpty(windowList)){
             return result;

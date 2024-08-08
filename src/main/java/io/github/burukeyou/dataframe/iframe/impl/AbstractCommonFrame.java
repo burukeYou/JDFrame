@@ -29,7 +29,7 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
     protected int defaultScale = 2;
     protected RoundingMode defaultRoundingMode = RoundingMode.HALF_UP;
 
-    protected abstract  List<T> dataList();
+    protected abstract  List<T> viewList();
 
     protected int getOldRoundingMode(){
             switch (defaultRoundingMode){
@@ -86,7 +86,7 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
         }
 
         if (isNormalType(fieldClass)) {
-            return new StringBuilder(JSON.toJSONString(dataList()));
+            return new StringBuilder(JSON.toJSONString(viewList()));
         }
 
         String[][] dataArr = buildPrintDataArr(n);
@@ -103,7 +103,7 @@ public abstract class AbstractCommonFrame<T> implements IFrame<T> {
     }
 
     protected String[][] buildPrintDataArr(int limit) {
-        List<T> dataList = dataList();
+        List<T> dataList = viewList();
         if (dataList.isEmpty()){
             return null;
         }
