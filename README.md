@@ -30,7 +30,7 @@ https://central.sonatype.com/artifact/io.github.burukeyou/jdframe/versions
 <dependency>
     <groupId>io.github.burukeyou</groupId>
     <artifactId>jdframe</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
@@ -66,7 +66,6 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - columns()  -获取表头列名
 - col()    -获取某一列值
 - page()  -获取分页数据
-- append()  -添加元素
 - union()   -合并其他Frame
 - map()      -矩阵转换
 - mapParallel()    并行的map
@@ -162,6 +161,14 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - overMinValue()  -生成最小值
 - overCount()   -生成数量
 - overNtile()  -分桶，生成桶编号
+
+
+==== 集合运算 ========
+- unionAll 取并集(不去重)
+- union    取并集(去重)
+- retainAll        保留集合A中在集合B存在的元素
+- intersection     取交集
+- different        取差集
 
 ==== 连接 == ======
 
