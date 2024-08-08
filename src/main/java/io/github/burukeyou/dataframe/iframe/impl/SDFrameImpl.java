@@ -1136,18 +1136,37 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public SDFrameImpl<T> intersection(IFrame<T> other, Comparator<T> comparator) {
+        return returnDF(intersectionList(viewList(),other.toLists(),comparator));
+    }
+
+    @Override
     public SDFrameImpl<T> intersection(Collection<T> other) {
         return returnDF(intersectionList(viewList(),other));
     }
 
+    @Override
+    public SDFrameImpl<T> intersection(Collection<T> other, Comparator<T> comparator) {
+        return returnDF(intersectionList(viewList(),other,comparator));
+    }
     @Override
     public SDFrameImpl<T> different(IFrame<T> other) {
         return returnDF(differentList(viewList(),other.toLists()));
     }
 
     @Override
+    public SDFrameImpl<T> different(IFrame<T> other, Comparator<T> comparator) {
+        return returnDF(differentList(viewList(),other.toLists(),comparator));
+    }
+
+    @Override
     public SDFrameImpl<T> different(Collection<T> other) {
         return returnDF(differentList(viewList(),other));
+    }
+
+    @Override
+    public SDFrame<T> different(Collection<T> other, Comparator<T> comparator) {
+        return returnDF(differentList(viewList(),other,comparator));
     }
 
     @Override

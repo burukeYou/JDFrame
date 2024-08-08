@@ -780,6 +780,19 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return leftList;
     }
 
+    protected List<T> differentList(List<T> leftList, Collection<T> rightList, Comparator<T> comparator) {
+        if (ListUtils.isEmpty(leftList)){
+            return leftList;
+        }
+        if (ListUtils.isEmpty(rightList)){
+            return leftList;
+        }
+        Set<T> otherSet = new TreeSet<>(comparator);
+        otherSet.addAll(rightList);
+        leftList = leftList.stream().filter(e -> !otherSet.contains(e)).collect(toList());
+        return leftList;
+    }
+
 
     protected static <T, C> List<T> replenish(List<T> itemDTOList,
                                               Function<T, C> collectDim,

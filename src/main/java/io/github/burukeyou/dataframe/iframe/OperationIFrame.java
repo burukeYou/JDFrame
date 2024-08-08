@@ -117,9 +117,26 @@ public interface OperationIFrame<T> {
     IFrame<T> different(IFrame<T> other);
 
     /**
+     * different other frame
+     *      Elements that are not within the other frame
+     * @return           other frame
+     * @param comparator         repetitive judgment comparator
+     */
+    IFrame<T> different(IFrame<T> other,Comparator<T> comparator);
+
+    /**
      * different other collection
      *      Elements that are not within the other frame
      * @return           other collection
      */
     IFrame<T> different(Collection<T> other);
+
+
+    /**
+     * different other collection
+     *      Elements that are not within the other frame
+     * @return           other collection
+     * @param comparator         repetitive judgment comparator
+     */
+    IFrame<T> different(Collection<T> other,Comparator<T> comparator);
 }

@@ -1152,8 +1152,18 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public JDFrameImpl<T> different(IFrame<T> other, Comparator<T> comparator) {
+        return returnDF(differentList(viewList(),other.toLists(),comparator));
+    }
+
+    @Override
     public JDFrameImpl<T> different(Collection<T> other) {
         return returnDF(differentList(viewList(),other));
+    }
+
+    @Override
+    public JDFrame<T> different(Collection<T> other, Comparator<T> comparator) {
+        return returnDF(differentList(viewList(),other,comparator));
     }
 
     /**  ============================== Other =============== */
