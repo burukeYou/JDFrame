@@ -307,6 +307,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public List<T> toLists() {
         List<T> tmp = data.collect(toList());
+        // To prevent external changes in the number of tmp from affecting this area, make a copy new ArrayList<>(tmp)
         data = new ArrayList<>(tmp).stream();
         return tmp;
     }

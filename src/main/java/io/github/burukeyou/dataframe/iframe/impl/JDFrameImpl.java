@@ -268,7 +268,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     public List<T> toLists() {
-        return dataList;
+        return new ArrayList<>(dataList);
     }
 
     @Override
