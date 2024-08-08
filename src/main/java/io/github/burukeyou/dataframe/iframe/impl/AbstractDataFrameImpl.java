@@ -724,8 +724,17 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         if (ListUtils.isEmpty(rightList)){
             return Collections.emptyList();
         }
-        Set<T> set = new HashSet<>(leftList);
+        Set<T> set = new HashSet<>(rightList);
         return leftList.stream().filter(set::contains).collect(toList());
+    }
+
+    protected List<T> intersectionList(List<T> leftList, Collection<T> rightList){
+        if (ListUtils.isEmpty(leftList) || ListUtils.isEmpty(rightList)){
+            return Collections.emptyList();
+        }
+
+        Set<T> set = new HashSet<>(rightList);
+        return leftList.stream().filter(set::contains).distinct().collect(Collectors.toList());
     }
 
     protected List<T> differentList(List<T> leftList, List<T> rightList) {

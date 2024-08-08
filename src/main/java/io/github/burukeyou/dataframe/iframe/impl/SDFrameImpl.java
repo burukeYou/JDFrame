@@ -1120,6 +1120,16 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public SDFrameImpl<T> intersection(IFrame<T> other) {
+        return returnDF(intersectionList(viewList(),other.toLists()));
+    }
+
+    @Override
+    public SDFrameImpl<T> intersection(Collection<T> other) {
+        return returnDF(intersectionList(viewList(),other));
+    }
+
+    @Override
     public SDFrameImpl<T> different(IFrame<T> other) {
         return returnDF(differentList(viewList(),other.toLists()));
     }

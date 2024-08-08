@@ -34,6 +34,20 @@ public interface OperationIFrame<T> {
     IFrame<T> retainAll(Collection<T> other);
 
     /**
+     * intersection other frame
+     *          get identical elements from two sets
+     * @param other     other frame
+     */
+    IFrame<T> intersection(IFrame<T> other);
+
+    /**
+     * intersection other frame
+     *          get identical elements from two sets
+     * @param other     other collection
+     */
+    IFrame<T> intersection(Collection<T> other);
+
+    /**
      * different other frame
      *      Elements that are not within the other frame
      * @return           other frame

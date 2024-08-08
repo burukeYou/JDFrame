@@ -34,6 +34,20 @@ public interface OperationJDFrame<T>  extends OperationIFrame<T> {
     JDFrame<T> retainAll(Collection<T> other);
 
     /**
+     * intersection other frame
+     *          get identical elements from two sets
+     * @param other     other frame
+     */
+    JDFrame<T> intersection(IFrame<T> other);
+
+    /**
+     * intersection other frame
+     *          get identical elements from two sets
+     * @param other     other collection
+     */
+    JDFrame<T> intersection(Collection<T> other);
+
+    /**
      * different other frame
      *      Elements that are not within the other frame
      * @return           other frame

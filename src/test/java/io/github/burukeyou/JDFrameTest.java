@@ -549,10 +549,12 @@ public class JDFrameTest {
         System.out.println("----- 并集(去重)------");
         frame.union(frame2).show();
 
+
+        System.out.println("----- 交集------");
+        frame.intersection(frame2).show();
+
         System.out.println("----- retainAll------");
         frame.retainAll(frame2).show();
-
-        frame.show();
 
         System.out.println("----- 差集------");
         frame.different(frame2).show();

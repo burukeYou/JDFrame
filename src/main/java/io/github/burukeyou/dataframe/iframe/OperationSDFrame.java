@@ -34,6 +34,19 @@ public interface OperationSDFrame<T> extends OperationIFrame<T> {
      */
     SDFrame<T> retainAll(Collection<T> other);
 
+    /**
+     * intersection other frame
+     *          get identical elements from two sets
+     * @param other     other frame
+     */
+    SDFrame<T> intersection(IFrame<T> other);
+
+    /**
+     * intersection other frame
+     *          get identical elements from two sets
+     * @param other     other collection
+     */
+    SDFrame<T> intersection(Collection<T> other);
 
     /**
      * different other frame
