@@ -720,13 +720,10 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return new ArrayList<>(set);
     }
 
-    protected List<T> intersectionList(List<T> leftList,List<T> rightList){
-        if (ListUtils.isEmpty(rightList) || ListUtils.isEmpty(leftList)){
-            return Collections.emptyList();
-        }
-        Set<T> otherSet = new HashSet<>(rightList);
-        leftList = leftList.stream().filter(otherSet::contains).collect(Collectors.toList());
-        return leftList;
+    protected List<T> retainAllList(List<T> leftList, List<T> rightList){
+        ArrayList<T> tmp = new ArrayList<>(leftList);
+        tmp.retainAll(rightList);
+        return tmp;
     }
 
     protected List<T> differentList(List<T> leftList, List<T> rightList) {

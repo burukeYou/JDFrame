@@ -19,13 +19,11 @@ public interface OperationIFrame<T> {
      */
     IFrame<T> union(IFrame<T> other);
 
-
     /**
-     * intersection other frame
-     *      retain elements that exist simultaneously in two frame
+     *  Retains only the elements in this list that are contained in the specified collection
      * @return           other frame
      */
-    IFrame<T> intersection(IFrame<T> other);
+    IFrame<T> retainAll(IFrame<T> other);
 
     /**
      * different other frame
