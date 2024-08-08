@@ -25,6 +25,7 @@ import java.util.stream.Stream;
  */
 public interface IFrame<T> extends SummaryFrame<T>,WhereIFrame<T>,JoinIFrame<T>,GroupIFrame<T>,OperationIFrame<T>,Iterable<T>{
 
+
     /**
      * Convert to list
      * @return      the list

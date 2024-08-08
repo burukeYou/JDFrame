@@ -46,7 +46,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public T[] toArray() {
-        List<T> ts = toLists();
+        List<T> ts = dataList();
         if (ts.isEmpty() && fieldClass == null){
             // 为空拿不到泛型先返回null
             return null;
@@ -60,7 +60,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public T[] toArray(Class<T> elementClass) {
-        List<T> ts = toLists();
+        List<T> ts = dataList();
         if (ts == null || ts.isEmpty()) {
             return (T[]) Array.newInstance(elementClass, 0);
         }
@@ -73,7 +73,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public boolean contains(T other) {
-        return toLists().contains(other);
+        return dataList().contains(other);
     }
 
     @Override
@@ -110,7 +110,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     @Override
     public <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
         // 原生stream 的 toMap存在两个问题。 1-value不能为null否则空指针异常 2-不能重复key，否则 Duplicate key 异常所以宁愿手写
-        List<T> list = toLists();
+        List<T> list = dataList();
         if (ListUtils.isEmpty(list)){
             return Collections.emptyMap();
         }
@@ -464,7 +464,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public Iterator<T> iterator() {
-        return toLists().iterator();
+        return dataList().iterator();
     }
 
 
@@ -476,7 +476,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public <R> List<R> col(Function<T, R> function) {
-        return toLists().stream().map(function).collect(toList());
+        return dataList().stream().map(function).collect(toList());
     }
 
     @Override
@@ -494,7 +494,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
             return Collections.emptyList();
         }
         int endIndex = Math.min(startIndex + pageSize, count);
-        return toLists().subList(startIndex, endIndex);
+        return dataList().subList(startIndex, endIndex);
     }
 
     @Override
@@ -659,7 +659,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public List<T> head(int n) {
-        List<T> tsList = toLists();
+        List<T> tsList = dataList();
         if (tsList.isEmpty()){
             return Collections.emptyList();
         }
@@ -672,7 +672,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public List<T> tail(int n) {
-        List<T> tsList = toLists();
+        List<T> tsList = dataList();
         if (tsList.isEmpty()){
             return Collections.emptyList();
         }
@@ -686,19 +686,19 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public T head() {
-        List<T> ts = toLists();
+        List<T> ts = dataList();
         return ts.isEmpty() ? null : ts.get(0);
     }
 
     @Override
     public T tail() {
-        List<T> ts = toLists();
+        List<T> ts = dataList();
         return ts.isEmpty() ? null : ts.get(ts.size()-1);
     }
 
     @Override
     public List<T> getList(Integer startIndex, Integer endIndex) {
-        List<T> ts = toLists();
+        List<T> ts = dataList();
         if (startIndex == null || startIndex < 0){
             startIndex = 0;
         }

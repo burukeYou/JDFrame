@@ -116,7 +116,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R extends Number> JDFrameImpl<T> mapPercent(Function<T, R> get, SetFunction<T, BigDecimal> set, int scale) {
-        toLists().forEach(e -> {
+        dataList().forEach(e -> {
             R value = get.apply(e);
             BigDecimal percentageValue = MathUtils.percentage(MathUtils.toBigDecimal(value), scale);
             set.accept(e,percentageValue);
@@ -126,13 +126,13 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrameImpl<List<T>> partition(int n) {
-        return returnDF(new PartitionList<>(toLists(), n));
+        return returnDF(new PartitionList<>(dataList(), n));
     }
 
 
     @Override
     public JDFrameImpl<T> append(T t) {
-        toLists().add(t);
+        dataList().add(t);
         return this;
     }
 
@@ -141,7 +141,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         if (other.count() <= 0){
             return this;
         }
-        toLists().addAll(other.toLists());
+        dataList().addAll(other.toLists());
         return this;
     }
 
@@ -267,8 +267,19 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return fi2Frame(this.addRankCol(sorter),set);
     }
 
+    /**
+     *  获取之后会改变list数量用这个
+     */
+    @Override
     public List<T> toLists() {
         return new ArrayList<>(dataList);
+    }
+
+    /**
+     *  获取之后不会改变list数量用这个
+     */
+    protected List<T> dataList() {
+        return dataList;
     }
 
     @Override
@@ -351,14 +362,14 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
      */
     @Override
     public JDFrameImpl<T> cutFirst(int n) {
-        DFList<T> first = new DFList<>(toLists()).first(n);
+        DFList<T> first = new DFList<>(dataList()).first(n);
         return returnDF(first.build());
     }
 
 
     @Override
     public JDFrameImpl<T> cutLast(int n) {
-        DFList<T> first = new DFList<>(toLists()).last(n);
+        DFList<T> first = new DFList<>(dataList()).last(n);
         return returnDF(first.build());
     }
 
@@ -394,7 +405,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrameImpl<T> distinct(Comparator<T> comparator, ListToOneFunction<T> function) {
-        return returnDF(distinctList(toLists(),comparator,function));
+        return returnDF(distinctList(dataList(),comparator,function));
     }
 
     @Override
@@ -635,10 +646,10 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <K,R extends Number> JDFrameImpl<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, NumberFunction<T,R> value) {
-        List<T> dataList = toLists();
+        List<T> dataList = dataList();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI2<K, BigDecimal>> sumList = returnDF(dataList).groupKey(key, tBigDecimalCollector);
-        List<FI2<K, Long>> countList =  from(dataList).groupByCount(key).toLists();
+        List<FI2<K, Long>> countList =  from(dataList).groupByCount(key).dataList();
         Map<K, Long> countMap = countList.stream().collect(Collectors.toMap(FI2::getC1, FI2::getC2));
         List<FI3<K, BigDecimal, Long>> collect = sumList.stream().map(e -> new FI3<>(e.getC1(), e.getC2(), countMap.get(e.getC1()))).collect(Collectors.toList());
         return returnDF(collect);
@@ -648,10 +659,10 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     public <K, J,R extends Number> JDFrameImpl<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key,
                                                                                             Function<T, J> key2,
                                                                                             NumberFunction<T,R> value) {
-        List<T> dataList = toLists();
+        List<T> dataList = dataList();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI3<K, J, BigDecimal>> sumList = returnDF(dataList).groupKey(key, key2, tBigDecimalCollector);
-        List<FI3<K, J, Long>> countList =  from(dataList).groupByCount(key, key2).toLists();
+        List<FI3<K, J, Long>> countList =  from(dataList).groupByCount(key, key2).dataList();
         // 合并sum和count字段
         Map<String, FI3<K, J, Long>> countMap = countList.stream().collect(Collectors.toMap(e -> e.getC1() + "_" + e.getC2(), Function.identity()));
         List<FI4<K, J, BigDecimal, Long>> collect = sumList.stream().map(e -> {
@@ -853,7 +864,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <F> JDFrame<T> overLagS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field, int n) {
+    public <F> JDFrameImpl<T> overLagS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field, int n) {
         return fi2Frame(overLag(overParam,field,n),setFunction);
     }
 
@@ -863,12 +874,12 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <F> JDFrame<T> overLagS(SetFunction<T, F> setFunction, Function<T, F> field, int n) {
+    public <F> JDFrameImpl<T> overLagS(SetFunction<T, F> setFunction, Function<T, F> field, int n) {
         return fi2Frame(overLag(field,n),setFunction);
     }
 
     @Override
-    public <F> JDFrame<T> overLeadS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field, int n) {
+    public <F> JDFrameImpl<T> overLeadS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field, int n) {
         return fi2Frame(overLead(overParam,field,n),setFunction);
     }
 
@@ -883,7 +894,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <F> JDFrame<T> overLeadS(SetFunction<T, F> setFunction, Function<T, F> field, int n) {
+    public <F> JDFrameImpl<T> overLeadS(SetFunction<T, F> setFunction, Function<T, F> field, int n) {
         return fi2Frame(overLead(field,n),setFunction);
     }
 
@@ -893,7 +904,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <F> JDFrame<T> overNthValueS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field, int n) {
+    public <F> JDFrameImpl<T> overNthValueS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field, int n) {
         return fi2Frame(overNthValue(overParam,field,n),setFunction);
     }
 
@@ -913,7 +924,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <F> JDFrame<T> overFirstValueS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field) {
+    public <F> JDFrameImpl<T> overFirstValueS(SetFunction<T, F> setFunction, Window<T> overParam, Function<T, F> field) {
         return fi2Frame(overFirstValue(overParam, field),setFunction);
     }
 
@@ -943,7 +954,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <F> JDFrame<T> overLastValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
+    public <F> JDFrameImpl<T> overLastValueS(SetFunction<T, F> setFunction, Function<T, F> field) {
         return fi2Frame(overLastValue(field),setFunction);
     }
 
@@ -1070,40 +1081,40 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrameImpl<T> unionAll(IFrame<T> other) {
-        ArrayList<T> ts = new ArrayList<>(toLists());
+        ArrayList<T> ts = new ArrayList<>(dataList());
         ts.addAll(other.toLists());
         return returnDF(ts);
     }
 
     @Override
     public JDFrameImpl<T> union(IFrame<T> other) {
-        return returnDF(unionList(toLists(),other.toLists()));
+        return returnDF(unionList(dataList(),other.toLists()));
     }
 
     @Override
     public JDFrameImpl<T> intersection(IFrame<T> other) {
-        return returnDF(intersectionList(toLists(),other.toLists()));
+        return returnDF(intersectionList(dataList(),other.toLists()));
     }
 
     @Override
     public JDFrameImpl<T> different(IFrame<T> other) {
-        return returnDF(differentList(toLists(),other.toLists()));
+        return returnDF(differentList(dataList(),other.toLists()));
     }
 
     /**  ============================== Other =============== */
     @Override
     public <G, C> JDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G, C, T> getEmptyObject) {
-        return returnDF(replenish(toLists(),groupDim,collectDim,allDim,getEmptyObject));
+        return returnDF(replenish(dataList(),groupDim,collectDim,allDim,getEmptyObject));
     }
 
     @Override
     public <C> JDFrameImpl<T> replenish(Function<T, C> collectDim, List<C> allDim, Function<C, T> getEmptyObject) {
-        return returnDF(replenish(toLists(),collectDim,allDim,getEmptyObject));
+        return returnDF(replenish(dataList(),collectDim,allDim,getEmptyObject));
     }
 
     @Override
     public <G, C> JDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G, C, T> getEmptyObject) {
-        return returnDF(replenish(toLists(),groupDim,collectDim,getEmptyObject));
+        return returnDF(replenish(dataList(),groupDim,collectDim,getEmptyObject));
     }
 
     // note: not need return this ever operation will create new frame

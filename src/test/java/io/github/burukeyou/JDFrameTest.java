@@ -546,10 +546,8 @@ public class JDFrameTest {
         System.out.println("----- 并集(不去重)------");
         frame.unionAll(frame2).show();
 
-        List<UserInfo> userInfos = frame.toLists();
-
-//        System.out.println("----- 并集(去重)------");
-//        frame.union(frame2).show();
+        System.out.println("----- 并集(去重)------");
+        frame.union(frame2).show();
 
         System.out.println("----- 交集------");
         frame.intersection(frame2).show();

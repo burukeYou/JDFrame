@@ -67,7 +67,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrameImpl<T> forEachParallel(Consumer<? super T> action) {
-        toLists().stream().parallel().forEach(action);
+        dataList().stream().parallel().forEach(action);
         return this;
     }
 
@@ -109,7 +109,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <R extends Number> SDFrame<T> mapPercent(Function<T,R> get, SetFunction<T,BigDecimal> set, int scale){
-        toLists().forEach(e -> {
+        dataList().forEach(e -> {
             R value = get.apply(e);
             BigDecimal percentageValue = MathUtils.percentage(MathUtils.toBigDecimal(value), scale);
             set.accept(e,percentageValue);
@@ -119,13 +119,13 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrameImpl<List<T>> partition(int n) {
-        return returnDF(new PartitionList<>(toLists(), n));
+        return returnDF(new PartitionList<>(dataList(), n));
     }
 
 
     @Override
     public SDFrameImpl<T> append(T t) {
-        List<T> ts = toLists();
+        List<T> ts = dataList();
         ts.add(t);
         data = ts.stream();
         return this;
@@ -136,7 +136,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         if (other.count() <= 0){
             return this;
         }
-        List<T> ts = toLists();
+        List<T> ts = dataList();
         ts.addAll(other.toLists());
         return returnThis(ts);
     }
@@ -304,11 +304,23 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(fi2Stream(explodeCollectionArrayStream(getFunction, elementClass),setFunction));
     }
 
+    /**
+     *  获取之后会改变list数量用这个
+     */
     @Override
     public List<T> toLists() {
         List<T> tmp = data.collect(toList());
         // To prevent external changes in the number of tmp from affecting this area, make a copy new ArrayList<>(tmp)
         data = new ArrayList<>(tmp).stream();
+        return tmp;
+    }
+
+    /**
+     *  获取之后不会改变list数量用这个
+     */
+    public List<T> dataList() {
+        List<T> tmp = data.collect(toList());
+        data = tmp.stream();
         return tmp;
     }
 
@@ -362,14 +374,14 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrame<T> cutFirst(int n) {
-        DFList<T> first = new DFList<>(toLists()).first(n);
+        DFList<T> first = new DFList<>(dataList()).first(n);
         List<T> build = first.build();
         return returnThis(build);
     }
 
     @Override
     public SDFrame<T> cutLast(int n) {
-        DFList<T> first = new DFList<>(toLists()).last(n);
+        DFList<T> first = new DFList<>(dataList()).last(n);
         data = first.build().stream();
         return this;
     }
@@ -408,7 +420,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrameImpl<T> distinct(Comparator<T> comparator, ListToOneFunction<T> function) {
-        return returnThis(distinctList(toLists(),comparator,function));
+        return returnThis(distinctList(dataList(),comparator,function));
     }
 
     @Override
@@ -653,10 +665,10 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <K,R extends Number> SDFrameImpl<FI3<K, BigDecimal,Long>> groupBySumCount(Function<T, K> key, NumberFunction<T,R> value) {
-        List<T> dataList = toLists();
+        List<T> dataList = dataList();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI2<K, BigDecimal>> sumList = returnDF(dataList).groupKey(key, tBigDecimalCollector);
-        List<FI2<K, Long>> countList =  returnDF(dataList).groupByCount(key).toLists();
+        List<FI2<K, Long>> countList =  returnDF(dataList).groupByCount(key).dataList();
         Map<K, Long> countMap = countList.stream().collect(Collectors.toMap(FI2::getC1, FI2::getC2));
         List<FI3<K, BigDecimal, Long>> collect = sumList.stream().map(e -> new FI3<>(e.getC1(), e.getC2(), countMap.get(e.getC1()))).collect(Collectors.toList());
         return returnDF(collect);
@@ -666,10 +678,10 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     public <K, J,R extends Number> SDFrameImpl<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key,
                                                                        Function<T, J> key2,
                                                                        NumberFunction<T,R> value) {
-        List<T> dataList = toLists();
+        List<T> dataList = dataList();
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.summingBigDecimalForNumber(value);
         List<FI3<K, J, BigDecimal>> sumList = returnDF(dataList).groupKey(key, key2, tBigDecimalCollector);
-        List<FI3<K, J, Long>> countList =  returnDF(dataList).groupByCount(key, key2).toLists();
+        List<FI3<K, J, Long>> countList =  returnDF(dataList).groupByCount(key, key2).dataList();
         // 合并sum和count字段
         Map<String, FI3<K, J, Long>> countMap = countList.stream().collect(Collectors.toMap(e -> e.getC1() + "_" + e.getC2(), Function.identity()));
         List<FI4<K, J, BigDecimal, Long>> collect = sumList.stream().map(e -> {
@@ -1094,33 +1106,33 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrameImpl<T> union(IFrame<T> other) {
-        return returnDF(unionList(toLists(),other.toLists()));
+        return returnDF(unionList(dataList(),other.toLists()));
     }
 
     @Override
     public SDFrameImpl<T> intersection(IFrame<T> other) {
-        return returnDF(intersectionList(toLists(),other.toLists()));
+        return returnDF(intersectionList(dataList(),other.toLists()));
     }
 
     @Override
     public SDFrameImpl<T> different(IFrame<T> other) {
-        return returnDF(differentList(toLists(),other.toLists()));
+        return returnDF(differentList(dataList(),other.toLists()));
     }
 
 
     @Override
     public <G, C> SDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G, C, T> getEmptyObject) {
-        return returnDF(replenish(toLists(),groupDim,collectDim,allDim,getEmptyObject));
+        return returnDF(replenish(dataList(),groupDim,collectDim,allDim,getEmptyObject));
     }
 
     @Override
     public <C> SDFrameImpl<T> replenish(Function<T, C> collectDim, List<C> allDim, Function<C, T> getEmptyObject) {
-        return returnDF(replenish(toLists(),collectDim,allDim,getEmptyObject));
+        return returnDF(replenish(dataList(),collectDim,allDim,getEmptyObject));
     }
 
     @Override
     public <G, C> SDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G, C, T> getEmptyObject) {
-        return returnDF(replenish(toLists(),groupDim,collectDim,getEmptyObject));
+        return returnDF(replenish(dataList(),groupDim,collectDim,getEmptyObject));
     }
 
     /**
