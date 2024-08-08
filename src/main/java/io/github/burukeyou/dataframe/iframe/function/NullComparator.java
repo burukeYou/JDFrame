@@ -37,6 +37,16 @@ public interface NullComparator<T> extends Comparator<T> {
     static <T, U extends Comparable<? super U>> NullComparator<T> comparing(Function<? super T, ? extends U> keyExtractor) {
         Objects.requireNonNull(keyExtractor);
         return (t1, t2) -> {
+            if (t1 == null && t2 == null){
+                return 0;
+            }
+            if (t1 == null){
+                return -1;
+            }
+            if (t2 == null){
+                return 1;
+            }
+
             U t1Value = keyExtractor.apply(t1);
             U t2Value = keyExtractor.apply(t2);
             if (t1Value == null && t2Value == null){

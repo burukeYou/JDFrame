@@ -1112,8 +1112,18 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public JDFrameImpl<T> retainAll(IFrame<T> other, Comparator<T> comparator) {
+        return returnDF(retainAllList(viewList(),other.toLists(),comparator));
+    }
+
+    @Override
     public JDFrameImpl<T> retainAll(Collection<T> other) {
         return returnDF(retainAllList(viewList(),other));
+    }
+
+    @Override
+    public JDFrameImpl<T> retainAll(Collection<T> other, Comparator<T> comparator) {
+        return returnDF(retainAllList(viewList(),other,comparator));
     }
 
     @Override

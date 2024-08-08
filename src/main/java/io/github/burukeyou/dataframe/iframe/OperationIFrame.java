@@ -56,11 +56,28 @@ public interface OperationIFrame<T> {
      */
     IFrame<T> retainAll(IFrame<T> other);
 
+
+    /**
+     *  Retains only the elements in this list that are contained in the specified collection
+     * @return                   other frame
+     * @param comparator         repetitive judgment comparator
+     */
+    IFrame<T> retainAll(IFrame<T> other,Comparator<T> comparator);
+
     /**
      * Retains only the elements in this list that are contained in the specified collection
      * @return           other collection
      */
     IFrame<T> retainAll(Collection<T> other);
+
+
+    /**
+     * Retains only the elements in this list that are contained in the specified collection
+     * @return                   other collection
+     * @param comparator         repetitive judgment comparator
+     */
+    IFrame<T> retainAll(Collection<T> other,Comparator<T> comparator);
+
 
     /**
      * intersection other frame
