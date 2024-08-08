@@ -546,6 +546,8 @@ public class JDFrameTest {
         System.out.println("----- 并集(不去重)------");
         frame.unionAll(frame2).show();
 
+        frame.show();
+
         System.out.println("----- 并集(去重)------");
         frame.union(frame2).show();
 

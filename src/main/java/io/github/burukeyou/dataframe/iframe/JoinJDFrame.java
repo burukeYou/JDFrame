@@ -8,18 +8,6 @@ import io.github.burukeyou.dataframe.iframe.support.VoidJoin;
 
 public interface JoinJDFrame<T> extends JoinIFrame<T> {
 
-    /**
-     * add element to Frame
-     * @param t         element
-     */
-    JDFrame<T> append(T t);
-
-    /**
-     * add other Frame to this
-     * @param other         other Frame
-     */
-    JDFrame<T> append(IFrame<T> other);
-
 
     /**
      * inner join Frame

@@ -44,14 +44,33 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     public SDFrameImpl(List<T> list) {
         if (list == null){
             list = Collections.emptyList();
-        }else {
+        }
+        /*else {
             // update reference ，don't let the original list affect the current flow
             list = new ArrayList<>(list);
-        }
+        }*/
         this.data = list.stream();
         if (!list.isEmpty()){
             fieldClass = list.get(0).getClass();
         }
+    }
+
+
+    // After obtaining it, the number of lists will be changed using this
+    @Override
+    public List<T> toLists() {
+        List<T> tmp = data.collect(toList());
+        // To prevent external changes in the number of tmp from affecting this area, make a copy new ArrayList<>(tmp)
+        //data = new ArrayList<>(tmp).stream();
+        data = tmp.stream();
+        return tmp;
+    }
+
+    // After obtaining it, the number of lists will not be changed using this
+    public List<T> viewList() {
+        List<T> tmp = data.collect(toList());
+        data = tmp.stream();
+        return tmp;
     }
 
     @Override
@@ -122,24 +141,6 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(new PartitionList<>(viewList(), n));
     }
 
-
-    @Override
-    public SDFrameImpl<T> append(T t) {
-        List<T> ts = viewList();
-        ts.add(t);
-        data = ts.stream();
-        return this;
-    }
-
-    @Override
-    public SDFrameImpl<T> append(IFrame<T> other) {
-        if (other.count() <= 0){
-            return this;
-        }
-        List<T> ts = viewList();
-        ts.addAll(other.toLists());
-        return returnThis(ts);
-    }
 
     @Override
     public <R, K> SDFrameImpl<R> join(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
@@ -302,26 +303,6 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public <E> SDFrameImpl<T> explodeCollectionArray(Function<T, ?> getFunction, SetFunction<T, E> setFunction, Class<E> elementClass) {
         return returnDF(fi2Stream(explodeCollectionArrayStream(getFunction, elementClass),setFunction));
-    }
-
-    /**
-     *  获取之后会改变list数量用这个
-     */
-    @Override
-    public List<T> toLists() {
-        List<T> tmp = data.collect(toList());
-        // To prevent external changes in the number of tmp from affecting this area, make a copy new ArrayList<>(tmp)
-        data = new ArrayList<>(tmp).stream();
-        return tmp;
-    }
-
-    /**
-     *  获取之后不会改变list数量用这个
-     */
-    public List<T> viewList() {
-        List<T> tmp = data.collect(toList());
-        data = tmp.stream();
-        return tmp;
     }
 
     @Override

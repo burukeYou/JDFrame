@@ -13,18 +13,6 @@ import io.github.burukeyou.dataframe.iframe.support.VoidJoin;
 public interface JoinSDFrame<T> extends JoinIFrame<T> {
 
     /**
-     * add element to Frame
-     * @param t         element
-     */
-    SDFrame<T> append(T t);
-
-    /**
-     * add other Frame to this
-     * @param other         other Frame
-     */
-    SDFrame<T> append(IFrame<T> other);
-
-    /**
      * inner join Frame
      * @param other         other frame
      * @param on            connection conditions

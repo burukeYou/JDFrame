@@ -36,15 +36,33 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     public JDFrameImpl(List<T> list) {
         if (list == null){
             list = Collections.emptyList();
-        }else {
+        }
+    /*    else {
             // update reference ，do not affect the original list
             list = new ArrayList<>(list);
-        }
+        }*/
 
         dataList = list;
         if (!dataList.isEmpty()){
             fieldClass = dataList.get(0).getClass();
         }
+    }
+
+
+    /**
+     *  After obtaining it, the number of lists will be changed using this
+     */
+    @Override
+    public List<T> toLists() {
+       // return new ArrayList<>(dataList);
+        return dataList;
+    }
+
+    /**
+     *  After obtaining it, the number of lists will not be changed using this
+     */
+    protected List<T> viewList() {
+        return dataList;
     }
 
     @Override
@@ -129,21 +147,6 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnDF(new PartitionList<>(viewList(), n));
     }
 
-
-    @Override
-    public JDFrameImpl<T> append(T t) {
-        viewList().add(t);
-        return this;
-    }
-
-    @Override
-    public JDFrameImpl<T> append(IFrame<T> other) {
-        if (other.count() <= 0){
-            return this;
-        }
-        viewList().addAll(other.toLists());
-        return this;
-    }
 
     @Override
     public <R, K> JDFrameImpl<R> join(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join) {
@@ -267,20 +270,6 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return fi2Frame(this.addRankCol(sorter),set);
     }
 
-    /**
-     *  获取之后会改变list数量用这个
-     */
-    @Override
-    public List<T> toLists() {
-        return new ArrayList<>(dataList);
-    }
-
-    /**
-     *  获取之后不会改变list数量用这个
-     */
-    protected List<T> viewList() {
-        return dataList;
-    }
 
     @Override
     public JDFrameImpl<FI2<T, String>> explodeString(Function<T, String> getFunction, String delimiter) {
