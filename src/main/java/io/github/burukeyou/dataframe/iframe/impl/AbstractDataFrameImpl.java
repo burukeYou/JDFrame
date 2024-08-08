@@ -737,7 +737,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return leftList.stream().filter(set::contains).distinct().collect(Collectors.toList());
     }
 
-    protected List<T> differentList(List<T> leftList, List<T> rightList) {
+    protected List<T> differentList(List<T> leftList, Collection<T> rightList) {
         if (ListUtils.isEmpty(leftList)){
             return leftList;
         }

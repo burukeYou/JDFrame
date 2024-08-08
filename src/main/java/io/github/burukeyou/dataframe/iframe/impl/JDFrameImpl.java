@@ -1087,6 +1087,13 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public JDFrameImpl<T> unionAll(Collection<T> other) {
+        ArrayList<T> ts = new ArrayList<>(viewList());
+        ts.addAll(other);
+        return returnDF(ts);
+    }
+
+    @Override
     public JDFrameImpl<T> union(IFrame<T> other) {
         return returnDF(unionList(viewList(),other.toLists()));
     }
@@ -1114,6 +1121,11 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public JDFrameImpl<T> different(IFrame<T> other) {
         return returnDF(differentList(viewList(),other.toLists()));
+    }
+
+    @Override
+    public JDFrameImpl<T> different(Collection<T> other) {
+        return returnDF(differentList(viewList(),other));
     }
 
     /**  ============================== Other =============== */

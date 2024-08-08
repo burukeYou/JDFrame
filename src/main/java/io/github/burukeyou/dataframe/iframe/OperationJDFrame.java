@@ -16,6 +16,12 @@ public interface OperationJDFrame<T>  extends OperationIFrame<T> {
     JDFrame<T> unionAll(IFrame<T> other);
 
     /**
+     * union other Collection
+     * @param other         other frame
+     */
+    JDFrame<T> unionAll(Collection<T> other);
+
+    /**
      * union frame,union other frame, will delete duplicates
      * @param other         other frame
      */
@@ -41,7 +47,7 @@ public interface OperationJDFrame<T>  extends OperationIFrame<T> {
     JDFrame<T> intersection(IFrame<T> other);
 
     /**
-     * intersection other frame
+     * intersection other collection
      *          get identical elements from two sets
      * @param other     other collection
      */
@@ -53,4 +59,11 @@ public interface OperationJDFrame<T>  extends OperationIFrame<T> {
      * @return           other frame
      */
     JDFrame<T> different(IFrame<T> other);
+
+    /**
+     * different other collection
+     *      Elements that are not within the other frame
+     * @return           other collection
+     */
+    JDFrame<T> different(Collection<T> other);
 }

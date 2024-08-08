@@ -1099,8 +1099,15 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrameImpl<T> unionAll(IFrame<T> other) {
-        List<T> ts = toLists();
+        ArrayList<T> ts = new ArrayList<>(viewList());
         ts.addAll(other.toLists());
+        return returnDF(ts);
+    }
+
+    @Override
+    public SDFrameImpl<T> unionAll(Collection<T> other) {
+        ArrayList<T> ts = new ArrayList<>(viewList());
+        ts.addAll(other);
         return returnDF(ts);
     }
 
@@ -1134,6 +1141,10 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(differentList(viewList(),other.toLists()));
     }
 
+    @Override
+    public SDFrameImpl<T> different(Collection<T> other) {
+        return returnDF(differentList(viewList(),other));
+    }
 
     @Override
     public <G, C> SDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G, C, T> getEmptyObject) {

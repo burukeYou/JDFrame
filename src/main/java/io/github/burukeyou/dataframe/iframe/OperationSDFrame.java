@@ -16,6 +16,13 @@ public interface OperationSDFrame<T> extends OperationIFrame<T> {
      */
     SDFrame<T> unionAll(IFrame<T> other);
 
+
+    /**
+     * union other Collection
+     * @param other         other frame
+     */
+    SDFrame<T> unionAll(Collection<T> other);
+
     /**
      * union frame,union other frame, will delete duplicates
      * @param other         other frame
@@ -42,7 +49,7 @@ public interface OperationSDFrame<T> extends OperationIFrame<T> {
     SDFrame<T> intersection(IFrame<T> other);
 
     /**
-     * intersection other frame
+     * intersection other collection
      *          get identical elements from two sets
      * @param other     other collection
      */
@@ -54,4 +61,11 @@ public interface OperationSDFrame<T> extends OperationIFrame<T> {
      * @return           other frame
      */
     SDFrame<T> different(IFrame<T> other);
+
+    /**
+     * different other collection
+     *      Elements that are not within the other frame
+     * @return           other collection
+     */
+    SDFrame<T> different(Collection<T> other);
 }
