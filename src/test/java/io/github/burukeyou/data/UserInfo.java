@@ -17,4 +17,10 @@ public class UserInfo {
         this.key1 = key1;
         this.key2 = key2;
     }
+
+    public UserInfo(String key1, int key2, String key3) {
+        this.key1 = key1;
+        this.key2 = key2;
+        this.key3 = key3;
+    }
 }

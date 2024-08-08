@@ -342,25 +342,25 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     public <R extends Comparable<? super R>> R maxValue(Function<T, R> function) {
-        Optional<R> value = stream().map(function).filter(Objects::nonNull).max(Comparator.comparing(e -> e));
+        Optional<R> value = stream().map(function).filter(Objects::nonNull).max(java.util.Comparator.comparing(e -> e));
         return value.orElse(null);
     }
 
 
     public <R extends Comparable<R>> T max(Function<T, R> function) {
-        Optional<T> max = stream().filter(e -> function.apply(e) != null).max(Comparator.comparing(function));
+        Optional<T> max = stream().filter(e -> function.apply(e) != null).max(java.util.Comparator.comparing(function));
         return max.orElse(null);
     }
 
 
     public <R extends Comparable<? super R>> R minValue(Function<T, R> function) {
-        Optional<R> value = stream().map(function).filter(Objects::nonNull).min(Comparator.comparing(e -> e));
+        Optional<R> value = stream().map(function).filter(Objects::nonNull).min(java.util.Comparator.comparing(e -> e));
         return value.orElse(null);
     }
 
 
     public <R extends Comparable<R>> T min(Function<T, R> function) {
-        Optional<T> min = stream().filter(e -> function.apply(e) != null).min(Comparator.comparing(function));
+        Optional<T> min = stream().filter(e -> function.apply(e) != null).min(java.util.Comparator.comparing(function));
         return min.orElse(null);
     }
 
@@ -426,11 +426,11 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     protected  <V extends Comparable<? super V>> Function<List<T>, T> getListMaxFunction(Function<T, V> value) {
-        return e -> e.stream().filter(a ->  value.apply(a) != null).max(Comparator.comparing(value)).orElse(null);
+        return e -> e.stream().filter(a ->  value.apply(a) != null).max(java.util.Comparator.comparing(value)).orElse(null);
     }
 
     protected  <V extends Comparable<? super V>> Function<List<T>, T> getListMinFunction(Function<T, V> value) {
-        return e -> e.stream().min(Comparator.comparing(value)).orElse(null);
+        return e -> e.stream().min(java.util.Comparator.comparing(value)).orElse(null);
     }
 
     protected <V extends Comparable<? super V>> Function<List<T>, MaxMin<V>> getListGroupMaxMinValueFunction(Function<T, V> value) {
@@ -439,8 +439,8 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
                 return null;
             }
             MaxMin<V> maxMin = new MaxMin<>();
-            maxMin.setMax(list.stream().max(Comparator.comparing(value)).map(value).orElse(null));
-            maxMin.setMin(list.stream().min(Comparator.comparing(value)).map(value).orElse(null));
+            maxMin.setMax(list.stream().max(java.util.Comparator.comparing(value)).map(value).orElse(null));
+            maxMin.setMin(list.stream().min(java.util.Comparator.comparing(value)).map(value).orElse(null));
             return maxMin;
         };
     }
@@ -451,8 +451,8 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
                 return new MaxMin<>();
             }
             MaxMin<T> maxMin = new MaxMin<>();
-            maxMin.setMax(list.stream().max(Comparator.comparing(value)).orElse(null));
-            maxMin.setMin(list.stream().min(Comparator.comparing(value)).orElse(null));
+            maxMin.setMax(list.stream().max(java.util.Comparator.comparing(value)).orElse(null));
+            maxMin.setMin(list.stream().min(java.util.Comparator.comparing(value)).orElse(null));
             return maxMin;
         };
     }
@@ -515,7 +515,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
 
 
-    protected List<T> distinctList(List<T> dataList, Comparator<T> comparator, ListToOneFunction<T> function){
+    protected List<T> distinctList(List<T> dataList, java.util.Comparator<T> comparator, ListToOneFunction<T> function){
         if (ListUtils.isEmpty(dataList) || dataList.size() == 1){
             return dataList;
         }
@@ -708,14 +708,27 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return ts.subList(startIndex,endIndex);
     }
 
-    protected List<T> unionList(List<T> leftList,List<T> rightList){
+    protected List<T> unionList(List<T> leftList,Collection<T> rightList){
         if (ListUtils.isEmpty(rightList)){
             return leftList;
         }
         if (ListUtils.isEmpty(leftList)){
-            return rightList;
+            return new ArrayList<>(rightList);
         }
         Set<T> set = new HashSet<>(leftList);
+        set.addAll(rightList);
+        return new ArrayList<>(set);
+    }
+
+    protected List<T> unionList(List<T> leftList, Collection<T> rightList, Comparator<T> comparator){
+        if (ListUtils.isEmpty(rightList)){
+            return leftList;
+        }
+        if (ListUtils.isEmpty(leftList)){
+            return new ArrayList<>(rightList);
+        }
+        TreeSet<T> set = new TreeSet<>(comparator);
+        set.addAll(leftList);
         set.addAll(rightList);
         return new ArrayList<>(set);
     }

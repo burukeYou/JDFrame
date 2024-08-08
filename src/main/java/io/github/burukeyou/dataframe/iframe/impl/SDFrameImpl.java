@@ -15,6 +15,7 @@ import io.github.burukeyou.dataframe.util.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Comparator;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -322,7 +323,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
      **/
 
     @Override
-    public SDFrameImpl<T> sortDesc(Comparator<T> comparator) {
+    public SDFrameImpl<T> sortDesc(java.util.Comparator<T> comparator) {
         data = stream().sorted(comparator.reversed());
         return this;
     }
@@ -334,7 +335,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrameImpl<T> sortAsc(Comparator<T> comparator) {
+    public SDFrameImpl<T> sortAsc(java.util.Comparator<T> comparator) {
         data = stream().sorted(comparator);
         return this;
     }
@@ -385,33 +386,33 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <R extends Comparable<R>> SDFrameImpl<T> distinct(Function<T, R> function) {
-        return distinct(Comparator.comparing(function));
+        return distinct(java.util.Comparator.comparing(function));
     }
 
     @Override
     public <R extends Comparable<R>> SDFrameImpl<T> distinct(Function<T, R> function, ListToOneFunction<T> listOneFunction) {
-        return distinct(Comparator.comparing(function),listOneFunction);
+        return distinct(java.util.Comparator.comparing(function),listOneFunction);
     }
 
     @Override
-    public SDFrameImpl<T> distinct(Comparator<T> comparator) {
+    public SDFrameImpl<T> distinct(java.util.Comparator<T> comparator) {
         ArrayList<T> tmp = stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparator)), ArrayList::new));
         return returnThis(tmp);
     }
 
     @Override
-    public SDFrameImpl<T> distinct(Comparator<T> comparator, ListToOneFunction<T> function) {
+    public SDFrameImpl<T> distinct(java.util.Comparator<T> comparator, ListToOneFunction<T> function) {
         return returnThis(distinctList(viewList(),comparator,function));
     }
 
     @Override
-    public long countDistinct(Comparator<T> comparator) {
+    public long countDistinct(java.util.Comparator<T> comparator) {
         return distinct(comparator).count();
     }
 
     @Override
     public <R extends Comparable<R>> long countDistinct(Function<T, R> function) {
-        return countDistinct(Comparator.comparing(function));
+        return countDistinct(java.util.Comparator.comparing(function));
     }
 
     /**
@@ -727,7 +728,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public <K, V extends Comparable<? super V>> SDFrameImpl<FI2<K, T>> groupByMin(Function<T, K> key,
                                                                       Function<T, V> value) {
-        Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), e -> e.stream().min(Comparator.comparing(value)).orElse(null))));
+        Map<K, T> collect = stream().collect(groupingBy(key, collectingAndThen(toList(), e -> e.stream().min(java.util.Comparator.comparing(value)).orElse(null))));
         return returnDF(FrameUtil.toListFI2(collect));
     }
 
@@ -1097,6 +1098,20 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnDF(unionList(viewList(),other.toLists()));
     }
 
+    @Override
+    public SDFrameImpl<T> union(IFrame<T> other, Comparator<T> comparator) {
+        return returnDF(unionList(viewList(),other.toLists(),comparator));
+    }
+
+    @Override
+    public SDFrameImpl<T> union(Collection<T> other) {
+        return returnDF(unionList(viewList(),other));
+    }
+
+    @Override
+    public SDFrameImpl<T> union(Collection<T> other, Comparator<T> comparator) {
+        return returnDF(unionList(viewList(),other,comparator));
+    }
     @Override
     public SDFrameImpl<T> retainAll(IFrame<T> other) {
         return returnDF(retainAllList(viewList(),other.toLists()));

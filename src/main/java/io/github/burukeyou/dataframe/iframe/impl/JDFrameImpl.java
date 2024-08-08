@@ -11,10 +11,14 @@ import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
 import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import io.github.burukeyou.dataframe.iframe.window.Window;
-import io.github.burukeyou.dataframe.util.*;
+import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
+import io.github.burukeyou.dataframe.util.FrameUtil;
+import io.github.burukeyou.dataframe.util.MathUtils;
+import io.github.burukeyou.dataframe.util.PartitionList;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Comparator;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -317,7 +321,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
      **/
 
     @Override
-    public JDFrameImpl<T> sortDesc(Comparator<T> comparator) {
+    public JDFrameImpl<T> sortDesc(java.util.Comparator<T> comparator) {
         dataList.sort(comparator.reversed());
         return this;
     }
@@ -328,7 +332,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrameImpl<T> sortAsc(Comparator<T> comparator) {
+    public JDFrameImpl<T> sortAsc(java.util.Comparator<T> comparator) {
         dataList.sort(comparator);
         return this;
     }
@@ -378,22 +382,22 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public <R extends Comparable<R>> JDFrameImpl<T> distinct(Function<T, R> function) {
-        return distinct(Comparator.comparing(function));
+        return distinct(java.util.Comparator.comparing(function));
     }
 
     @Override
     public <R extends Comparable<R>> JDFrame<T> distinct(Function<T, R> function, ListToOneFunction<T> listOneFunction) {
-        return distinct(Comparator.comparing(function),listOneFunction);
+        return distinct(java.util.Comparator.comparing(function),listOneFunction);
     }
 
     @Override
-    public JDFrameImpl<T> distinct(Comparator<T> comparator) {
+    public JDFrameImpl<T> distinct(java.util.Comparator<T> comparator) {
         ArrayList<T> tmp = stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparator)), ArrayList::new));
         return returnDF(tmp);
     }
 
     @Override
-    public JDFrameImpl<T> distinct(Comparator<T> comparator, ListToOneFunction<T> function) {
+    public JDFrameImpl<T> distinct(java.util.Comparator<T> comparator, ListToOneFunction<T> function) {
         return returnDF(distinctList(viewList(),comparator,function));
     }
 
@@ -403,13 +407,13 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public long countDistinct(Comparator<T> comparator) {
+    public long countDistinct(java.util.Comparator<T> comparator) {
         return distinct(comparator).count();
     }
 
     @Override
     public <R extends Comparable<R>> long countDistinct(Function<T, R> function) {
-        return this.countDistinct(Comparator.comparing(function));
+        return this.countDistinct(java.util.Comparator.comparing(function));
     }
 
     /**
@@ -1085,6 +1089,21 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public JDFrameImpl<T> union(IFrame<T> other) {
         return returnDF(unionList(viewList(),other.toLists()));
+    }
+
+    @Override
+    public JDFrameImpl<T> union(IFrame<T> other, Comparator<T> comparator) {
+        return returnDF(unionList(viewList(),other.toLists(),comparator));
+    }
+
+    @Override
+    public JDFrameImpl<T> union(Collection<T> other) {
+        return returnDF(unionList(viewList(),other));
+    }
+
+    @Override
+    public JDFrameImpl<T> union(Collection<T> other, Comparator<T> comparator) {
+        return returnDF(unionList(viewList(),other,comparator));
     }
 
     @Override

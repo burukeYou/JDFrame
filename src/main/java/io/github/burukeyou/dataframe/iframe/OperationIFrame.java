@@ -1,6 +1,8 @@
 package io.github.burukeyou.dataframe.iframe;
 
+
 import java.util.Collection;
+import java.util.Comparator;
 
 /**
  *
@@ -27,6 +29,26 @@ public interface OperationIFrame<T> {
      * @param other         other frame
      */
     IFrame<T> union(IFrame<T> other);
+
+    /**
+     * union other frame, will delete duplicates
+     * @param other              other frame
+     * @param comparator         repetitive judgment comparator
+     */
+    IFrame<T> union(IFrame<T> other, Comparator<T> comparator);
+
+    /**
+     * union other frame, will delete duplicates
+     * @param other         other Collection
+     */
+    IFrame<T> union(Collection<T> other);
+
+    /**
+     * union other frame, will delete duplicates
+     * @param other         other Collection
+     * @param comparator         repetitive judgment comparator
+     */
+    IFrame<T> union(Collection<T> other, Comparator<T> comparator);
 
     /**
      *  Retains only the elements in this list that are contained in the specified collection

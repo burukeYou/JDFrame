@@ -4,6 +4,7 @@ import io.github.burukeyou.data.Student;
 import io.github.burukeyou.data.UserInfo;
 import io.github.burukeyou.dataframe.iframe.JDFrame;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
+import io.github.burukeyou.dataframe.iframe.function.NullComparator;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -16,7 +17,10 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -258,7 +262,7 @@ public class JDFrameTest {
         // 等价于 order by age asc
         SDFrame.read(studentList).sortAsc(Student::getAge);
         // 使用Comparator 排序
-        SDFrame.read(studentList).sortAsc(Comparator.comparing(e -> e.getLevel() + e.getId()));
+        SDFrame.read(studentList).sortAsc(java.util.Comparator.comparing(e -> e.getLevel() + e.getId()));
 
         // 等价于 select round(score*100,2) from student
         SDFrame<Student> map2 = SDFrame.read(studentList).mapPercent(Student::getScore, Student::setScore,2);
@@ -557,5 +561,20 @@ public class JDFrameTest {
 
         frame.show();
 
+    }
+
+    @Test
+    public void testOper2(){
+        List<UserInfo> us1 = Arrays.asList(new UserInfo("a", 1,"99"), new UserInfo("a", 2,"99"),new UserInfo("a",3,"4"), new UserInfo("b", 4,"77"));
+        List<UserInfo> us2 = Arrays.asList(new UserInfo(null, 5,"99"), new UserInfo("b",6,null), new UserInfo("c", 7,"4"));
+
+        SDFrame<UserInfo> frame1 = SDFrame.read(us1);
+        SDFrame<UserInfo> frame2 = SDFrame.read(us2);
+
+        //frame1.union(frame2, NullComparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+
+        frame1.union(us2, NullComparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+
+        frame1.show();
     }
 }
