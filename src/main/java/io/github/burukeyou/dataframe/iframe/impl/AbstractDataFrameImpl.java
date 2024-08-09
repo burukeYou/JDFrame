@@ -4,6 +4,7 @@ package io.github.burukeyou.dataframe.iframe.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import io.github.burukeyou.dataframe.iframe.IFrame;
+import io.github.burukeyou.dataframe.iframe.function.CompareTwo;
 import io.github.burukeyou.dataframe.iframe.function.ListToOneFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
@@ -750,6 +751,20 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return leftList.stream().filter(set::contains).collect(toList());
     }
 
+    protected <K> List<T> retainAllOtherList(List<T> leftList, Collection<K> rightList, CompareTwo<T,K> comparator){
+        if (ListUtils.isEmpty(rightList)){
+            return Collections.emptyList();
+        }
+        return leftList.stream().filter(e -> {
+            for (K k : rightList) {
+                if (comparator.compare(e,k) == 0){
+                    return true;
+                }
+            }
+            return false;
+        }).collect(toList());
+    }
+
     protected List<T> intersectionList(List<T> leftList, Collection<T> rightList){
         if (ListUtils.isEmpty(leftList) || ListUtils.isEmpty(rightList)){
             return Collections.emptyList();
@@ -791,6 +806,24 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         otherSet.addAll(rightList);
         leftList = leftList.stream().filter(e -> !otherSet.contains(e)).collect(toList());
         return leftList;
+    }
+
+    protected <K> List<T> differentOtherList(List<T> leftList, Collection<K> rightList, CompareTwo<T,K> comparator) {
+        if (ListUtils.isEmpty(leftList)){
+            return leftList;
+        }
+        if (ListUtils.isEmpty(rightList)){
+            return leftList;
+        }
+        return leftList.stream().filter(e -> {
+            // todo optimization get (e,k) compare result
+            for (K k : rightList) {
+                if (comparator.compare(e,k) == 0){
+                    return false;
+                }
+            }
+            return true;
+        }).collect(toList());
     }
 
     protected List<T> subtractList(List<T> leftList, Collection<T> rightList){

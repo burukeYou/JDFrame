@@ -2,6 +2,7 @@ package io.github.burukeyou.dataframe.iframe.impl;
 
 
 import io.github.burukeyou.dataframe.iframe.IFrame;
+import io.github.burukeyou.dataframe.iframe.JDFrame;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.WindowSDFrame;
 import io.github.burukeyou.dataframe.iframe.function.*;
@@ -1130,6 +1131,11 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     public SDFrameImpl<T> retainAll(Collection<T> other, Comparator<T> comparator) {
         return returnDF(retainAllList(viewList(),other,comparator));
     }
+
+    @Override
+    public <K> SDFrame<T> retainAllOther(Collection<K> other, CompareTwo<T, K> comparator) {
+        return returnDF(retainAllOtherList(viewList(),other,comparator));
+    }
     @Override
     public SDFrameImpl<T> intersection(IFrame<T> other) {
         return returnDF(intersectionList(viewList(),other.toLists()));
@@ -1167,6 +1173,11 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     @Override
     public SDFrameImpl<T> different(Collection<T> other, Comparator<T> comparator) {
         return returnDF(differentList(viewList(),other,comparator));
+    }
+
+    @Override
+    public <K> SDFrameImpl<T> differentOther(Collection<K> other, CompareTwo<T, K> comparator) {
+        return returnDF(differentOtherList(viewList(),other,comparator));
     }
 
     @Override

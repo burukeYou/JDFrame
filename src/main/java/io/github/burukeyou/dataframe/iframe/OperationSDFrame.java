@@ -1,6 +1,8 @@
 package io.github.burukeyou.dataframe.iframe;
 
 
+import io.github.burukeyou.dataframe.iframe.function.CompareTwo;
+
 import java.util.Collection;
 import java.util.Comparator;
 
@@ -77,6 +79,12 @@ public interface OperationSDFrame<T> extends OperationIFrame<T> {
      */
     SDFrame<T> retainAll(Collection<T> other,Comparator<T> comparator);
 
+    /**
+     * Retains only the elements in this list that are contained in the specified collection
+     * @return                   other collection
+     * @param comparator         repetitive judgment comparator
+     */
+    <K> SDFrame<T> retainAllOther(Collection<K> other, CompareTwo<T,K> comparator);
 
     /**
      * intersection other frame
@@ -138,6 +146,14 @@ public interface OperationSDFrame<T> extends OperationIFrame<T> {
      * @param comparator         repetitive judgment comparator
      */
     SDFrame<T> different(Collection<T> other,Comparator<T> comparator);
+
+    /**
+     * different other collection
+     *      Elements that are not within the other frame
+     * @return                   other collection
+     * @param comparator         repetitive judgment comparator
+     */
+    <K> SDFrame<T> differentOther(Collection<K> other, CompareTwo<T,K> comparator);
 
     /**
      * subtract other

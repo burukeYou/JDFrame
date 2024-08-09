@@ -4,6 +4,7 @@ import io.github.burukeyou.data.Student;
 import io.github.burukeyou.data.UserInfo;
 import io.github.burukeyou.dataframe.iframe.JDFrame;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
+import io.github.burukeyou.dataframe.iframe.function.CompareTwo;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -581,5 +582,30 @@ public class JDFrameTest {
         SDFrame.read(us1).subtract(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
 
         System.out.println();
+    }
+
+    @Test
+    public void testOper3(){
+        List<UserInfo> us1 = Arrays.asList(new UserInfo("a", 1,"99"), new UserInfo("a",11,"99"),new UserInfo("c",3,"88"), new UserInfo("b", 4,"77"));
+
+        System.out.println("---- retainAllOther-1 -----");
+        SDFrame.read(studentList)
+                .retainAllOther(us1, CompareTwo.on(Student::getName,UserInfo::getKey1))
+                .show();
+
+        System.out.println("---- retainAllOther-2 -----");
+        SDFrame.read(studentList)
+               .retainAllOther(us1, CompareTwo.on(Student::getName,UserInfo::getKey1).thenOn(Student::getAge,UserInfo::getKey2))
+               .show();
+
+        System.out.println("---- differentOther-1 -----");
+        SDFrame.read(studentList)
+                .differentOther(us1, CompareTwo.on(Student::getName,UserInfo::getKey1))
+                .show();
+
+        System.out.println("---- differentOther-2 -----");
+        SDFrame.read(studentList)
+                .differentOther(us1, CompareTwo.on(Student::getName,UserInfo::getKey1).thenOn(Student::getAge,UserInfo::getKey2))
+                .show();
     }
 }

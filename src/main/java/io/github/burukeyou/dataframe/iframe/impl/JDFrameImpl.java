@@ -1124,6 +1124,10 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public <K> JDFrameImpl<T> retainAllOther(Collection<K> other, CompareTwo<T, K> comparator) {
+        return returnDF(retainAllOtherList(viewList(),other,comparator));
+    }
+    @Override
     public JDFrameImpl<T> intersection(IFrame<T> other) {
         return returnDF(intersectionList(viewList(),other.toLists()));
     }
@@ -1161,6 +1165,11 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     @Override
     public JDFrameImpl<T> different(Collection<T> other, Comparator<T> comparator) {
         return returnDF(differentList(viewList(),other,comparator));
+    }
+
+    @Override
+    public <K> JDFrameImpl<T> differentOther(Collection<K> other, CompareTwo<T, K> comparator) {
+        return returnDF(differentOtherList(viewList(),other,comparator));
     }
 
     @Override
