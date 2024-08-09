@@ -1165,8 +1165,42 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrame<T> different(Collection<T> other, Comparator<T> comparator) {
+    public SDFrameImpl<T> different(Collection<T> other, Comparator<T> comparator) {
         return returnDF(differentList(viewList(),other,comparator));
+    }
+
+    @Override
+    public SDFrameImpl<T> subtract(IFrame<T> other) {
+        List<T> ts = other.toLists();
+        if (ListUtils.isEmpty(ts)){
+            return this;
+        }
+        return returnDF(subtractList(viewList(),ts));
+    }
+
+    @Override
+    public SDFrameImpl<T> subtract(Collection<T> other) {
+        if (ListUtils.isEmpty(other)){
+            return this;
+        }
+        return returnDF(subtractList(viewList(),other));
+    }
+
+    @Override
+    public SDFrameImpl<T> subtract(IFrame<T> other, Comparator<T> comparator) {
+        List<T> ts = other.toLists();
+        if (ListUtils.isEmpty(ts)){
+            return this;
+        }
+        return returnDF(subtractList(viewList(),ts,comparator));
+    }
+
+    @Override
+    public SDFrameImpl<T> subtract(Collection<T> other, Comparator<T> comparator) {
+        if (ListUtils.isEmpty(other)){
+            return this;
+        }
+        return returnDF(subtractList(viewList(),other,comparator));
     }
 
     @Override

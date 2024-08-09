@@ -555,6 +555,9 @@ public class JDFrameTest {
         System.out.println("----- 差集------");
         frame.different(frame2).show();
 
+        System.out.println("------- 减去 -----");
+        frame.subtract(frame2).show();
+
         frame.show();
 
     }
@@ -578,6 +581,10 @@ public class JDFrameTest {
 
         System.out.println("------- 差集 -----");
         frame1.different(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+
+        System.out.println("------- 减去 -----");
+        frame1.subtract(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+
 
         System.out.println();
     }

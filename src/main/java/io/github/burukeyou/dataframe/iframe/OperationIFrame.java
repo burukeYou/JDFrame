@@ -139,4 +139,30 @@ public interface OperationIFrame<T> {
      * @param comparator         repetitive judgment comparator
      */
     IFrame<T> different(Collection<T> other,Comparator<T> comparator);
+
+    /**
+     * subtract other
+     * @return           other
+     */
+    IFrame<T> subtract(IFrame<T> other);
+
+    /**
+     * subtract other
+     * @return           other
+     */
+    IFrame<T> subtract(Collection<T> other);
+
+    /**
+     * subtract other
+     * @return                   other
+     * @param comparator         repetitive judgment comparator
+     */
+    IFrame<T> subtract(IFrame<T> other,Comparator<T> comparator);
+
+    /**
+     * subtract other
+     * @return                   other
+     * @param comparator         repetitive judgment comparator
+     */
+    IFrame<T> subtract(Collection<T> other,Comparator<T> comparator);
 }

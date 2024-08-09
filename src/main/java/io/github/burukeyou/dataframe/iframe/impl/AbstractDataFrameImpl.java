@@ -793,6 +793,34 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return leftList;
     }
 
+    protected List<T> subtractList(List<T> leftList, Collection<T> rightList){
+        if (ListUtils.isEmpty(rightList)){
+            return leftList;
+        }
+        LinkedList<T> result = new LinkedList<>(leftList);
+        for (T t : rightList) {
+            result.remove(t);
+        }
+        return result;
+    }
+
+    protected List<T> subtractList(List<T> leftList, Collection<T> rightList, Comparator<T> comparator){
+        if (ListUtils.isEmpty(rightList)){
+            return leftList;
+        }
+        LinkedList<T> result = new LinkedList<>(leftList);
+        for (T t : rightList) {
+            final Iterator<T> each = result.iterator();
+            while (each.hasNext()) {
+                if (comparator.compare(each.next(),t) == 0) {
+                    each.remove();
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
 
     protected static <T, C> List<T> replenish(List<T> itemDTOList,
                                               Function<T, C> collectDim,

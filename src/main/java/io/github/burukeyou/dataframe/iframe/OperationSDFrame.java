@@ -138,4 +138,30 @@ public interface OperationSDFrame<T> extends OperationIFrame<T> {
      * @param comparator         repetitive judgment comparator
      */
     SDFrame<T> different(Collection<T> other,Comparator<T> comparator);
+
+    /**
+     * subtract other
+     * @return           other
+     */
+    SDFrame<T> subtract(IFrame<T> other);
+
+    /**
+     * subtract other
+     * @return           other
+     */
+    SDFrame<T> subtract(Collection<T> other);
+
+    /**
+     * subtract other
+     * @return                   other
+     * @param comparator         repetitive judgment comparator
+     */
+    SDFrame<T> subtract(IFrame<T> other,Comparator<T> comparator);
+
+    /**
+     * subtract other
+     * @return                   other
+     * @param comparator         repetitive judgment comparator
+     */
+    SDFrame<T> subtract(Collection<T> other,Comparator<T> comparator);
 }

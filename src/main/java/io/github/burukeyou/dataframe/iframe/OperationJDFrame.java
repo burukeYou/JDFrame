@@ -136,4 +136,30 @@ public interface OperationJDFrame<T>  extends OperationIFrame<T> {
      * @param comparator         repetitive judgment comparator
      */
     JDFrame<T> different(Collection<T> other,Comparator<T> comparator);
+
+    /**
+     * subtract other
+     * @return           other
+     */
+    JDFrame<T> subtract(IFrame<T> other);
+
+    /**
+     * subtract other
+     * @return           other
+     */
+    JDFrame<T> subtract(Collection<T> other);
+
+    /**
+     * subtract other
+     * @return                   other
+     * @param comparator         repetitive judgment comparator
+     */
+    JDFrame<T> subtract(IFrame<T> other,Comparator<T> comparator);
+
+    /**
+     * subtract other
+     * @return                   other
+     * @param comparator         repetitive judgment comparator
+     */
+    JDFrame<T> subtract(Collection<T> other,Comparator<T> comparator);
 }

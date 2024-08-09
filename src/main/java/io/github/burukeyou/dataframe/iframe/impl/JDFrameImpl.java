@@ -11,10 +11,7 @@ import io.github.burukeyou.dataframe.iframe.item.FI4;
 import io.github.burukeyou.dataframe.iframe.support.*;
 import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import io.github.burukeyou.dataframe.iframe.window.Window;
-import io.github.burukeyou.dataframe.util.CollectorsPlusUtil;
-import io.github.burukeyou.dataframe.util.FrameUtil;
-import io.github.burukeyou.dataframe.util.MathUtils;
-import io.github.burukeyou.dataframe.util.PartitionList;
+import io.github.burukeyou.dataframe.util.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1162,9 +1159,45 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrame<T> different(Collection<T> other, Comparator<T> comparator) {
+    public JDFrameImpl<T> different(Collection<T> other, Comparator<T> comparator) {
         return returnDF(differentList(viewList(),other,comparator));
     }
+
+    @Override
+    public JDFrameImpl<T> subtract(IFrame<T> other) {
+        List<T> ts = other.toLists();
+        if (ListUtils.isEmpty(ts)){
+            return this;
+        }
+        return returnDF(subtractList(viewList(),ts));
+    }
+
+    @Override
+    public JDFrameImpl<T> subtract(Collection<T> other) {
+        if (ListUtils.isEmpty(other)){
+            return this;
+        }
+        return returnDF(subtractList(viewList(),other));
+    }
+
+
+    @Override
+    public JDFrameImpl<T> subtract(IFrame<T> other, Comparator<T> comparator) {
+        List<T> ts = other.toLists();
+        if (ListUtils.isEmpty(ts)){
+            return this;
+        }
+        return returnDF(subtractList(viewList(),ts,comparator));
+    }
+
+    @Override
+    public JDFrameImpl<T> subtract(Collection<T> other, Comparator<T> comparator) {
+        if (ListUtils.isEmpty(other)){
+            return this;
+        }
+        return returnDF(subtractList(viewList(),other,comparator));
+    }
+
 
     /**  ============================== Other =============== */
     @Override
