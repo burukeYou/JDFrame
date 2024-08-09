@@ -534,31 +534,27 @@ public class JDFrameTest {
         List<UserInfo> us1 = Arrays.asList(new UserInfo("a", 99), new UserInfo("a", 99),new UserInfo("a", 4), new UserInfo("b", 4));
         List<UserInfo> us2 = Arrays.asList(new UserInfo("a", 99), new UserInfo("b", 4), new UserInfo("c", 4));
 
-        SDFrame<UserInfo> frame = SDFrame.read(us1);
         SDFrame<UserInfo> frame2 = SDFrame.read(us2);
 
         System.out.println("----- 并集(不去重)------");
-        frame.unionAll(frame2).show();
-
-        frame.show();
+        SDFrame.read(us1).unionAll(frame2).show();
 
         System.out.println("----- 并集(去重)------");
-        frame.union(frame2).show();
-
+        SDFrame.read(us1).union(frame2).show();
 
         System.out.println("----- 交集------");
-        frame.intersection(frame2).show();
+        SDFrame.read(us1).intersection(frame2).show();
 
         System.out.println("----- retainAll------");
-        frame.retainAll(frame2).show();
+        SDFrame.read(us1).retainAll(frame2).show();
 
         System.out.println("----- 差集------");
-        frame.different(frame2).show();
+        SDFrame.read(us1).different(frame2).show();
 
         System.out.println("------- 减去 -----");
-        frame.subtract(frame2).show();
+        SDFrame.read(us1).subtract(frame2).show();
 
-        frame.show();
+        SDFrame.read(us1).show();
 
     }
 
@@ -567,24 +563,22 @@ public class JDFrameTest {
         List<UserInfo> us1 = Arrays.asList(new UserInfo("a", 1,"99"), new UserInfo("a", 2,"99"),new UserInfo("c",3,"88"), new UserInfo("b", 4,"77"));
         List<UserInfo> us2 = Arrays.asList(new UserInfo("a", 5,"99"), new UserInfo("b",6,"77"), new UserInfo("c", 7,"4"));
 
-        SDFrame<UserInfo> frame1 = SDFrame.read(us1);
         SDFrame<UserInfo> frame2 = SDFrame.read(us2);
 
         System.out.println("------- 并集 -----");
-        frame1.union(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+        SDFrame.read(us1).union(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
 
         System.out.println("------- 交集 -----");
-        frame1.intersection(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+        SDFrame.read(us1).intersection(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
 
         System.out.println("------- retainAll -----");
-        frame1.retainAll(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+        SDFrame.read(us1).retainAll(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
 
         System.out.println("------- 差集 -----");
-        frame1.different(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
+        SDFrame.read(us1).different(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
 
         System.out.println("------- 减去 -----");
-        frame1.subtract(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
-
+        SDFrame.read(us1).subtract(frame2, Comparator.comparing(UserInfo::getKey1).thenComparing(UserInfo::getKey3)).show();
 
         System.out.println();
     }
