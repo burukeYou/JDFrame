@@ -112,6 +112,14 @@ public interface OperationSDFrame<T> extends OperationIFrame<T> {
      * different other frame
      *      Elements that are not within the other frame
      * @return           other frame
+     */
+    SDFrame<T> different(IFrame<T> other);
+
+
+    /**
+     * different other frame
+     *      Elements that are not within the other frame
+     * @return           other frame
      * @param comparator         repetitive judgment comparator
      */
     SDFrame<T> different(IFrame<T> other,Comparator<T> comparator);

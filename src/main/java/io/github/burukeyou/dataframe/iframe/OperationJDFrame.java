@@ -110,6 +110,13 @@ public interface OperationJDFrame<T>  extends OperationIFrame<T> {
      * different other frame
      *      Elements that are not within the other frame
      * @return           other frame
+     */
+    JDFrame<T> different(IFrame<T> other);
+
+    /**
+     * different other frame
+     *      Elements that are not within the other frame
+     * @return           other frame
      * @param comparator         repetitive judgment comparator
      */
     JDFrame<T> different(IFrame<T> other,Comparator<T> comparator);
