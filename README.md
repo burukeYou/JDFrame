@@ -167,8 +167,12 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - unionAll 取并集(不去重)
 - union    取并集(去重)
 - retainAll        保留集合A中在集合B存在的元素
+- retainAllOther()                   等价于 retainAll ，区别是支持不同集合间的保留
 - intersection     取交集
 - different        取差集
+- differentOther()                    不同集合间求差集
+- subtract()                               集合相减
+
 
 ==== 连接 == ======
 
