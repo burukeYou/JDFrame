@@ -1207,6 +1207,8 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     /**
      * If the operation is on its own data, it can be return this
      * But in the end, it cannot be controlled. It is recommended to reread
+     *
+     * If it needs to affect the current frame, it should be used, otherwise it should not be used
      */
     protected SDFrameImpl<T> returnThis(Stream<T> stream) {
         this.data = stream;
