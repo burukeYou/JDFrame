@@ -30,7 +30,7 @@ https://central.sonatype.com/artifact/io.github.burukeyou/jdframe/versions
 <dependency>
     <groupId>io.github.burukeyou</groupId>
     <artifactId>jdframe</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
 </dependency>
 ```
 
@@ -142,6 +142,7 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - groupByMinValue()    -分组求最小值
 - groupByMaxMinValue()   -分组求最大值和最小值
 - groupByMaxMin()    -分组求最大对象和最小对象
+- groupByCustom()    -分组自定义求值
 
 ==== 窗口函数 ====  
 - window()   -打开窗口函数
