@@ -383,7 +383,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> distinct(Function<T, R> function, ListToOneFunction<T> listOneFunction) {
+    public <R extends Comparable<R>> JDFrame<T> distinct(Function<T, R> function, ListSelectOneFunction<T> listOneFunction) {
         return distinct(java.util.Comparator.comparing(function),listOneFunction);
     }
 
@@ -394,7 +394,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrameImpl<T> distinct(java.util.Comparator<T> comparator, ListToOneFunction<T> function) {
+    public JDFrameImpl<T> distinct(java.util.Comparator<T> comparator, ListSelectOneFunction<T> function) {
         return returnDF(distinctList(viewList(),comparator,function));
     }
 
@@ -576,12 +576,34 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
 
     /** ===========================   分组相关  ===================================== **/
-
     @Override
     public <K> JDFrameImpl<FI2<K, List<T>>> group(Function<? super T, ? extends K> key) {
-        return returnDF(groupKey(key));
+        return returnDF(groupListKey(key));
     }
 
+    @Override
+    public <K, V> JDFrameImpl<FI2<K, V>> groupByCustom(Function<T, K> key, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,function));
+    }
+
+    @Override
+    public <K, J> JDFrameImpl<FI3<K, J, List<T>>> group(Function<T, K> key, Function<T, J> key2) {
+        return returnDF(groupListKey(key,key2));
+    }
+
+    @Override
+    public <K, J, V> JDFrameImpl<FI3<K, J, V>> groupByCustom(Function<T, K> key, Function<T, J> key2, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,key2,function));
+    }
+    @Override
+    public <K, J, H> JDFrameImpl<FI4<K, J, H, List<T>>> group(Function<T, K> key, Function<T, J> key2, Function<T, H> key3) {
+        return returnDF(groupListKey(key,key2,key3));
+    }
+
+    @Override
+    public <K, J, H, V> JDFrameImpl<FI4<K, J, H, V>> groupByCustom(Function<T, K> key, Function<T, J> key2, Function<T, H> key3, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,key2,key3,function));
+    }
     @Override
     public <K,R extends Number> JDFrameImpl<FI2<K, BigDecimal>> groupBySum(Function<T, K> key,
                                                                            NumberFunction<T,R> value) {

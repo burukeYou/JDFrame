@@ -1,7 +1,7 @@
 package io.github.burukeyou.dataframe.iframe;
 
 import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
-import io.github.burukeyou.dataframe.iframe.function.ListToOneFunction;
+import io.github.burukeyou.dataframe.iframe.function.ListSelectOneFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.impl.SDFrameImpl;
@@ -404,7 +404,7 @@ public interface SDFrame<T> extends ConfigurableSDFrame<T> {
      * @param listOneFunction          When there are more than one repeated element, this method will be called back, and customization will determine which element to choose
      * @param <R>               field value type
      */
-    <R extends Comparable<R>> SDFrame<T> distinct(Function<T, R> function, ListToOneFunction<T> listOneFunction);
+    <R extends Comparable<R>> SDFrame<T> distinct(Function<T, R> function, ListSelectOneFunction<T> listOneFunction);
 
 
     /**
@@ -418,7 +418,7 @@ public interface SDFrame<T> extends ConfigurableSDFrame<T> {
      * @param comparator        the comparator
      * @param function          When there are more than one repeated element, this method will be called back, and customization will determine which element to choose
      */
-    SDFrame<T> distinct(Comparator<T> comparator, ListToOneFunction<T> function);
+    SDFrame<T> distinct(Comparator<T> comparator, ListSelectOneFunction<T> function);
 
 
 

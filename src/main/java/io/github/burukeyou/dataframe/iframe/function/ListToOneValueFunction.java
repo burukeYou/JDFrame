@@ -7,10 +7,10 @@ import java.util.List;
  * @param <T>
  */
 @FunctionalInterface
-public interface ListToOneFunction<T> {
+public interface ListToOneValueFunction<T,V> {
 
     /**
-     * Select one from the list
+     * list to one value
      */
-    T apply(List<T> elements);
+    V apply(List<T> elements);
 }

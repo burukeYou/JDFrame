@@ -1,5 +1,6 @@
 package io.github.burukeyou.dataframe.iframe;
 
+import io.github.burukeyou.dataframe.iframe.function.ListToOneValueFunction;
 import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
@@ -17,14 +18,57 @@ public interface GroupIFrame<T> {
      * Group list
      * @param key        group field
      */
-    <K> IFrame<FI2<K, List<T>>> group(Function<? super T, ? extends K> key);
+    <K> IFrame<FI2<K,List<T>>> group(Function<? super T, ? extends K> key);
+
+
+    /**
+     * Group list
+     * @param key        group field
+     * @param key2       secondary level group field
+     */
+    <K,J> IFrame<FI3<K,J,List<T>>> group(Function<T, K> key,Function<T,J> key2);
+
+
+
+    /**
+     * Group list
+     * @param key        group field
+     * @param key2       secondary level group field
+     * @param key3       third level group field
+     */
+    <K,J,H> IFrame<FI4<K,J,H,List<T>>> group(Function<T, K> key,Function<T,J> key2,Function<T,H> key3);
+
+    /**
+     * Group list
+     * @param key               group field
+     * @param function          group list to one value function
+     */
+    <K,V> IFrame<FI2<K,V>> groupByCustom(Function<T,K> key, ListToOneValueFunction<T,V> function);
+
+    /**
+     * Group list
+     * @param key               group field
+     * @param key2              secondary level group field
+     * @param function          group list to one value function
+     */
+    <K,J,V> IFrame<FI3<K,J,V>> groupByCustom(Function<T, K> key, Function<T,J> key2, ListToOneValueFunction<T,V> function);
+
+    /**
+     * Group list
+     * @param key               group field
+     * @param key2              secondary level group field
+     * @param key3              third level group field
+     * @param function          group list to one value function
+     */
+    <K,J,H,V> IFrame<FI4<K,J,H,V>> groupByCustom(Function<T, K> key, Function<T,J> key2, Function<T,H> key3, ListToOneValueFunction<T,V> function);
+
 
     /**
      * Group summation
      * @param key       group field
      * @param value     Aggregated field
      */
-    <K,R extends Number> IFrame<FI2<K, BigDecimal>> groupBySum(Function<T, K> key, NumberFunction<T,R> value);
+    <K,R extends Number> IFrame<FI2<K,BigDecimal>> groupBySum(Function<T, K> key, NumberFunction<T,R> value);
 
     /**
      * Group summation
@@ -32,7 +76,7 @@ public interface GroupIFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K, J,R extends Number> IFrame<FI3<K, J, BigDecimal>> groupBySum(Function<T, K> key, Function<T, J> key2, NumberFunction<T,R> value);
+    <K, J,R extends Number> IFrame<FI3<K,J,BigDecimal>> groupBySum(Function<T, K> key, Function<T, J> key2, NumberFunction<T,R> value);
 
     /**
      * Group summation

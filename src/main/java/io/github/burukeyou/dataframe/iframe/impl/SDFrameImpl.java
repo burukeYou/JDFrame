@@ -2,7 +2,6 @@ package io.github.burukeyou.dataframe.iframe.impl;
 
 
 import io.github.burukeyou.dataframe.iframe.IFrame;
-import io.github.burukeyou.dataframe.iframe.JDFrame;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.WindowSDFrame;
 import io.github.burukeyou.dataframe.iframe.function.*;
@@ -391,7 +390,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrameImpl<T> distinct(Function<T, R> function, ListToOneFunction<T> listOneFunction) {
+    public <R extends Comparable<R>> SDFrameImpl<T> distinct(Function<T, R> function, ListSelectOneFunction<T> listOneFunction) {
         return distinct(java.util.Comparator.comparing(function),listOneFunction);
     }
 
@@ -402,7 +401,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrameImpl<T> distinct(java.util.Comparator<T> comparator, ListToOneFunction<T> function) {
+    public SDFrameImpl<T> distinct(java.util.Comparator<T> comparator, ListSelectOneFunction<T> function) {
         return returnThis(distinctList(viewList(),comparator,function));
     }
 
@@ -591,9 +590,34 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <K> SDFrameImpl<FI2<K, List<T>>> group(Function<? super T, ? extends K> key) {
-        return returnDF(groupKey(key));
+        return returnDF(groupListKey(key));
     }
 
+    @Override
+    public <K, V> SDFrameImpl<FI2<K, V>> groupByCustom(Function<T, K> key, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,function));
+    }
+
+    @Override
+    public <K, J> SDFrameImpl<FI3<K, J, List<T>>> group(Function<T, K> key, Function<T, J> key2) {
+        return returnDF(groupListKey(key,key2));
+    }
+
+
+    @Override
+    public <K, J, V> SDFrame<FI3<K, J, V>> groupByCustom(Function<T, K> key, Function<T, J> key2, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,key2,function));
+    }
+
+    @Override
+    public <K, J, H> SDFrameImpl<FI4<K, J, H, List<T>>> group(Function<T, K> key, Function<T, J> key2, Function<T, H> key3) {
+        return returnDF(groupListKey(key,key2,key3));
+    }
+
+    @Override
+    public <K, J, H, V> SDFrameImpl<FI4<K, J, H, V>> groupByCustom(Function<T, K> key, Function<T, J> key2, Function<T, H> key3, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,key2,key3,function));
+    }
 
     @Override
     public <K,R extends Number> SDFrameImpl<FI2<K, BigDecimal>> groupBySum(Function<T, K> key, NumberFunction<T,R> value) {

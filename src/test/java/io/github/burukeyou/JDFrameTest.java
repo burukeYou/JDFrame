@@ -247,6 +247,11 @@ public class JDFrameTest {
         List<FI4<String, String, String, BigDecimal>> a9 = frame.groupBySum(Student::getSchool, Student::getLevel, Student::getName, Student::getAge).toLists();
 
 
+        //
+        SDFrame.read(studentList).groupByCustom(Student::getName,(list) -> SDFrame.read(list).maxValue(Student::getAge)).show();
+
+        SDFrame.read(studentList).groupByCustom(Student::getName,Student::getSchool,(list) -> SDFrame.read(list).joining(Student::getId,",")).show();
+
         System.out.println();
     }
 
