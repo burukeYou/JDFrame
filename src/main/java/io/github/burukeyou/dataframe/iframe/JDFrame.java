@@ -1,7 +1,7 @@
 package io.github.burukeyou.dataframe.iframe;
 
 import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
-import io.github.burukeyou.dataframe.iframe.function.ListToOneFunction;
+import io.github.burukeyou.dataframe.iframe.function.ListSelectOneFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.impl.JDFrameImpl;
@@ -396,7 +396,7 @@ public interface JDFrame<T> extends ConfigurableJDFrame<T> {
      * @param listOneFunction          When there are more than one repeated element, this method will be called back, and customization will determine which element to choose
      * @param <R>               field value type
      */
-    <R extends Comparable<R>> JDFrame<T> distinct(Function<T, R> function, ListToOneFunction<T> listOneFunction);
+    <R extends Comparable<R>> JDFrame<T> distinct(Function<T, R> function, ListSelectOneFunction<T> listOneFunction);
 
 
     /**
@@ -410,7 +410,7 @@ public interface JDFrame<T> extends ConfigurableJDFrame<T> {
      * @param comparator        the comparator
      * @param function          When there are more than one repeated element, this method will be called back, and customization will determine which element to choose
      */
-    JDFrame<T> distinct(Comparator<T> comparator, ListToOneFunction<T> function);
+    JDFrame<T> distinct(Comparator<T> comparator, ListSelectOneFunction<T> function);
 
 
     /** ===========================   Window Function  ===================================== **/

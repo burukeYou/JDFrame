@@ -7,7 +7,7 @@ import java.util.List;
  * @param <T>
  */
 @FunctionalInterface
-public interface ListToOneFunction<T> {
+public interface ListSelectOneFunction<T> {
 
     /**
      * Select one from the list

@@ -383,7 +383,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <R extends Comparable<R>> JDFrame<T> distinct(Function<T, R> function, ListToOneFunction<T> listOneFunction) {
+    public <R extends Comparable<R>> JDFrame<T> distinct(Function<T, R> function, ListSelectOneFunction<T> listOneFunction) {
         return distinct(java.util.Comparator.comparing(function),listOneFunction);
     }
 
@@ -394,7 +394,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrameImpl<T> distinct(java.util.Comparator<T> comparator, ListToOneFunction<T> function) {
+    public JDFrameImpl<T> distinct(java.util.Comparator<T> comparator, ListSelectOneFunction<T> function) {
         return returnDF(distinctList(viewList(),comparator,function));
     }
 

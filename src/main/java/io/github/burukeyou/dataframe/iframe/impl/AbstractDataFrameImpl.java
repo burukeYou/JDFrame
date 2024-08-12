@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import io.github.burukeyou.dataframe.iframe.IFrame;
 import io.github.burukeyou.dataframe.iframe.function.CompareTwo;
-import io.github.burukeyou.dataframe.iframe.function.ListToOneFunction;
+import io.github.burukeyou.dataframe.iframe.function.ListSelectOneFunction;
 import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
 import io.github.burukeyou.dataframe.iframe.function.SetFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
@@ -524,7 +524,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
 
 
-    protected List<T> distinctList(List<T> dataList, java.util.Comparator<T> comparator, ListToOneFunction<T> function){
+    protected List<T> distinctList(List<T> dataList, java.util.Comparator<T> comparator, ListSelectOneFunction<T> function){
         if (ListUtils.isEmpty(dataList) || dataList.size() == 1){
             return dataList;
         }

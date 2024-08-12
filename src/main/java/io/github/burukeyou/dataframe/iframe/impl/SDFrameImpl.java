@@ -390,7 +390,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <R extends Comparable<R>> SDFrameImpl<T> distinct(Function<T, R> function, ListToOneFunction<T> listOneFunction) {
+    public <R extends Comparable<R>> SDFrameImpl<T> distinct(Function<T, R> function, ListSelectOneFunction<T> listOneFunction) {
         return distinct(java.util.Comparator.comparing(function),listOneFunction);
     }
 
@@ -401,7 +401,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrameImpl<T> distinct(java.util.Comparator<T> comparator, ListToOneFunction<T> function) {
+    public SDFrameImpl<T> distinct(java.util.Comparator<T> comparator, ListSelectOneFunction<T> function) {
         return returnThis(distinctList(viewList(),comparator,function));
     }
 
