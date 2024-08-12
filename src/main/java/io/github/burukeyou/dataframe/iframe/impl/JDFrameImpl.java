@@ -582,13 +582,27 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public <K, V> JDFrameImpl<FI2<K, V>> groupByCustom(Function<T, K> key, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,function));
+    }
+
+    @Override
     public <K, J> JDFrameImpl<FI3<K, J, List<T>>> group(Function<T, K> key, Function<T, J> key2) {
         return returnDF(groupListKey(key,key2));
     }
 
     @Override
+    public <K, J, V> JDFrameImpl<FI3<K, J, V>> groupByCustom(Function<T, K> key, Function<T, J> key2, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,key2,function));
+    }
+    @Override
     public <K, J, H> JDFrameImpl<FI4<K, J, H, List<T>>> group(Function<T, K> key, Function<T, J> key2, Function<T, H> key3) {
         return returnDF(groupListKey(key,key2,key3));
+    }
+
+    @Override
+    public <K, J, H, V> JDFrameImpl<FI4<K, J, H, V>> groupByCustom(Function<T, K> key, Function<T, J> key2, Function<T, H> key3, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,key2,key3,function));
     }
     @Override
     public <K,R extends Number> JDFrameImpl<FI2<K, BigDecimal>> groupBySum(Function<T, K> key,

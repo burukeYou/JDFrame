@@ -594,13 +594,29 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public <K, V> SDFrameImpl<FI2<K, V>> groupByCustom(Function<T, K> key, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,function));
+    }
+
+    @Override
     public <K, J> SDFrameImpl<FI3<K, J, List<T>>> group(Function<T, K> key, Function<T, J> key2) {
         return returnDF(groupListKey(key,key2));
+    }
+
+
+    @Override
+    public <K, J, V> SDFrame<FI3<K, J, V>> groupByCustom(Function<T, K> key, Function<T, J> key2, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,key2,function));
     }
 
     @Override
     public <K, J, H> SDFrameImpl<FI4<K, J, H, List<T>>> group(Function<T, K> key, Function<T, J> key2, Function<T, H> key3) {
         return returnDF(groupListKey(key,key2,key3));
+    }
+
+    @Override
+    public <K, J, H, V> SDFrameImpl<FI4<K, J, H, V>> groupByCustom(Function<T, K> key, Function<T, J> key2, Function<T, H> key3, ListToOneValueFunction<T, V> function) {
+        return returnDF(groupListKey(key,key2,key3,function));
     }
 
     @Override

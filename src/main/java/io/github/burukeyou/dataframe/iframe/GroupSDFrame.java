@@ -1,5 +1,6 @@
 package io.github.burukeyou.dataframe.iframe;
 
+import io.github.burukeyou.dataframe.iframe.function.ListToOneValueFunction;
 import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
@@ -22,6 +23,7 @@ public interface GroupSDFrame<T>  extends GroupIFrame<T> {
      */
     <K> SDFrame<FI2<K, List<T>>> group(Function<? super T, ? extends K> key);
 
+
     /**
      * Group list
      * @param key        group field
@@ -34,9 +36,35 @@ public interface GroupSDFrame<T>  extends GroupIFrame<T> {
      * Group list
      * @param key        group field
      * @param key2       secondary level group field
-     * @param key3      third level group field
+     * @param key3       third level group field
      */
-    <K,J,H> SDFrame<FI4<K, J,H,List<T>>> group(Function<T, K> key,Function<T,J> key2,Function<T,H> key3);
+    <K,J,H> SDFrame<FI4<K,J,H,List<T>>> group(Function<T, K> key,Function<T,J> key2,Function<T,H> key3);
+
+    /**
+     * Group list
+     * @param key               group field
+     * @param function          group list to one value function
+     */
+    <K,V> SDFrame<FI2<K, V>> groupByCustom(Function<T, K> key, ListToOneValueFunction<T,V> function);
+
+
+    /**
+     * Group list
+     * @param key               group field
+     * @param key2              secondary level group field
+     * @param function          group list to one value function
+     */
+    <K,J,V> SDFrame<FI3<K,J,V>> groupByCustom(Function<T, K> key, Function<T,J> key2, ListToOneValueFunction<T,V> function);
+
+
+    /**
+     * Group list
+     * @param key               group field
+     * @param key2              secondary level group field
+     * @param key3              third level group field
+     * @param function          group list to one value function
+     */
+    <K,J,H,V> SDFrame<FI4<K,J,H,V>> groupByCustom(Function<T, K> key, Function<T,J> key2, Function<T,H> key3, ListToOneValueFunction<T,V> function);
 
 
     /**

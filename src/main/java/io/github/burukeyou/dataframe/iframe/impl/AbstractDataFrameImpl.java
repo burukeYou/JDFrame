@@ -4,10 +4,7 @@ package io.github.burukeyou.dataframe.iframe.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import io.github.burukeyou.dataframe.iframe.IFrame;
-import io.github.burukeyou.dataframe.iframe.function.CompareTwo;
-import io.github.burukeyou.dataframe.iframe.function.ListSelectOneFunction;
-import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
-import io.github.burukeyou.dataframe.iframe.function.SetFunction;
+import io.github.burukeyou.dataframe.iframe.function.*;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -383,12 +380,24 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return FrameUtil.toListFI2(stream().collect(groupingBy(key)));
     }
 
+    protected  <K,V> List<FI2<K, V>> groupListKey(Function<T,K> key, ListToOneValueFunction<T,V> function) {
+        return groupListKey(key).stream().map(e -> new FI2<>(e.getC1(), function.apply(e.getC2()))).collect(toList());
+    }
+
     protected  <K,J> List<FI3<K, J,List<T>>> groupListKey(Function<T,K> key,Function<T, J> key2) {
         return FrameUtil.toListFI3(stream().collect(groupingBy(key, groupingBy(key2))));
     }
 
+    protected  <K,J,V> List<FI3<K,J,V>> groupListKey(Function<T,K> key,Function<T, J> key2,ListToOneValueFunction<T,V> function) {
+        return groupListKey(key,key2).stream().map(e -> new FI3<>(e.getC1(), e.getC2(),function.apply(e.getC3()))).collect(toList());
+    }
+
     protected  <K,J,H> List<FI4<K, J,H,List<T>>> groupListKey(Function<T,K> key,Function<T, J> key2,Function<T, H> key3) {
         return FrameUtil.toListFI4(stream().collect(groupingBy(key, groupingBy(key2,groupingBy(key3)))));
+    }
+
+    protected  <K,J,H,V> List<FI4<K, J,H,V>> groupListKey(Function<T,K> key,Function<T, J> key2,Function<T, H> key3,ListToOneValueFunction<T,V> function) {
+        return groupListKey(key,key2,key3).stream().map(e -> new FI4<>(e.getC1(), e.getC2(),e.getC3(),function.apply(e.getC4()))).collect(toList());
     }
 
     /**
