@@ -379,8 +379,16 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return count() > 0;
     }
 
-    protected  <K> List<FI2<K, List<T>>> groupKey(Function<? super T, ? extends K> K) {
-        return FrameUtil.toListFI2(stream().collect(groupingBy(K)));
+    protected  <K> List<FI2<K, List<T>>> groupListKey(Function<? super T, ? extends K> key) {
+        return FrameUtil.toListFI2(stream().collect(groupingBy(key)));
+    }
+
+    protected  <K,J> List<FI3<K, J,List<T>>> groupListKey(Function<T,K> key,Function<T, J> key2) {
+        return FrameUtil.toListFI3(stream().collect(groupingBy(key, groupingBy(key2))));
+    }
+
+    protected  <K,J,H> List<FI4<K, J,H,List<T>>> groupListKey(Function<T,K> key,Function<T, J> key2,Function<T, H> key3) {
+        return FrameUtil.toListFI4(stream().collect(groupingBy(key, groupingBy(key2,groupingBy(key3)))));
     }
 
     /**

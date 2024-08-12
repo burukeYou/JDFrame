@@ -2,7 +2,6 @@ package io.github.burukeyou.dataframe.iframe.impl;
 
 
 import io.github.burukeyou.dataframe.iframe.IFrame;
-import io.github.burukeyou.dataframe.iframe.JDFrame;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.WindowSDFrame;
 import io.github.burukeyou.dataframe.iframe.function.*;
@@ -591,9 +590,18 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <K> SDFrameImpl<FI2<K, List<T>>> group(Function<? super T, ? extends K> key) {
-        return returnDF(groupKey(key));
+        return returnDF(groupListKey(key));
     }
 
+    @Override
+    public <K, J> SDFrameImpl<FI3<K, J, List<T>>> group(Function<T, K> key, Function<T, J> key2) {
+        return returnDF(groupListKey(key,key2));
+    }
+
+    @Override
+    public <K, J, H> SDFrameImpl<FI4<K, J, H, List<T>>> group(Function<T, K> key, Function<T, J> key2, Function<T, H> key3) {
+        return returnDF(groupListKey(key,key2,key3));
+    }
 
     @Override
     public <K,R extends Number> SDFrameImpl<FI2<K, BigDecimal>> groupBySum(Function<T, K> key, NumberFunction<T,R> value) {

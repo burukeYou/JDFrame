@@ -576,12 +576,20 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
 
     /** ===========================   分组相关  ===================================== **/
-
     @Override
     public <K> JDFrameImpl<FI2<K, List<T>>> group(Function<? super T, ? extends K> key) {
-        return returnDF(groupKey(key));
+        return returnDF(groupListKey(key));
     }
 
+    @Override
+    public <K, J> JDFrameImpl<FI3<K, J, List<T>>> group(Function<T, K> key, Function<T, J> key2) {
+        return returnDF(groupListKey(key,key2));
+    }
+
+    @Override
+    public <K, J, H> JDFrameImpl<FI4<K, J, H, List<T>>> group(Function<T, K> key, Function<T, J> key2, Function<T, H> key3) {
+        return returnDF(groupListKey(key,key2,key3));
+    }
     @Override
     public <K,R extends Number> JDFrameImpl<FI2<K, BigDecimal>> groupBySum(Function<T, K> key,
                                                                            NumberFunction<T,R> value) {

@@ -23,6 +23,23 @@ public interface GroupSDFrame<T>  extends GroupIFrame<T> {
     <K> SDFrame<FI2<K, List<T>>> group(Function<? super T, ? extends K> key);
 
     /**
+     * Group list
+     * @param key        group field
+     * @param key2       secondary level group field
+     */
+    <K,J> SDFrame<FI3<K, J,List<T>>> group(Function<T, K> key,Function<T,J> key2);
+
+
+    /**
+     * Group list
+     * @param key        group field
+     * @param key2       secondary level group field
+     * @param key3      third level group field
+     */
+    <K,J,H> SDFrame<FI4<K, J,H,List<T>>> group(Function<T, K> key,Function<T,J> key2,Function<T,H> key3);
+
+
+    /**
      * Group summation
      * @param key       group field
      * @param value     Aggregated field
