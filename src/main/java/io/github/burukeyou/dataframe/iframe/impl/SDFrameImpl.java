@@ -701,7 +701,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public <K,R extends Number> SDFrameImpl<FI2<K, BigDecimal>> groupByAvg(Function<T, K> key,
-                                                      NumberFunction<T,R> value) {
+                                                                           NumberFunction<T,R> value) {
         Collector<T, ?, BigDecimal> tBigDecimalCollector = CollectorsPlusUtil.averagingBigDecimal(value, defaultScale, getOldRoundingMode());
         List<FI2<K, BigDecimal>> collect = groupKey(key, tBigDecimalCollector);
         return returnDF(collect);

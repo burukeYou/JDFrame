@@ -12,6 +12,15 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Function;
 
+
+/**
+ * Group Data
+ *      If the method name is contain with 2, it means it is a second level group;
+ *      if the method name is contain with 3, it means it is a third level group
+ *
+ * @author      caizhihao
+ * @param <T>
+ */
 public interface GroupIFrame<T> {
 
 
