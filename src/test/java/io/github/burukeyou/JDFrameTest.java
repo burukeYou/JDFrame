@@ -242,16 +242,16 @@ public class JDFrameTest {
         List<FI3<String, BigDecimal, Long>> a7 = frame.groupBySumCount(Student::getSchool, Student::getAge).toLists();
 
         // (二级分组)等价于 select school,level,sum(age),count(age) group by school,level
-        List<FI3<String, String, BigDecimal>> a8 = frame.groupBySum(Student::getSchool, Student::getLevel, Student::getAge).toLists();
+        List<FI3<String, String, BigDecimal>> a8 = frame.group2BySum(Student::getSchool, Student::getLevel, Student::getAge).toLists();
 
         // （三级分组）等价于 select school,level,name,sum(age),count(age) group by school,level,name
-        List<FI4<String, String, String, BigDecimal>> a9 = frame.groupBySum(Student::getSchool, Student::getLevel, Student::getName, Student::getAge).toLists();
+        List<FI4<String, String, String, BigDecimal>> a9 = frame.group3BySum(Student::getSchool, Student::getLevel, Student::getName, Student::getAge).toLists();
 
 
         //
         SDFrame.read(studentList).groupByCustom(Student::getName,(list) -> SDFrame.read(list).maxValue(Student::getAge)).show();
 
-        SDFrame.read(studentList).groupByCustom(Student::getName,Student::getSchool,(list) -> SDFrame.read(list).joining(Student::getId,",")).show();
+        SDFrame.read(studentList).group2ByCustom(Student::getName,Student::getSchool,(list) -> SDFrame.read(list).joining(Student::getId,",")).show();
 
         System.out.println();
     }
@@ -642,6 +642,10 @@ public class JDFrameTest {
         SDFrame.read(studentList)
                 .group3ByConcat(Student::getName,Student::getSchool,Student::getScore,concat)
                 .show();
+
+
+        SDFrame.read(studentList)
+                .group2(Student::getSchool,Student::getAge).toLists();
     }
 
 }

@@ -27,7 +27,7 @@ public interface GroupIFrame<T> {
      * @param key        group field
      * @param key2       secondary level group field
      */
-    <K,J> IFrame<FI3<K,J,List<T>>> group(Function<T, K> key,Function<T,J> key2);
+    <K,J> IFrame<FI3<K,J,List<T>>> group2(Function<T, K> key, Function<T,J> key2);
 
 
 
@@ -37,7 +37,7 @@ public interface GroupIFrame<T> {
      * @param key2       secondary level group field
      * @param key3       third level group field
      */
-    <K,J,H> IFrame<FI4<K,J,H,List<T>>> group(Function<T, K> key,Function<T,J> key2,Function<T,H> key3);
+    <K,J,H> IFrame<FI4<K,J,H,List<T>>> group3(Function<T, K> key, Function<T,J> key2, Function<T,H> key3);
 
     /**
      * Group list
@@ -52,7 +52,7 @@ public interface GroupIFrame<T> {
      * @param key2              secondary level group field
      * @param function          group list to one value function
      */
-    <K,J,V> IFrame<FI3<K,J,V>> groupByCustom(Function<T, K> key, Function<T,J> key2, ListToOneValueFunction<T,V> function);
+    <K,J,V> IFrame<FI3<K,J,V>> group2ByCustom(Function<T, K> key, Function<T,J> key2, ListToOneValueFunction<T,V> function);
 
     /**
      * Group list
@@ -61,7 +61,7 @@ public interface GroupIFrame<T> {
      * @param key3              third level group field
      * @param function          group list to one value function
      */
-    <K,J,H,V> IFrame<FI4<K,J,H,V>> groupByCustom(Function<T, K> key, Function<T,J> key2, Function<T,H> key3, ListToOneValueFunction<T,V> function);
+    <K,J,H,V> IFrame<FI4<K,J,H,V>> group3ByCustom(Function<T, K> key, Function<T,J> key2, Function<T,H> key3, ListToOneValueFunction<T,V> function);
 
 
     /**
@@ -77,7 +77,7 @@ public interface GroupIFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K, J,R extends Number> IFrame<FI3<K,J,BigDecimal>> groupBySum(Function<T, K> key, Function<T, J> key2, NumberFunction<T,R> value);
+    <K, J,R extends Number> IFrame<FI3<K,J,BigDecimal>> group2BySum(Function<T, K> key, Function<T, J> key2, NumberFunction<T,R> value);
 
     /**
      * Group summation
@@ -87,10 +87,10 @@ public interface GroupIFrame<T> {
      * @param key3    third level group field
      * @param value   Aggregated field
      */
-    <K, J, H,R extends Number> IFrame<FI4<K, J, H, BigDecimal>> groupBySum(Function<T, K> key,
-                                                                           Function<T, J> key2,
-                                                                           Function<T, H> key3,
-                                                                           NumberFunction<T,R> value);
+    <K, J, H,R extends Number> IFrame<FI4<K, J, H, BigDecimal>> group3BySum(Function<T, K> key,
+                                                                            Function<T, J> key2,
+                                                                            Function<T, H> key3,
+                                                                            NumberFunction<T,R> value);
 
     /**
      * Group count
@@ -103,7 +103,7 @@ public interface GroupIFrame<T> {
      * @param key       group field
      * @param key2      secondary level group field
      */
-    <K, J> IFrame<FI3<K, J, Long>> groupByCount(Function<T, K> key, Function<T, J> key2);
+    <K, J> IFrame<FI3<K, J, Long>> group2ByCount(Function<T, K> key, Function<T, J> key2);
 
     /**
      * Group count
@@ -112,7 +112,7 @@ public interface GroupIFrame<T> {
      * @param key2    secondary level group field
      * @param key3    third level group field
      */
-    <K, J, H> IFrame<FI4<K, J, H, Long>> groupByCount(Function<T, K> key, Function<T, J> key2, Function<T, H> key3);
+    <K, J, H> IFrame<FI4<K, J, H, Long>> group3ByCount(Function<T, K> key, Function<T, J> key2, Function<T, H> key3);
 
     /**
      * Group sum and count together
@@ -131,7 +131,7 @@ public interface GroupIFrame<T> {
      * @param value         Aggregated field
      * @return              FItem4(key, ke2,Sum, Count)
      */
-    <K, J,R extends Number> IFrame<FI4<K, J, BigDecimal, Long>> groupBySumCount(Function<T, K> key, Function<T, J> key2, NumberFunction<T,R> value);
+    <K, J,R extends Number> IFrame<FI4<K, J, BigDecimal, Long>> group2BySumCount(Function<T, K> key, Function<T, J> key2, NumberFunction<T,R> value);
 
 
     /**
@@ -147,7 +147,7 @@ public interface GroupIFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K, J,R extends Number> IFrame<FI3<K, J, BigDecimal>> groupByAvg(Function<T, K> key, Function<T, J> key2, NumberFunction<T,R> value);
+    <K, J,R extends Number> IFrame<FI3<K, J, BigDecimal>> group2ByAvg(Function<T, K> key, Function<T, J> key2, NumberFunction<T,R> value);
 
     /**
      * Group average
@@ -156,10 +156,10 @@ public interface GroupIFrame<T> {
      * @param key3      third level group field
      * @param value     Aggregated field
      */
-    <K, J, H,R extends Number> IFrame<FI4<K, J, H, BigDecimal>> groupByAvg(Function<T, K> key,
-                                                                           Function<T, J> key2,
-                                                                           Function<T, H> key3,
-                                                                           NumberFunction<T,R> value) ;
+    <K, J, H,R extends Number> IFrame<FI4<K, J, H, BigDecimal>> group3ByAvg(Function<T, K> key,
+                                                                            Function<T, J> key2,
+                                                                            Function<T, H> key3,
+                                                                            NumberFunction<T,R> value) ;
 
     /**
      * Group max
@@ -174,7 +174,7 @@ public interface GroupIFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K,J, V extends Comparable<? super V>> IFrame<FI3<K,J,T>> groupByMax(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
+    <K,J, V extends Comparable<? super V>> IFrame<FI3<K,J,T>> group2ByMax(Function<T, K> key, Function<T, J> key2, Function<T, V> value);
 
 
     /**
@@ -191,7 +191,7 @@ public interface GroupIFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K,J, V extends Comparable<? super V>> IFrame<FI3<K,J,V>> groupByMaxValue(Function<T, K> key, Function<T, J> key2,Function<T, V> value) ;
+    <K,J, V extends Comparable<? super V>> IFrame<FI3<K,J,V>> group2ByMaxValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value) ;
 
 
     /**
@@ -207,7 +207,7 @@ public interface GroupIFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K, J,V extends Comparable<? super V>> IFrame<FI3<K, J,T>> groupByMin(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
+    <K, J,V extends Comparable<? super V>> IFrame<FI3<K, J,T>> group2ByMin(Function<T, K> key, Function<T, J> key2, Function<T, V> value);
 
     /**
      * Group min value
@@ -222,7 +222,7 @@ public interface GroupIFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K,J,V extends Comparable<? super V>> IFrame<FI3<K,J,V>> groupByMinValue(Function<T, K> key, Function<T, J> key2,Function<T, V> value);
+    <K,J,V extends Comparable<? super V>> IFrame<FI3<K,J,V>> group2ByMinValue(Function<T, K> key, Function<T, J> key2, Function<T, V> value);
 
     /**
      * Group max and min value
@@ -237,9 +237,9 @@ public interface GroupIFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K, J, V extends Comparable<? super V>> IFrame<FI3<K, J, MaxMin<V>>> groupByMaxMinValue(Function<T, K> key,
-                                                                                            Function<T, J> key2,
-                                                                                            Function<T, V> value);
+    <K, J, V extends Comparable<? super V>> IFrame<FI3<K, J, MaxMin<V>>> group2ByMaxMinValue(Function<T, K> key,
+                                                                                             Function<T, J> key2,
+                                                                                             Function<T, V> value);
 
     /**
      * Group max and min element
@@ -255,9 +255,9 @@ public interface GroupIFrame<T> {
      * @param key2      secondary level group field
      * @param value     Aggregated field
      */
-    <K, J, V extends Comparable<? super V>> IFrame<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
-                                                                                       Function<T, J> key2,
-                                                                                       Function<T, V> value);
+    <K, J, V extends Comparable<? super V>> IFrame<FI3<K, J, MaxMin<T>>> group2ByMaxMin(Function<T, K> key,
+                                                                                        Function<T, J> key2,
+                                                                                        Function<T, V> value);
 
     /**
      * Group Concat
