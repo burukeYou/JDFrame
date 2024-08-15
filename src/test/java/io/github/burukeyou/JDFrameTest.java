@@ -241,10 +241,10 @@ public class JDFrameTest {
         // 等价于 select school,sum(age),count(age) group by school
         List<FI3<String, BigDecimal, Long>> a7 = frame.groupBySumCount(Student::getSchool, Student::getAge).toLists();
 
-        // (二级分组)等价于 select school,level,sum(age),count(age) group by school,level
+        // (二级分组)等价于 select school,level,sum(age)  group by school,level
         List<FI3<String, String, BigDecimal>> a8 = frame.group2BySum(Student::getSchool, Student::getLevel, Student::getAge).toLists();
 
-        // （三级分组）等价于 select school,level,name,sum(age),count(age) group by school,level,name
+        // （三级分组）等价于 select school,level,name,sum(age) group by school,level,name
         List<FI4<String, String, String, BigDecimal>> a9 = frame.group3BySum(Student::getSchool, Student::getLevel, Student::getName, Student::getAge).toLists();
 
 
@@ -260,12 +260,12 @@ public class JDFrameTest {
     public void testSort(){
         // 等价于 order by age desc
         SDFrame.read(studentList).sortDesc(Student::getAge);
-        //  等价于 order by age desc, level asc
-        SDFrame.read(studentList).sortDesc(Student::getAge).sortAsc(Student::getLevel);
+        //  （多级排序) 等价于 order by age desc, level asc
+        SDFrame.read(studentList).sortAsc(Sorter.sortDescBy(Student::getAge).sortAsc(Student::getLevel));
         // 等价于 order by age asc
         SDFrame.read(studentList).sortAsc(Student::getAge);
         // 使用Comparator 排序
-        SDFrame.read(studentList).sortAsc(java.util.Comparator.comparing(e -> e.getLevel() + e.getId()));
+        SDFrame.read(studentList).sortAsc(Comparator.comparing(e -> e.getLevel() + e.getId()));
 
         // 等价于 select round(score*100,2) from student
         SDFrame<Student> map2 = SDFrame.read(studentList).mapPercent(Student::getScore, Student::setScore,2);
