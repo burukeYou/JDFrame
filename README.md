@@ -30,7 +30,7 @@ https://central.sonatype.com/artifact/io.github.burukeyou/jdframe/versions
 <dependency>
     <groupId>io.github.burukeyou</groupId>
     <artifactId>jdframe</artifactId>
-    <version>0.1.3</version>
+    <version>0.1.4</version>
 </dependency>
 ```
 
@@ -83,7 +83,8 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - head()       -获取前N个元素
 - tail()      -获取后N个元素
 - subList()    - 范围截取
-- replenish()   -补充缺失条目
+- replenish()   -补充缺失的条目
+- replenishList()   -返回缺失的条目
 - distinct()   -去重
 - joining()    -将字段值按照指定分隔符拼接起来
 - explodeString()   -爆炸函数一列转多行，将字符串按照分隔符(支持正则)切割后生成多行
