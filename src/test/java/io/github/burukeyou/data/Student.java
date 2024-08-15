@@ -42,6 +42,12 @@ public class Student {
         this.level = level;
     }
 
+    public Student(String name, String school, String level) {
+        this.name = name;
+        this.school = school;
+        this.level = level;
+    }
+
     public Student(String level, BigDecimal score) {
         this.level = level;
         this.score = score;

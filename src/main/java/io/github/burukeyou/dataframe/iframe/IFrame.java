@@ -489,7 +489,7 @@ public interface IFrame<T> extends SummaryFrame<T>,WhereIFrame<T>,JoinIFrame<T>,
      * Summarize all collectDim values, calculate the difference between them,
      * and then add the missing difference to the Frame through getEmptyObject
      * Finally, return the list that needs to be supplemented
-     * 
+     *
      * @param  collectDim           Summary value
      * @param  allDim               all need value
      * @param  getEmptyObject       Generate a new object based on the difference using this function

@@ -274,9 +274,22 @@ public class JDFrameTest {
     @Test
     public void testReplenish(){
         List<String> allDim = Arrays.asList("一中","二中","三中","四中");
-        //SDFrame.read(studentList).replenish(Student::getSchool,allDim,(school) -> new Student(school)).show(30);
 
-        SDFrame.read(studentList).replenish(Student::getSchool,Student::getLevel,(school,level) -> new Student(school,level)).show(30);
+        System.out.println("---------- 返回需要补充的元素---------- ");
+        List<Student> otherList = SDFrame.read(studentList).replenishList(Student::getSchool, allDim, (school) -> new Student(school,"补充的元素"));
+        SDFrame.read(otherList).show();
+
+        System.out.println("---------- 列表补充---------- ");
+        SDFrame.read(studentList).replenish(Student::getSchool,allDim,(school) -> new Student(school,"补充的元素")).show(30);
+
+        System.out.println("---------- 手动分组列表补充---------- ");
+        List<String> allNameDim = Arrays.asList("a","e","b");
+        SDFrame.read(studentList).replenish(Student::getSchool,Student::getName,allNameDim,(school,name) -> new Student(name,school,"补充的元素")).show(30);
+
+
+        System.out.println("---------- 自动分组列表补充---------- ");
+        SDFrame.read(studentList).replenish(Student::getSchool,Student::getName,(school,name) -> new Student(name,school,"补充的元素")).show(30);
+
     }
 
 
