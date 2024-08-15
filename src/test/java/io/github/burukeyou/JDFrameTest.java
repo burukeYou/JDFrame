@@ -5,6 +5,7 @@ import io.github.burukeyou.data.UserInfo;
 import io.github.burukeyou.dataframe.iframe.JDFrame;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.function.CompareTwo;
+import io.github.burukeyou.dataframe.iframe.group.GroupConcat;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -613,4 +614,34 @@ public class JDFrameTest {
                 .differentOther(us1, CompareTwo.on(Student::getName,UserInfo::getKey1).thenOn(Student::getAge,UserInfo::getKey2))
                 .show();
     }
+
+    @Test
+    public void testGroupConcat(){
+        GroupConcat<Student> concat = GroupConcat.concatBy(Student::getId, ";", "[", "]");
+
+        System.out.println("===== 一级分组 ====");
+        SDFrame.read(studentList)
+                .groupByConcat(Student::getName,Student::getId, ";")
+                .show();
+
+        SDFrame.read(studentList)
+                .groupByConcat(Student::getName,concat)
+                .show();
+
+        System.out.println("===== 二级分组 ====");
+
+        SDFrame.read(studentList)
+                .group2ByConcat(Student::getName,Student::getSchool,Student::getId, ";")
+                .show();
+
+        SDFrame.read(studentList)
+                .group2ByConcat(Student::getName,Student::getSchool,concat)
+                .show();
+
+        System.out.println("===== 三级分组 ====");
+        SDFrame.read(studentList)
+                .group3ByConcat(Student::getName,Student::getSchool,Student::getScore,concat)
+                .show();
+    }
+
 }

@@ -4,7 +4,10 @@ package io.github.burukeyou.dataframe.iframe.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import io.github.burukeyou.dataframe.iframe.IFrame;
+import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.function.*;
+import io.github.burukeyou.dataframe.iframe.group.GroupConcat;
+import io.github.burukeyou.dataframe.iframe.group.GroupConcatImpl;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -376,6 +379,12 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return count() > 0;
     }
 
+    /** ================================ Group =========================================*/
+
+
+    /**
+     *   分组成列表
+     */
     protected  <K> List<FI2<K, List<T>>> groupListKey(Function<? super T, ? extends K> key) {
         return FrameUtil.toListFI2(stream().collect(groupingBy(key)));
     }
@@ -399,6 +408,46 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     protected  <K,J,H,V> List<FI4<K, J,H,V>> groupListKey(Function<T,K> key,Function<T, J> key2,Function<T, H> key3,ListToOneValueFunction<T,V> function) {
         return groupListKey(key,key2,key3).stream().map(e -> new FI4<>(e.getC1(), e.getC2(),e.getC3(),function.apply(e.getC4()))).collect(toList());
     }
+
+    /**
+     * 分组后置聚合处理
+     */
+    public <K,V> List<FI2<K,V>> groupAfterCustom(Function<T, K> key, Function<List<T>, V> groupList) {
+        Map<K, V> map = stream().collect(groupingBy(key, collectingAndThen(toList(), groupList)));
+        return FrameUtil.toListFI2(map);
+    }
+
+    public <K,J,V> List<FI3<K,J,V>> groupAfterCustom(Function<T, K> key, Function<T, J> key2,Function<List<T>, V> groupList) {
+        Map<K, Map<J, V>> map = stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), groupList))));
+        return FrameUtil.toListFI3(map);
+    }
+
+    public <K,J,H,V> List<FI4<K,J,H,V>> groupAfterCustom(Function<T, K> key, Function<T, J> key2, Function<T, H> key3,Function<List<T>, V> groupList) {
+        Map<K,Map<J, Map<H, V>>> map = stream().collect(groupingBy(key, groupingBy(key2, groupingBy(key3, collectingAndThen(toList(), groupList)))));
+        return FrameUtil.toListFI4(map);
+    }
+
+    /**
+     *  Group Concat
+     */
+    public <K> List<FI2<K,String>> groupByConcatStream(Function<T, K> key, GroupConcat<T> concat) {
+        return groupAfterCustom(key, list -> groupByConcatListToString(concat, list));
+    }
+
+    public <K,J> List<FI3<K,J,String>> groupByConcatStream(Function<T, K> key, Function<T,J> key2,GroupConcat<T> concat) {
+        return groupAfterCustom(key,key2, list -> groupByConcatListToString(concat, list));
+    }
+
+    public <K,J,H> List<FI4<K,J,H,String>> groupByConcatStream(Function<T, K> key, Function<T,J> key2,Function<T,H> key3,GroupConcat<T> concat) {
+        return groupAfterCustom(key,key2, key3,list -> groupByConcatListToString(concat, list));
+    }
+
+
+    protected String groupByConcatListToString(GroupConcat<T> concat, List<T> list) {
+        GroupConcatImpl<T> concatImpl = (GroupConcatImpl<T>)concat;
+        return SDFrame.read(list).joining(concatImpl.getAggField(), concatImpl.getDelimiter(),concatImpl.getPrefix(),concatImpl.getSuffix());
+    }
+
 
     /**
      * 一级分组
@@ -475,6 +524,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         };
     }
 
+    /** ====================================================================================================*/
 
     public <R> Stream<T> streamFilterNull(Function<T,R> function){
         return stream().filter(e -> e != null && function.apply(e) != null);

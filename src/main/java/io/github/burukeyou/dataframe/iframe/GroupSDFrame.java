@@ -2,6 +2,7 @@ package io.github.burukeyou.dataframe.iframe;
 
 import io.github.burukeyou.dataframe.iframe.function.ListToOneValueFunction;
 import io.github.burukeyou.dataframe.iframe.function.NumberFunction;
+import io.github.burukeyou.dataframe.iframe.group.GroupConcat;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -263,5 +264,46 @@ public interface GroupSDFrame<T>  extends GroupIFrame<T> {
     <K, J, V extends Comparable<? super V>> SDFrame<FI3<K, J, MaxMin<T>>> groupByMaxMin(Function<T, K> key,
                                                                                         Function<T, J> key2,
                                                                                         Function<T, V> value);
+
+    /**
+     * Group Concat
+     * @param key                          group field
+     * @param concatField                  concat value
+     * @param delimiter                    concat delimiter
+     */
+    <K,V> SDFrame<FI2<K,String>> groupByConcat(Function<T, K> key, Function<T,V> concatField,CharSequence delimiter);
+
+    /**
+     * Group Concat
+     * @param key                     group field
+     * @param concat                  group concat builder
+     */
+    <K> SDFrame<FI2<K,String>> groupByConcat(Function<T, K> key, GroupConcat<T> concat);
+
+    /**
+     * Group Concat
+     * @param key                          first group field
+     * @param key2                         second group field
+     * @param concatField                  concat value
+     * @param delimiter                    concat delimiter
+     */
+    <K,J,V> SDFrame<FI3<K,J,String>> group2ByConcat(Function<T, K> key, Function<T, J> key2,Function<T,V> concatField,CharSequence delimiter);
+
+    /**
+     * Group Concat
+     * @param key                          first group field
+     * @param key2                         second group field
+     * @param concat                       group concat builder
+     */
+    <K,J> SDFrame<FI3<K,J,String>> group2ByConcat(Function<T, K> key, Function<T, J> key2,GroupConcat<T> concat);
+
+    /**
+     * Group Concat
+     * @param key                          first group field
+     * @param key2                         second group field
+     * @param key3                         third group field
+     * @param concat                       group concat builder
+     */
+    <K,J,H> SDFrame<FI4<K,J,H,String>> group3ByConcat(Function<T, K> key, Function<T, J> key2,Function<T, H> key3,GroupConcat<T> concat);
 
 }

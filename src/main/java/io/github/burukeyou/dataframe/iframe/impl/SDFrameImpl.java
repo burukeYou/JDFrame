@@ -5,6 +5,7 @@ import io.github.burukeyou.dataframe.iframe.IFrame;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.WindowSDFrame;
 import io.github.burukeyou.dataframe.iframe.function.*;
+import io.github.burukeyou.dataframe.iframe.group.GroupConcat;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
 import io.github.burukeyou.dataframe.iframe.item.FI4;
@@ -801,6 +802,31 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
                                                                                        Function<T, V> value) {
         Map<K, Map<J, MaxMin<T>>> map = stream().collect(groupingBy(key, groupingBy(key2, collectingAndThen(toList(), getListGroupMaxMinFunction(value)))));
         return returnDF(FrameUtil.toListFI3(map));
+    }
+
+    @Override
+    public <K, V> SDFrameImpl<FI2<K, String>> groupByConcat(Function<T, K> key, Function<T, V> concatField, CharSequence delimiter) {
+        return returnDF(groupByConcatStream(key,GroupConcat.concatBy(concatField,delimiter)));
+    }
+
+    @Override
+    public <K> SDFrameImpl<FI2<K, String>> groupByConcat(Function<T, K> key, GroupConcat<T> concat) {
+        return returnDF(groupByConcatStream(key,concat));
+    }
+
+    @Override
+    public <K, J, V> SDFrameImpl<FI3<K, J, String>> group2ByConcat(Function<T, K> key, Function<T, J> key2, Function<T, V> concatField, CharSequence delimiter) {
+        return returnDF(groupByConcatStream(key,key2,GroupConcat.concatBy(concatField,delimiter)));
+    }
+
+    @Override
+    public <K, J> SDFrameImpl<FI3<K, J, String>> group2ByConcat(Function<T, K> key, Function<T, J> key2, GroupConcat<T> concat) {
+        return returnDF(groupByConcatStream(key,key2,concat));
+    }
+
+    @Override
+    public <K, J, H> SDFrameImpl<FI4<K, J, H, String>> group3ByConcat(Function<T, K> key, Function<T, J> key2, Function<T, H> key3, GroupConcat<T> concat) {
+        return returnDF(groupByConcatStream(key,key2,key3,concat));
     }
 
     /** ===========================   Window Function  ===================================== **/
