@@ -921,22 +921,33 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         return result;
     }
 
-
-    protected static <T, C> List<T> replenish(List<T> itemDTOList,
-                                              Function<T, C> collectDim,
-                                              List<C> allDim,
-                                              Function<C,T> getEmptyObject){
+    protected static <T, C> List<T> replenishList(List<T> itemDTOList,
+                                                  Function<T, C> collectDim,
+                                                  List<C> allDim,
+                                                  Function<C,T> getEmptyObject){
         allDim = new ArrayList<>(new HashSet<>(allDim));
         // 计算差集，然后补充
         List<C> collect = itemDTOList.stream().map(collectDim).collect(toList());
         collect = new ArrayList<>(new HashSet<>(collect));
         // 计算差集，然后补充
         allDim.removeAll(collect);
-        List<T> collect1 = allDim.stream().map(getEmptyObject).collect(toList());
-        itemDTOList.addAll(collect1);
+        return allDim.stream().map(getEmptyObject).collect(toList());
+    }
+
+    protected static <T, C> List<T> replenish(List<T> itemDTOList,
+                                              Function<T, C> collectDim,
+                                              List<C> allDim,
+                                              Function<C,T> getEmptyObject){
+        itemDTOList = new ArrayList<>(itemDTOList);
+        List<T> otherList = replenishList(itemDTOList, collectDim, allDim, getEmptyObject);
+        itemDTOList.addAll(otherList);
         return itemDTOList;
     }
 
+    @Override
+    public <C> List<T> replenishList(Function<T, C> collectDim, List<C> allDim, Function<C, T> getEmptyObject) {
+        return replenishList(viewList(),collectDim,allDim,getEmptyObject);
+    }
 
     /**
      * 分组计算差集， 然后将差集补充到该分组内
@@ -975,6 +986,8 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
         return nameItemListMap.values().stream().flatMap(Collection::stream).collect(toList());
     }
+
+
 
 
     protected  static <T,G, C> List<T> replenish(List<T> itemDTOList,
