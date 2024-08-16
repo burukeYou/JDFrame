@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 /**
@@ -25,6 +26,15 @@ import java.util.stream.Stream;
  */
 public interface IFrame<T> extends SummaryFrame<T>,WhereIFrame<T>,JoinIFrame<T>,GroupIFrame<T>,OperationIFrame<T>,Iterable<T>{
 
+
+    /**
+     * convert to data by Collector, same as stream Collector
+     * @param collector     the {@code Collector} describing the reduction
+     * @param <R>           the type of the result
+     * @param <A>           the intermediate accumulation type of the {@code Collector}
+     * @return              the result of the reduction
+     */
+    <R, A> R collect(Collector<? super T, A, R> collector);
 
     /**
      * Convert to list

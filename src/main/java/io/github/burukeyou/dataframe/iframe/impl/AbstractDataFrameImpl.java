@@ -46,6 +46,11 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     @Override
+    public <R, A> R collect(Collector<? super T, A, R> collector) {
+        return stream().collect(collector);
+    }
+
+    @Override
     public T[] toArray() {
         List<T> ts = viewList();
         if (ts.isEmpty() && fieldClass == null){
