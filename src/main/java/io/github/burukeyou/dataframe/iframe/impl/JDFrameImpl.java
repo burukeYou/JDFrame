@@ -100,7 +100,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public JDFrameImpl<T> forEachDo(ConsumerIndex<? super T> action) {
+    public JDFrameImpl<T> forEachIndexDo(ConsumerIndex<? super T> action) {
         int index = 0;
         for (T t : this) {
             action.accept(index++,t);

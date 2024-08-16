@@ -67,17 +67,17 @@ public interface SDFrame<T> extends ConfigurableSDFrame<T> {
      */
     SDFrame<T> forEachDo(Consumer<? super T> action);
 
-    /**
-     * such as {@link #forEachDo(Consumer)} , but is parallel to forEach
-     */
-    SDFrame<T> forEachParallel(Consumer<? super T> action);
-
 
     /**
      * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
      */
-    SDFrame<T> forEachDo(ConsumerIndex<? super T> action);
+    SDFrame<T> forEachIndexDo(ConsumerIndex<? super T> action);
 
+
+    /**
+     * such as {@link #forEachDo(Consumer)} , but is parallel to forEach
+     */
+    SDFrame<T> forEachParallel(Consumer<? super T> action);
 
 
     /**

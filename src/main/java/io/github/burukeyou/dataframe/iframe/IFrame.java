@@ -104,16 +104,17 @@ public interface IFrame<T> extends ISummaryFrame<T>, IWhereFrame<T>, IJoinFrame<
      */
     IFrame<T> forEachDo(Consumer<? super T> action);
 
-    /**
-     * such as {@link #forEachDo(Consumer)} , but is parallel to forEach
-     */
-    IFrame<T> forEachParallel(Consumer<? super T> action);
 
     /**
      * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
      */
-    IFrame<T> forEachDo(ConsumerIndex<? super T> action);
+    IFrame<T> forEachIndexDo(ConsumerIndex<? super T> action);
 
+
+    /**
+     * such as {@link #forEachDo(Consumer)} , but is parallel to forEach
+     */
+    IFrame<T> forEachParallel(Consumer<? super T> action);
 
     /**
      * traverse each element determine whether the specified object is included

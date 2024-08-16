@@ -28,7 +28,7 @@ public class JDFrameTest {
     static List<Student> studentList = new ArrayList<>();
 
     static {
-        studentList.add(new Student(null,"a","一中","\"生活\",日子",11, new BigDecimal(1)));
+        studentList.add(new Student(1,"a","一中","\"生活\",日子",11, new BigDecimal(1)));
         studentList.add(new Student(2,"a","一中","一年级",13, new BigDecimal(1)));
         studentList.add(new Student(3,"d","二中","一年级",14, new BigDecimal(4)));
         studentList.add(new Student(4,"b","一中","三年级",12, new BigDecimal(2)));
@@ -393,7 +393,7 @@ public class JDFrameTest {
 
     @Test
     public void testForEachDo(){
-        SDFrame.read(studentList).forEachDo((index,student) -> {
+        SDFrame.read(studentList).forEachIndexDo((index, student) -> {
             student.setRank(index);
             System.out.println(index + "------>" + student.getName());
         }).show();

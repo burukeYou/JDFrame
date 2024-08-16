@@ -98,7 +98,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public SDFrameImpl<T> forEachDo(ConsumerIndex<? super T> action) {
+    public SDFrameImpl<T> forEachIndexDo(ConsumerIndex<? super T> action) {
         int index = 0;
         for (T t : this) {
             action.accept(index++,t);

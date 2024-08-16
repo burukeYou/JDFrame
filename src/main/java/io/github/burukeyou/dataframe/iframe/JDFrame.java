@@ -68,15 +68,15 @@ public interface JDFrame<T> extends ConfigurableJDFrame<T> {
     JDFrame<T> forEachDo(Consumer<? super T> action);
 
     /**
+     * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+     */
+    JDFrame<T> forEachIndexDo(ConsumerIndex<? super T> action);
+
+
+    /**
      * such as {@link #forEachDo(Consumer)} , but is parallel to forEach
      */
     JDFrame<T> forEachParallel(Consumer<? super T> action);
-
-    /**
-     * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
-     */
-    JDFrame<T> forEachDo(ConsumerIndex<? super T> action);
-
 
     /**
      * ===========================   Frame Setting =====================================
