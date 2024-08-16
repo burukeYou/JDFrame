@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -44,6 +45,22 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     protected AbstractDataFrameImpl() {
 
     }
+
+    @Override
+    public void forEach(Consumer<? super T> action) {
+        super.forEach(action);
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        return super.spliterator();
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return viewList().iterator();
+    }
+
 
     @Override
     public <R, A> R collect(Collector<? super T, A, R> collector) {
@@ -533,11 +550,6 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     public <R> Stream<T> streamFilterNull(Function<T,R> function){
         return stream().filter(e -> e != null && function.apply(e) != null);
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        return viewList().iterator();
     }
 
 
