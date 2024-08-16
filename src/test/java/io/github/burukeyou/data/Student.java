@@ -16,7 +16,7 @@ public class Student {
 
     private LocalDateTime createTime;
 
-    private int id;
+    private Integer id;
     private String name;
     private String school;
     private String level;
@@ -53,7 +53,7 @@ public class Student {
         this.score = score;
     }
 
-    public Student(int id, String name, String school, String level, Integer age, BigDecimal score) {
+    public Student(Integer id, String name, String school, String level, Integer age, BigDecimal score) {
         this.id = id;
         this.name = name;
         this.school = school;

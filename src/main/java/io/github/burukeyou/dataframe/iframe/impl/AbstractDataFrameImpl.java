@@ -4,6 +4,7 @@ package io.github.burukeyou.dataframe.iframe.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import io.github.burukeyou.dataframe.iframe.IFrame;
+import io.github.burukeyou.dataframe.iframe.JDFrame;
 import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.function.*;
 import io.github.burukeyou.dataframe.iframe.group.GroupConcat;
@@ -145,11 +146,13 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     @Override
-    public <K, K2, V> Map<K, Map<K2, V>> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends K2> key2Mapper, Function<? super T, ? extends V> valueMapper) {
-        Map<? extends K, List<T>> oldMap = stream().collect(groupingBy(keyMapper));
-        Map<K, Map<K2, V>> map = new HashMap<>(oldMap.size());
-        oldMap.forEach((key,list) -> map.put(key,from(list.stream()).toMap(key2Mapper, valueMapper)));
-        return map;
+    public <K, K2, V> Map<K, Map<K2, V>> toMulti2Map(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends K2> key2Mapper, Function<? super T, ? extends V> valueMapper) {
+        return stream().collect(groupingBy(keyMapper, collectingAndThen(toList(), list -> JDFrame.read(list).toMap(key2Mapper, valueMapper))));
+    }
+
+    @Override
+    public <K, K2, K3, V> Map<K, Map<K2, Map<K3, V>>> toMulti3Map(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends K2> key2Mapper, Function<? super T, ? extends K3> key3Mapper, Function<? super T, ? extends V> valueMapper) {
+         return stream().collect(groupingBy(keyMapper, groupingBy(key2Mapper, collectingAndThen(toList(), list -> JDFrame.read(list).toMap(key3Mapper, valueMapper)))));
     }
 
     protected  <R> Stream<T> whereNullStream(Function<T, R> function) {

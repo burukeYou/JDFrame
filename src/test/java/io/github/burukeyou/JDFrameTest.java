@@ -28,7 +28,7 @@ public class JDFrameTest {
     static List<Student> studentList = new ArrayList<>();
 
     static {
-        studentList.add(new Student(1,"a","一中","\"生活\",日子",11, new BigDecimal(1)));
+        studentList.add(new Student(null,"a","一中","\"生活\",日子",11, new BigDecimal(1)));
         studentList.add(new Student(2,"a","一中","一年级",13, new BigDecimal(1)));
         studentList.add(new Student(3,"d","二中","一年级",14, new BigDecimal(4)));
         studentList.add(new Student(4,"b","一中","三年级",12, new BigDecimal(2)));
@@ -377,10 +377,19 @@ public class JDFrameTest {
         Map<String, Integer> stringIntegerMap = SDFrame.read(studentList).toMap(Student::getName, Student::getId);
         Map<Integer, String> toMap = SDFrame.read(studentList).toMap(Student::getId, Student::getName);
 
-        //
-        Map<String, Map<String, Integer>> multiMap = SDFrame.read(studentList).toMap(Student::getSchool, Student::getName, Student::getId);
+        Map<String, Map<String, Integer>> multiMap = SDFrame
+                .read(studentList)
+                .toMulti2Map(Student::getSchool, Student::getName, Student::getId);
+
+        Map<String, Map<String, Map<Integer, Integer>>> stringMapMap = SDFrame
+                .read(studentList)
+                .toMulti3Map(Student::getSchool, Student::getName, Student::getAge, Student::getId);
+
         System.out.println();
     }
+
+
+
 
     @Test
     public void testForEachDo(){

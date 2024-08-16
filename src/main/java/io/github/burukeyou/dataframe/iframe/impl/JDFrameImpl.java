@@ -82,6 +82,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return  new JDFrameImpl<>(stream.collect(toList()));
     }
 
+    @Override
     public <R> JDFrameImpl<R> from(List<R> list) {
         return new JDFrameImpl<>(list);
     }

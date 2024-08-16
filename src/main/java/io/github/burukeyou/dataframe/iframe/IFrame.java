@@ -68,7 +68,20 @@ public interface IFrame<T> extends ISummaryFrame<T>, IWhereFrame<T>, IJoinFrame<
      * @param key2Mapper      a mapping function to produce second keys
      * @param valueMapper     a mapping function to produce values
      */
-    <K,K2,V> Map<K,Map<K2,V>> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends K2> key2Mapper,Function<? super T, ? extends V> valueMapper);
+    <K,K2,V> Map<K,Map<K2,V>> toMulti2Map(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends K2> key2Mapper, Function<? super T, ? extends V> valueMapper);
+
+    /**
+     * Convert to Map
+     * @param keyMapper       a mapping function to produce first keys
+     * @param key2Mapper      a mapping function to produce second keys
+     * @param key3Mapper      a mapping function to produce third keys
+     * @param valueMapper     a mapping function to produce values
+     */
+    <K,K2,K3,V> Map<K,Map<K2,Map<K3,V>>> toMulti3Map(Function<? super T, ? extends K> keyMapper,
+                                                     Function<? super T, ? extends K2> key2Mapper,
+                                                     Function<? super T, ? extends K3> key3Mapper,
+                                                     Function<? super T, ? extends V> valueMapper);
+
 
     /**
      * get stream
@@ -80,6 +93,11 @@ public interface IFrame<T> extends ISummaryFrame<T>, IWhereFrame<T>, IJoinFrame<
      * Convert to other IFrame
      */
     <R> IFrame<R> from(Stream<R> data);
+
+    /**
+     * Convert to other IFrame
+     */
+    <R> IFrame<R> from(List<R> data);
 
     /**
      * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.

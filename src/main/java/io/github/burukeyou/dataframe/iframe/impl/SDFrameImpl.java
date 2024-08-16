@@ -81,6 +81,11 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public <R> SDFrameImpl<R> from(List<R> data) {
+        return new SDFrameImpl<>(data);
+    }
+
+    @Override
     public SDFrameImpl<T> forEachDo(Consumer<? super T> action) {
         this.forEach(action);
         return this;
