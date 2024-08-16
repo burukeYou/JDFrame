@@ -323,6 +323,12 @@ public interface JDFrame<T> extends ConfigurableJDFrame<T> {
     <R extends Comparable<? super R>> JDFrame<T> sortDesc(Function<T, R> function);
 
     /**
+     * sort by Sorter
+     * @param comparator         comparator
+     */
+    JDFrame<T> sort(Sorter<T> comparator);
+
+    /**
      * Ascending order
      * @param comparator         comparator
      */

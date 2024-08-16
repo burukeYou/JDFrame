@@ -326,6 +326,13 @@ public interface SDFrame<T> extends ConfigurableSDFrame<T> {
      */
     <R extends Comparable<? super R>> SDFrame<T> sortDesc(Function<T, R> function);
 
+
+    /**
+     * sort by Sorter
+     * @param comparator         comparator
+     */
+    SDFrame<T> sort(Sorter<T> comparator);
+
     /**
      * Ascending order
      * @param comparator         comparator

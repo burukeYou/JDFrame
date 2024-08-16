@@ -411,6 +411,12 @@ public interface IFrame<T> extends ISummaryFrame<T>, IWhereFrame<T>, IJoinFrame<
     <R extends Comparable<? super R>> IFrame<T> sortDesc(Function<T, R> function);
 
     /**
+     * sort by comparator
+     * @param comparator         comparator
+     */
+    IFrame<T> sort(Sorter<T> comparator);
+
+    /**
      * Ascending order
      * @param comparator         comparator
      */

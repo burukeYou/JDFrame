@@ -353,6 +353,12 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
+    public SDFrameImpl<T> sort(Sorter<T> comparator) {
+        data = stream().sorted(comparator);
+        return this;
+    }
+
+    @Override
     public SDFrameImpl<T> sortAsc(java.util.Comparator<T> comparator) {
         data = stream().sorted(comparator);
         return this;

@@ -343,6 +343,12 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public JDFrameImpl<T> sort(Sorter<T> comparator) {
+        dataList.sort(comparator);
+        return this;
+    }
+
+    @Override
     public JDFrameImpl<T> sortAsc(java.util.Comparator<T> comparator) {
         dataList.sort(comparator);
         return this;
