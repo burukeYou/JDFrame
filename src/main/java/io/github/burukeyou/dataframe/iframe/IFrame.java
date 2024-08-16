@@ -106,7 +106,9 @@ public interface IFrame<T> extends ISummaryFrame<T>, IWhereFrame<T>, IJoinFrame<
 
 
     /**
-     * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+     * Performs the given action for each element of the Iterable until all elements
+     * have been processed or the action throws an exception.
+     * the index starting from zero
      */
     IFrame<T> forEachIndexDo(ConsumerIndex<? super T> action);
 
