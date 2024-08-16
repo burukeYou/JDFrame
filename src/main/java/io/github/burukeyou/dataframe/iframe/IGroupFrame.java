@@ -21,7 +21,7 @@ import java.util.function.Function;
  * @author      caizhihao
  * @param <T>
  */
-public interface GroupIFrame<T> {
+public interface IGroupFrame<T> {
 
 
     /**

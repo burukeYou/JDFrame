@@ -24,7 +24,7 @@ import java.util.stream.Stream;
  *
  * @author caizhihao
  */
-public interface IFrame<T> extends SummaryFrame<T>,WhereIFrame<T>,JoinIFrame<T>,GroupIFrame<T>,OperationIFrame<T>,Iterable<T>{
+public interface IFrame<T> extends ISummaryFrame<T>, IWhereFrame<T>, IJoinFrame<T>, IGroupFrame<T>, IOperationFrame<T>,Iterable<T>{
 
 
     /**

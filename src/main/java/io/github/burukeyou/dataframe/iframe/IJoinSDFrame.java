@@ -5,9 +5,12 @@ import io.github.burukeyou.dataframe.iframe.support.Join;
 import io.github.burukeyou.dataframe.iframe.support.JoinOn;
 import io.github.burukeyou.dataframe.iframe.support.VoidJoin;
 
-
-public interface JoinJDFrame<T> extends JoinIFrame<T> {
-
+/**
+ * @author  caizhihao
+ *
+ * @param <T>
+ */
+public interface IJoinSDFrame<T> extends IJoinFrame<T> {
 
     /**
      * inner join Frame
@@ -17,7 +20,7 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param <R>           new Frame type
      * @param <K>           other Frame type
      */
-    <R,K> JDFrame<R> join(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+    <R,K> SDFrame<R> join(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
     /**
      * inner join Frame
@@ -28,7 +31,7 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param <R>           new Frame type
      * @param <K>           other Frame type
      */
-    <R,K> JDFrame<R> joinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+    <R,K> SDFrame<R> joinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
 
     /**
@@ -40,8 +43,7 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param <R>           new Frame type
      * @param <K>           other Frame type
      */
-    <R,K> JDFrame<R> join(IFrame<K> other, JoinOn<T,K> on);
-
+    <R,K> SDFrame<R> join(IFrame<K> other, JoinOn<T,K> on);
 
     /**
      * just Execute inner join operation， will not change the data of the frame
@@ -49,17 +51,17 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param on            connection conditions
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> joinVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
-
+    <K> SDFrame<T> joinVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
-     *  just Execute inner join operation， will not change the data of the frame
+     * just Execute inner join operation， will not change the data of the frame
      *      If successfully associated with other Frame record, it will only be associated once
      * @param other         other frame
      * @param on            connection conditions
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> joinOnceVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> SDFrame<T> joinOnceVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+
 
     /**
      * left join Frame
@@ -70,7 +72,8 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param <R>           new Frame type
      * @param <K>           other Frame type
      */
-    <R,K> JDFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+    <R,K> SDFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+
 
     /**
      * left join Frame
@@ -82,7 +85,7 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param <R>           new Frame type
      * @param <K>           other Frame type
      */
-    <R,K> JDFrame<R> leftJoinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+    <R,K> SDFrame<R> leftJoinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
     /**
      * left join Frame
@@ -92,21 +95,20 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param <R>           new Frame type
      * @param <K>           other Frame type
      */
-    <R,K> JDFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on);
+    <R,K> SDFrame<R> leftJoin(IFrame<K> other, JoinOn<T,K> on);
 
     /**
-     *  just Execute left join operation， will not change the data of the frame
+     * just Execute left join operation， will not change the data of the frame
      *      if connection conditions false, The callback value K for Join will be null， always keep T
      * @param other         other frame
      * @param on            connection conditions
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> leftJoinVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
-
+    <K> SDFrame<T> leftJoinVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
-     *  just Execute left join operation， will not change the data of the frame
+     * just Execute left join operation， will not change the data of the frame
      *      if connection conditions false, The callback value K for Join will be null， always keep T
      *      If successfully associated with other Frame record, it will only be associated once
      * @param other         other frame
@@ -114,7 +116,7 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> leftJoinOnceVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> SDFrame<T> leftJoinOnceVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
     /**
      * right join Frame
@@ -125,7 +127,7 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param <R>           new Frame type
      * @param <K>           other Frame type
      */
-    <R,K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+    <R,K> SDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
     /**
      * right join Frame
@@ -137,7 +139,7 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param <R>           new Frame type
      * @param <K>           other Frame type
      */
-    <R,K> JDFrame<R> rightJoinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
+    <R,K> SDFrame<R> rightJoinOnce(IFrame<K> other, JoinOn<T,K> on, Join<T,K,R> join);
 
 
     /**
@@ -148,20 +150,21 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param <R>           new Frame type
      * @param <K>           other Frame type
      */
-    <R,K> JDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on);
+    <R,K> SDFrame<R> rightJoin(IFrame<K> other, JoinOn<T,K> on);
 
     /**
-     *  just Execute right join operation， will not change the data of the frame
+     * just Execute right join operation， will not change the data of the frame
      *      if connection conditions false, The callback value T for Join will be null， always keep K
      * @param other         other frame
      * @param on            connection conditions
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> rightJoinVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+    <K> SDFrame<T> rightJoinVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
+
 
     /**
-     *  just Execute right join operation， will not change the data of the frame
+     * just Execute right join operation， will not change the data of the frame
      *      if connection conditions false, The callback value T for Join will be null， always keep K
      *      If successfully associated with other Frame record, it will only be associated once
      * @param other         other frame
@@ -169,7 +172,6 @@ public interface JoinJDFrame<T> extends JoinIFrame<T> {
      * @param join          Connection logic
      * @param <K>           other Frame type
      */
-    <K> JDFrame<T> rightJoinOnceVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
-
+    <K> SDFrame<T> rightJoinOnceVoid(IFrame<K> other, JoinOn<T,K> on, VoidJoin<T,K> join);
 
 }

@@ -11,7 +11,7 @@ import java.util.function.Function;
  *
  * @author      caizhihao
  */
-public interface SummaryFrame<T> {
+public interface ISummaryFrame<T> {
 
     /**
      * Sum the values of the field

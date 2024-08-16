@@ -11,7 +11,7 @@ import java.util.Comparator;
  * @author      caizhihao
  * @param <T>
  */
-public interface OperationJDFrame<T>  extends OperationIFrame<T> {
+public interface IOperationJDFrame<T>  extends IOperationFrame<T> {
 
     /**
      * union other frame
