@@ -411,6 +411,12 @@ public class JDFrameTest {
                 System.out.println("之前元素: " + pre.getId() + "   当前元素" + cur.getId());
             }
         });
+
+        SDFrame.read(studentList).forEachNextDo((cur,next) -> {
+            if (next != null){
+                System.out.println("当前元素: " + cur.getId() + "   下一个元素" + next.getId());
+            }
+        });
     }
 
     @Test

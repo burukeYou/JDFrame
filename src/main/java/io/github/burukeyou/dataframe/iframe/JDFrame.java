@@ -79,6 +79,13 @@ public interface JDFrame<T> extends ConfigurableJDFrame<T> {
 
 
     /**
+     *  Iterate each current element and its next elements to a specified function
+     *  Note that if it is the last element, its next elements will be null
+     */
+    JDFrame<T> forEachNextDo(ConsumerNext<? super T> action);
+
+
+    /**
      * such as {@link #forEachDo(Consumer)} , but is parallel to forEach
      */
     JDFrame<T> forEachParallel(Consumer<? super T> action);

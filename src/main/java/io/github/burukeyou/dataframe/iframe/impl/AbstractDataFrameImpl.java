@@ -121,6 +121,29 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         });
     }
 
+    protected void forEachPreStreamDo(ConsumerPrevious<? super T> action){
+        T pre = null;
+        for (T cur : this) {
+            action.accept(pre,cur);
+            pre = cur;
+        }
+
+    }
+
+    protected void forEachNextStreamDo(ConsumerNext<? super T> action){
+        Iterator<T> iterator = this.iterator();
+        if (!iterator.hasNext()){
+            return;
+        }
+        T cur = iterator.next();
+        while (iterator.hasNext()) {
+            T next = iterator.next();
+            action.accept(cur,next);
+            cur = next;
+        }
+        action.accept(cur,null);
+    }
+
     @Override
     public <U> String joining(Function<T, U> joinField,CharSequence delimiter, CharSequence prefix, CharSequence suffix) {
         return stream().map(joinField).filter(Objects::nonNull).map(Object::toString).collect(Collectors.joining(delimiter,prefix,suffix));

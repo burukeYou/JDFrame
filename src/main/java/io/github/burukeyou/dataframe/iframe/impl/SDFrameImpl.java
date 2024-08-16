@@ -108,14 +108,15 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
 
     @Override
     public SDFrameImpl<T> forEachPreDo(ConsumerPrevious<? super T> action) {
-        T pre = null;
-        for (T t : this) {
-            action.accept(pre,t);
-            pre = t;
-        }
+        forEachPreStreamDo(action);
         return this;
     }
 
+    @Override
+    public SDFrameImpl<T> forEachNextDo(ConsumerNext<? super T> action) {
+        forEachNextStreamDo(action);
+        return this;
+    }
 
     @Override
     public SDFrame<T> defaultScale(int scale) {

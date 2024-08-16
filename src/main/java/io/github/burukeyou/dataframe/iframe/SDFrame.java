@@ -79,6 +79,11 @@ public interface SDFrame<T> extends ConfigurableSDFrame<T> {
      */
     SDFrame<T> forEachPreDo(ConsumerPrevious<? super T> action);
 
+    /**
+     *  Iterate each current element and its next elements to a specified function
+     *  Note that if it is the last element, its next elements will be null
+     */
+    SDFrame<T> forEachNextDo(ConsumerNext<? super T> action);
 
     /**
      * such as {@link #forEachDo(Consumer)} , but is parallel to forEach

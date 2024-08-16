@@ -110,11 +110,13 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     @Override
     public JDFrameImpl<T> forEachPreDo(ConsumerPrevious<? super T> action) {
-        T pre = null;
-        for (T t : this) {
-            action.accept(pre,t);
-            pre = t;
-        }
+        forEachPreStreamDo(action);
+        return this;
+    }
+
+    @Override
+    public JDFrame<T> forEachNextDo(ConsumerNext<? super T> action) {
+        forEachNextStreamDo(action);
         return this;
     }
 
