@@ -23,4 +23,11 @@ public class FI2<T1, T2> implements FItem {
     private T1 c1;
     private T2 c2;
 
+    public T1 C1() {
+        return c1;
+    }
+
+    public T2 C2() {
+        return c2;
+    }
 }

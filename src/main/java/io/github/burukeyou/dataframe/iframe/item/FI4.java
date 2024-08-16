@@ -25,4 +25,19 @@ public class FI4<T1, T2, T3, T4>  implements FItem {
     private T3 c3;
     private T4 c4;
 
+    public T1 C1() {
+        return c1;
+    }
+
+    public T2 C2() {
+        return c2;
+    }
+
+    public T3 C3() {
+        return c3;
+    }
+
+    public T4 C4() {
+        return c4;
+    }
 }
