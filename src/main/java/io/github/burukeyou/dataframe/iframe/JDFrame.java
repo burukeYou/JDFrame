@@ -1,9 +1,6 @@
 package io.github.burukeyou.dataframe.iframe;
 
-import io.github.burukeyou.dataframe.iframe.function.ConsumerIndex;
-import io.github.burukeyou.dataframe.iframe.function.ListSelectOneFunction;
-import io.github.burukeyou.dataframe.iframe.function.ReplenishFunction;
-import io.github.burukeyou.dataframe.iframe.function.SetFunction;
+import io.github.burukeyou.dataframe.iframe.function.*;
 import io.github.burukeyou.dataframe.iframe.impl.JDFrameImpl;
 import io.github.burukeyou.dataframe.iframe.item.FI2;
 import io.github.burukeyou.dataframe.iframe.item.FI3;
@@ -73,6 +70,12 @@ public interface JDFrame<T> extends ConfigurableJDFrame<T> {
      * the index starting from zero
      */
     JDFrame<T> forEachIndexDo(ConsumerIndex<? super T> action);
+
+    /**
+     *  Iterate each current element and its previous elements to a specified function
+     *  Note that if it is the first element, its preceding elements will be null
+     */
+    JDFrame<T> forEachPreDo(ConsumerPrevious<? super T> action);
 
 
     /**

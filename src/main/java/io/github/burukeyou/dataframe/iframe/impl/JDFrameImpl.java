@@ -109,6 +109,16 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
+    public JDFrameImpl<T> forEachPreDo(ConsumerPrevious<? super T> action) {
+        T pre = null;
+        for (T t : this) {
+            action.accept(pre,t);
+            pre = t;
+        }
+        return this;
+    }
+
+    @Override
     public JDFrameImpl<T> defaultScale(int scale) {
         initDefaultScale(scale,defaultRoundingMode);
         return this;

@@ -405,6 +405,12 @@ public class JDFrameTest {
         SDFrame.read(studentList).forEachParallel((student) -> {
             System.out.println("------>>>>" + student.getId());
         });
+
+        SDFrame.read(studentList).forEachPreDo((pre,cur) -> {
+            if (pre != null){
+                System.out.println("之前元素: " + pre.getId() + "   当前元素" + cur.getId());
+            }
+        });
     }
 
     @Test

@@ -7,15 +7,15 @@ import java.util.Objects;
  * @param <T>
  */
 @FunctionalInterface
-public interface ConsumerPre<T> {
+public interface ConsumerPrevious<T> {
 
     /**
      * Performs this operation on the given argument.
      *
-     * @param t         the input argument
-     * @param index     The index of the current iteration
+     * @param preElement     the pre iteration element
+     * @param curElement     the current iteration element
      */
-    void accept(T pre, T t);
+    void accept(T preElement, T curElement);
 
     /**
      * Returns a composed {@code ConsumerIndex} that performs, in sequence, this
@@ -29,9 +29,9 @@ public interface ConsumerPre<T> {
      * operation followed by the {@code after} operation
      * @throws NullPointerException if {@code after} is null
      */
-    default ConsumerPre<T> andThen(ConsumerPre<? super T> after) {
+    default ConsumerPrevious<T> andThen(ConsumerPrevious<? super T> after) {
         Objects.requireNonNull(after);
-        return (index,t) -> { accept(index,t); after.accept(index,t); };
+        return (preElement,curElement) -> { accept(preElement,curElement); after.accept(preElement,curElement); };
     }
 
 }
