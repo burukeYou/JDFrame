@@ -55,11 +55,16 @@ JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的
 - from()   -从其他流读取成Frame进行数据处理
 - toLists() -转换成普通列表
 - toArray(): 转成数组， 支持无需手动指定数组类型
-- toMap()    - 转换成Map。 支持多层级Map转换。 如 Map<K,Map<K2,V>>
+- toMap()    - 转换成Map。 
+- toMulti2Map() - 转换成二层级嵌套Map。 如Map<A,Map<B,C>>
+- toMulti3Map() - 转换成三层级嵌套Map。 如Map<A,Map<B,Map<C,D>>>
 - isEmpty(): 判断集合是否为空
 - containsValue(): 集合是否包含指定值
 - stream()  -获取Frame的流.
-- forEachDo()  -迭代处理每个元素等价于forEach。 也支持迭代下标index
+- forEachDo()  -迭代处理每个元素等价于forEach。
+- forEachIndexDo -迭代处理每个元素和当前下标index（从0开始）
+- forEachPre    -迭代处理每个元素和当前元素的前一个元素。 如果前一个元素为null说明是第一个元素
+- forEachNext     -迭代处理每个元素和当前元素的下一个元素. 如果下一个元素为null说明是最后一个元素
 - forEachParallel()        并行的forEach
 - defaultScale()  -设置统计的数值为小数时的保留精度
 - show()   -打印Frame成表到控制台
