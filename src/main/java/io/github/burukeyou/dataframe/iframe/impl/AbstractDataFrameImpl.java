@@ -890,7 +890,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         }
         TreeSet<T> set = new TreeSet<>(comparator);
         set.addAll(rightList);
-        return leftList.stream().filter(set::contains).distinct().collect(Collectors.toList());
+        return leftList.stream().filter(set::contains).collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparator)), ArrayList::new));
     }
 
     protected List<T> differentList(List<T> leftList, Collection<T> rightList) {
