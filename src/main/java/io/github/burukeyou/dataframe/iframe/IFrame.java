@@ -177,7 +177,7 @@ public interface IFrame<T> extends ISummaryFrame<T>, IWhereFrame<T>, IJoinFrame<
      * ===========================   Frame Info =====================================
      **/
     /**
-     * print the 10 row to the console
+     * print the 15 row to the console
      *
      */
     void show();

@@ -110,7 +110,7 @@ public interface SDFrame<T> extends ConfigurableSDFrame<T> {
      * ===========================   Frame Info =====================================
      **/
     /**
-     * print the 10 row to the console
+     * print the 15 row to the console
      *
      */
     void show();
