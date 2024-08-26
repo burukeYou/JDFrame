@@ -477,13 +477,13 @@ public interface JDFrame<T> extends ConfigurableJDFrame<T> {
      *
      *The set supplemented by @ return
      */
-    <G, C> JDFrame<T> replenish(Function<T, G> groupDim,
-                                Function<T, C> collectDim,
-                                List<C> allDim,
-                                ReplenishFunction<G,C,T> getEmptyObject);
+    <G, C> JDFrame<T> replenishGroup(Function<T, G> groupDim,
+                                     Function<T, C> collectDim,
+                                     List<C> allDim,
+                                     ReplenishFunction<G,C,T> getEmptyObject);
 
     /**
-     *  such as {@link IFrame#replenish(Function, Function, List, ReplenishFunction)}, but can not Specify allDim，
+     *  such as {@link IFrame#replenishGroup(Function, Function, List, ReplenishFunction)}, but can not Specify allDim，
      *  will auto generate allDim, The default allDim is the value of all collectDim fields in the set
      *
      * @param groupDim              Dimension fields for grouping
@@ -493,6 +493,6 @@ public interface JDFrame<T> extends ConfigurableJDFrame<T> {
      * @param <G>        The type of grouping
      * @param <C>        type of collection within the group
      */
-    <G, C> JDFrame<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G,C,T> getEmptyObject);
+    <G, C> JDFrame<T> replenishGroup(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G,C,T> getEmptyObject);
 
 }

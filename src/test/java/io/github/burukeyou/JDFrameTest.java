@@ -284,11 +284,11 @@ public class JDFrameTest {
 
         System.out.println("---------- 手动分组列表补充---------- ");
         List<String> allNameDim = Arrays.asList("a","e","b");
-        SDFrame.read(studentList).replenish(Student::getSchool,Student::getName,allNameDim,(school,name) -> new Student(name,school,"补充的元素")).show(30);
+        SDFrame.read(studentList).replenishGroup(Student::getSchool,Student::getName,allNameDim,(school, name) -> new Student(name,school,"补充的元素")).show(30);
 
 
         System.out.println("---------- 自动分组列表补充---------- ");
-        SDFrame.read(studentList).replenish(Student::getSchool,Student::getName,(school,name) -> new Student(name,school,"补充的元素")).show(30);
+        SDFrame.read(studentList).replenishGroup(Student::getSchool,Student::getName,(school, name) -> new Student(name,school,"补充的元素")).show(30);
 
     }
 

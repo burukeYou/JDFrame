@@ -1276,7 +1276,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
     /**  ============================== Other =============== */
     @Override
-    public <G, C> JDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G, C, T> getEmptyObject) {
+    public <G, C> JDFrameImpl<T> replenishGroup(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G, C, T> getEmptyObject) {
         return returnDF(replenish(viewList(),groupDim,collectDim,allDim,getEmptyObject));
     }
 
@@ -1286,7 +1286,7 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
     }
 
     @Override
-    public <G, C> JDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G, C, T> getEmptyObject) {
+    public <G, C> JDFrameImpl<T> replenishGroup(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G, C, T> getEmptyObject) {
         return returnDF(replenish(viewList(),groupDim,collectDim,getEmptyObject));
     }
 

@@ -1274,7 +1274,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <G, C> SDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G, C, T> getEmptyObject) {
+    public <G, C> SDFrameImpl<T> replenishGroup(Function<T, G> groupDim, Function<T, C> collectDim, List<C> allDim, ReplenishFunction<G, C, T> getEmptyObject) {
         return returnDF(replenish(viewList(),groupDim,collectDim,allDim,getEmptyObject));
     }
 
@@ -1284,7 +1284,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     }
 
     @Override
-    public <G, C> SDFrameImpl<T> replenish(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G, C, T> getEmptyObject) {
+    public <G, C> SDFrameImpl<T> replenishGroup(Function<T, G> groupDim, Function<T, C> collectDim, ReplenishFunction<G, C, T> getEmptyObject) {
         return returnDF(replenish(viewList(),groupDim,collectDim,getEmptyObject));
     }
 
