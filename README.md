@@ -11,14 +11,21 @@
 [![Javadocs](http://javadoc.io/badge/de.unknownreality/dataframe.svg?color=blue)](http://javadoc.io/doc/io.github.burukeyou/jdframe)
 
 
-# 背景
-burukeyou的私房工具， 由于经常记不住stream的一些api每次要复制来复制去，想要更加语意化的api
+# 简介
 
-于是想到了以前写大数据Spark pandas 等DataFrame模型时的api， 然后发现其实也存在java的JVM层的DataFrame模型比如 tablesaw，joinery
+`JDFrame`是一个仿SQL数据处理工具， 一个流式处理工具， 一个JVM层级的仿DataFrame模型工具，提供了DataFrame模型的若干基本功能比如复杂数据筛选、分组聚合、窗口函数、连接矩阵。除此之外，还会语意化和简化一些Java8的stream流式处理功能，提供更加强大的流式处理能力。
 
-但是他们得硬编码去指定字段名，这对于有代码洁癖的burukeyou实在难以忍受，而且我只是简单统计下数据，我想在一些场景下能不能使用匿名函数去指定的字段处理去处理，于是便有了这个
 
-一个jvm层级的仿DataFrame工具，语意化和简化java8的stream流式处理工具， 并且提供了更加强大的流式处理能力以及基本的DataFrame模型功能
+
+<h1>特性</h1>
+
+- **无侵入**：  非常轻量级无需任何依赖和配置环境， 使用它就像使用一个Util那么简单
+- **DataFrame模型**:    JVM层级的仿DataFrame模型实现，涵盖了模型的大部分常用功能。同时，支持强类型，既不会导致数据类型的丢失，也无需进行硬编码操作。
+- **类SQL的语义**： 如果您会 SQL 语言，基本上不需要花费什么学习精力。多数 API 基本都是依据 SQL 的语义来进行 Java 的实现，具有极高的可读性
+- **强大的流式处理能力:**     在原有 Java8 的 stream 流的基础之上，提供了更为强大且更为简洁的流式处理能力。就理念而言，它并非是对 stream 的替换，而是对 stream 的继承
+- **极简式API:**     把业务功能或者冗长繁杂的数据处理功能凝聚成一个极简且语意明晰的 API，以供开发者使用
+
+
 
 
 # 快速开始
@@ -47,8 +54,6 @@ https://central.sonatype.com/artifact/io.github.burukeyou/jdframe/versions
                 .cutFirst(10);
 ```
 
-其他具体API见 IFrame接口
-JDFrame 与 SDFrame区别 ，JDFrame的所有操作都是实时生效的 
 
 # Frame的API列表
 - read()  -读取成Frame进行数据处理
