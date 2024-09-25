@@ -211,4 +211,5 @@ https://central.sonatype.com/artifact/io.github.burukeyou/jdframe/versions
 
 
 # 联系群
+有比较急的问题和bug可以加群@我处理
  <img src="docs/images/qr/groupChat.jpg" width = 200 height = 200 />
