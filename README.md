@@ -208,3 +208,7 @@ https://central.sonatype.com/artifact/io.github.burukeyou/jdframe/versions
 # 其他
 如果还有api可以扩展，欢迎你的建议，或者一起扩展
 虽然精力有限，但是如有Bug欢迎指正，会很快修复
+
+
+# 联系群
+ <img src="docs/images/qr/groupChat.jpg" width = 200 height = 200 />
