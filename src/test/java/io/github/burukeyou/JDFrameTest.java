@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JDFrameTest {
 
-    static List<Student> studentList = new ArrayList<>();
+    public static List<Student> studentList = new ArrayList<>();
 
     static {
         studentList.add(new Student(1,"a","一中","\"生活\",日子",11, new BigDecimal(1)));

@@ -1,5 +1,6 @@
 package io.github.burukeyou.data;
 
+import com.alibaba.fastjson.JSON;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -60,5 +61,10 @@ public class Student {
         this.level = level;
         this.age = age;
         this.score = score;
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 }

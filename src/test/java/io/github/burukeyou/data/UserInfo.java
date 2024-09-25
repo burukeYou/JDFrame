@@ -1,5 +1,6 @@
 package io.github.burukeyou.data;
 
+import com.alibaba.fastjson.JSON;
 import lombok.Data;
 
 @Data
@@ -22,5 +23,10 @@ public class UserInfo {
         this.key1 = key1;
         this.key2 = key2;
         this.key3 = key3;
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 }

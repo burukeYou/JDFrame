@@ -691,15 +691,18 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     protected  <R, K> List<R> leftJoinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join, boolean isJoinOnce) {
         List<R> resultList = new ArrayList<>();
         for (T cur :this){
+            boolean flag = false;
             for (K k : other) {
                 if(on.on(cur,k)){
                     resultList.add(join.join(cur,k));
+                    flag = true;
                     if (isJoinOnce){
                         break;
                     }
-                }else {
-                    resultList.add(join.join(cur,null));
                 }
+            }
+            if (!flag){
+                resultList.add(join.join(cur,null));
             }
         }
         return resultList;
@@ -712,15 +715,18 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     protected  <K> void leftJoinListLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join, boolean isJoinOnce) {
         for (T cur :this){
+            boolean flag = false;
             for (K k : other) {
                 if(on.on(cur,k)){
                     join.join(cur,k);
+                    flag = true;
                     if (isJoinOnce){
                         break;
                     }
-                }else {
-                    join.join(cur,null);
                 }
+            }
+            if (!flag){
+                join.join(cur,null);
             }
         }
     }
@@ -732,15 +738,18 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     protected  <R, K> List<R> rightJoinList(IFrame<K> other, JoinOn<T, K> on, Join<T, K, R> join,boolean isJoinOnce) {
         List<R> resultList = new ArrayList<>();
         for (K k : other) {
+            boolean flag = false;
             for (T cur :this){
                 if(on.on(cur,k)){
                     resultList.add(join.join(cur,k));
+                    flag = true;
                     if (isJoinOnce){
                         break;
                     }
-                }else {
-                    resultList.add(join.join(null,k));
                 }
+            }
+            if (!flag){
+                resultList.add(join.join(null,k));
             }
         }
         return resultList;
@@ -752,15 +761,19 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     protected  <K> void rightJoinListLink(IFrame<K> other, JoinOn<T, K> on, VoidJoin<T, K> join,boolean isJoinOnce) {
         for (K k : other) {
+            boolean flag = false;
             for (T cur :this){
                 if(on.on(cur,k)){
                     join.join(cur,k);
+                    flag = true;
                     if (isJoinOnce){
                         break;
                     }
-                }else {
-                    join.join(null,k);
                 }
+            }
+            if (!flag){
+                join.join(null,k);
+
             }
         }
     }
