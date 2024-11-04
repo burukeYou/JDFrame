@@ -161,7 +161,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         if (ListUtils.isEmpty(list)){
             return Collections.emptyMap();
         }
-        Map<K, V> map = new HashMap<>(list.size());
+        Map<K, V> map = new LinkedHashMap<>(list.size());
         for (T t : list) {
             map.put(keyMapper.apply(t),valueMapper.apply(t));
         }
@@ -170,12 +170,12 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public <K, K2, V> Map<K, Map<K2, V>> toMulti2Map(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends K2> key2Mapper, Function<? super T, ? extends V> valueMapper) {
-        return stream().collect(groupingBy(keyMapper, collectingAndThen(toList(), list -> JDFrame.read(list).toMap(key2Mapper, valueMapper))));
+        return stream().collect(groupingBy(keyMapper,  LinkedHashMap::new,collectingAndThen(toList(), list -> JDFrame.read(list).toMap(key2Mapper, valueMapper))));
     }
 
     @Override
     public <K, K2, K3, V> Map<K, Map<K2, Map<K3, V>>> toMulti3Map(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends K2> key2Mapper, Function<? super T, ? extends K3> key3Mapper, Function<? super T, ? extends V> valueMapper) {
-         return stream().collect(groupingBy(keyMapper, groupingBy(key2Mapper, collectingAndThen(toList(), list -> JDFrame.read(list).toMap(key3Mapper, valueMapper)))));
+         return stream().collect(groupingBy(keyMapper,  LinkedHashMap::new,groupingBy(key2Mapper,  LinkedHashMap::new,collectingAndThen(toList(), list -> JDFrame.read(list).toMap(key3Mapper, valueMapper)))));
     }
 
     protected  <R> Stream<T> whereNullStream(Function<T, R> function) {
