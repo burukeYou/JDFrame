@@ -587,7 +587,12 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public <R> List<R> col(Function<T, R> function) {
-        return viewList().stream().map(function).collect(toList());
+        return stream().map(function).collect(toList());
+    }
+
+    @Override
+    public <R> Set<R> colSet(Function<T, R> function) {
+        return stream().map(function).collect(Collectors.toSet());
     }
 
     @Override

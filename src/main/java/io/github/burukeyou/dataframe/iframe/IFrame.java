@@ -6,10 +6,7 @@ import io.github.burukeyou.dataframe.iframe.window.Sorter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
@@ -193,9 +190,14 @@ public interface IFrame<T> extends ISummaryFrame<T>, IWhereFrame<T>, IJoinFrame<
     List<String> columns();
 
     /**
-     *  Get a column value
+     *  collect a column value to the list
      */
     <R> List<R> col(Function<T, R> function);
+
+    /**
+     *  collect a column value to the Set
+     */
+    <R> Set<R> colSet(Function<T, R> function);
 
     /**
      * Get paginated data
