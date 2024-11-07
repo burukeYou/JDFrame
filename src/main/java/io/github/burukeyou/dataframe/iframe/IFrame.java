@@ -9,6 +9,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -126,16 +127,64 @@ public interface IFrame<T> extends ISummaryFrame<T>, IWhereFrame<T>, IJoinFrame<
     IFrame<T> forEachParallel(Consumer<? super T> action);
 
     /**
-     * traverse each element determine whether the specified object is included
+     * Returns true if contains the specified element object
      * @param other         specified object
      */
-    boolean contains(T other);
+    boolean isContains(T other);
 
     /**
-     * traverse each element determine whether the specified object value is included
+     * return true if contain the value of the specified value of object
      * @param valueFunction     field value
      */
-    <U> boolean containsValue(Function<T,U> valueFunction, U value);
+    <U> boolean isContainValue(Function<T,U> valueFunction, U value);
+
+    /**
+     * return true if not contain the value of specified value of object
+     * @param valueFunction     field value
+     */
+    <U> boolean isNotContainValue(Function<T,U> valueFunction, U value);
+
+    /**
+     * Equivalent to {@link java.util.stream.Stream#anyMatch}
+     * @param predicate          a non-interfering, stateless predicate to apply to elements of this stream
+     * @return                   true if any elements of the stream match the provided predicate, otherwise false
+     */
+    boolean anyMatch(Predicate<? super T> predicate);
+
+    /**
+     * Returns whether any elements of this frame match the specified value of object
+     * @param valueFunction      field value
+     * @param value              specified value
+     */
+    <U> boolean anyMatchValue(Function<T,U> valueFunction, U value);
+
+    /**
+     * Equivalent to {@link java.util.stream.Stream#allMatch}
+     * @param predicate          a non-interfering, stateless predicate to apply to elements of this stream
+     * @return                   true if either all elements of the stream match the provided predicate or the stream is empty, otherwise false
+     */
+    boolean allMatch(Predicate<? super T> predicate);
+
+    /**
+     * Returns whether all elements of this frame match the specified value of object
+     * @param valueFunction      field value
+     * @param value              specified value
+     */
+    <U> boolean allMatchValue(Function<T,U> valueFunction, U value);
+
+    /**
+     * Equivalent to {@link java.util.stream.Stream#noneMatch}
+     * @param predicate          a non-interfering, stateless predicate to apply to elements of this stream
+     * @return                   true if either no elements of the stream match the provided predicate or the stream is empty, otherwise false
+     */
+    boolean noneMatch(Predicate<? super T> predicate);
+
+    /**
+     * Returns whether no elements of this frame match the specified value of object
+     * @param valueFunction      field value
+     * @param value              specified value
+     */
+    <U> boolean noneMatchValue(Function<T,U> valueFunction, U value);
 
     /**
      * Concatenate the values of the fields according to the specified delimiter and  prefix ,suffix

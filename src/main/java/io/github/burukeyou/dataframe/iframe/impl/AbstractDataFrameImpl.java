@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -96,12 +97,12 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     @Override
-    public boolean contains(T other) {
+    public boolean isContains(T other) {
         return viewList().contains(other);
     }
 
     @Override
-    public  <U> boolean containsValue(Function<T,U> valueFunction, U value) {
+    public  <U> boolean isContainValue(Function<T,U> valueFunction, U value) {
         return stream().anyMatch(e -> {
             if (e == null) {
                 return false;
@@ -120,6 +121,54 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
             }
         });
     }
+
+    @Override
+    public <U> boolean isNotContainValue(Function<T, U> valueFunction, U value) {
+        return !isContainValue(valueFunction,value);
+    }
+
+    @Override
+    public boolean anyMatch(Predicate<? super T> predicate) {
+        return stream().anyMatch(predicate);
+    }
+
+    @Override
+    public <U> boolean anyMatchValue(Function<T, U> valueFunction, U value) {
+        return stream().map(valueFunction).anyMatch(e -> safeCompareValue(e,value));
+    }
+
+    @Override
+    public boolean allMatch(Predicate<? super T> predicate) {
+        return stream().allMatch(predicate);
+    }
+
+    @Override
+    public <U> boolean allMatchValue(Function<T, U> valueFunction, U value) {
+        return stream().map(valueFunction).allMatch(e -> safeCompareValue(value, e));
+    }
+
+    @Override
+    public boolean noneMatch(Predicate<? super T> predicate) {
+        return stream().noneMatch(predicate);
+    }
+
+    @Override
+    public <U> boolean noneMatchValue(Function<T, U> valueFunction, U value) {
+        return stream().map(valueFunction).noneMatch(e -> safeCompareValue(e,value));
+    }
+
+    protected static <U> boolean safeCompareValue(U value, U otherValue) {
+        if (otherValue == null && value == null) {
+            return true;
+        }
+        if (value != null) {
+            return value.equals(otherValue);
+        } else {
+            // value is null ,otherValue is not null
+            return false;
+        }
+    }
+
 
     protected void forEachPreStreamDo(ConsumerPrevious<? super T> action){
         T pre = null;
