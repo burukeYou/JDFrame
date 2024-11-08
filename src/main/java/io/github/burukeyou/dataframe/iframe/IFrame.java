@@ -144,6 +144,14 @@ public interface IFrame<T> extends ISummaryFrame<T>, IWhereFrame<T>, IJoinFrame<
      */
     <U> boolean isNotContainValue(Function<T,U> valueFunction, U value);
 
+
+    /**
+     * To determine whether there is a null value, it is compatible with String type processing,
+     * and if it is an empty string, it will return true
+     * @param valueFunction          field value
+     */
+    <U> boolean hasNullValue(Function<T,U> valueFunction);
+
     /**
      * Equivalent to {@link java.util.stream.Stream#anyMatch}
      * @param predicate          a non-interfering, stateless predicate to apply to elements of this stream

@@ -128,6 +128,16 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     @Override
+    public <U> boolean hasNullValue(Function<T, U> valueFunction) {
+        return stream().map(valueFunction).anyMatch(e -> {
+            if (e == null){
+                return true;
+            }
+            return e instanceof String && StringUtils.isBlank((String) e);
+        });
+    }
+
+    @Override
     public boolean anyMatch(Predicate<? super T> predicate) {
         return stream().anyMatch(predicate);
     }
