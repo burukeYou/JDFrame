@@ -28,7 +28,7 @@ public class JDFrameTest {
     public static List<Student> studentList = new ArrayList<>();
 
     static {
-        studentList.add(new Student(1,"a","一中","\"生活\",日子",11, new BigDecimal(1)));
+        studentList.add(new Student(1,null,"一中","\"生活\",日子",11, new BigDecimal(1)));
         studentList.add(new Student(2,"a","一中","一年级",13, new BigDecimal(1)));
         studentList.add(new Student(3,"d","二中","一年级",14, new BigDecimal(4)));
         studentList.add(new Student(4,"b","一中","三年级",12, new BigDecimal(2)));
@@ -437,10 +437,21 @@ public class JDFrameTest {
 
     @Test
     public void eqContain(){
-        SDFrame.read(studentList).whereEq(Student::getName,"e").show(30);
+        boolean b = SDFrame.read(Arrays.asList(null, null, 3)).anyMatchValue(e -> e, null);
+        boolean b1 = SDFrame.read(Arrays.asList(3, 3, 3)).allMatchValue(e -> e, 3);
+        boolean b3 = SDFrame.read(Arrays.asList(null, null, 3)).noneMatchValue(e -> e, null);
 
-        boolean e = SDFrame.read(studentList).containsValue(Student::getName, "e");
-        System.out.println(e);
+        boolean b2 = SDFrame.read(studentList).hasNullValue(Student::getName);
+        System.out.println();
+
+    }
+
+    @Test
+    public void test() {
+        List<Object> collect = Arrays.asList(null, null).stream().map(e -> e).collect(Collectors.toList());
+        System.out.println();
+        List<Object> lists = SDFrame.read(Arrays.asList(null, null)).map(e -> e).toLists();
+        System.out.println();
     }
 
     @Test
@@ -676,7 +687,6 @@ public class JDFrameTest {
         SDFrame.read(studentList)
                 .group3ByConcat(Student::getName,Student::getSchool,Student::getScore,concat)
                 .show();
-
 
         SDFrame.read(studentList)
                 .group2(Student::getSchool,Student::getAge).toLists();
