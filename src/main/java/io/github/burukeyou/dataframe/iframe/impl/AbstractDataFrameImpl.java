@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -96,12 +97,12 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     @Override
-    public boolean contains(T other) {
+    public boolean isContains(T other) {
         return viewList().contains(other);
     }
 
     @Override
-    public  <U> boolean containsValue(Function<T,U> valueFunction, U value) {
+    public  <U> boolean isContainValue(Function<T,U> valueFunction, U value) {
         return stream().anyMatch(e -> {
             if (e == null) {
                 return false;
@@ -120,6 +121,64 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
             }
         });
     }
+
+    @Override
+    public <U> boolean isNotContainValue(Function<T, U> valueFunction, U value) {
+        return !isContainValue(valueFunction,value);
+    }
+
+    @Override
+    public <U> boolean hasNullValue(Function<T, U> valueFunction) {
+        return stream().map(valueFunction).anyMatch(e -> {
+            if (e == null){
+                return true;
+            }
+            return e instanceof String && StringUtils.isBlank((String) e);
+        });
+    }
+
+    @Override
+    public boolean anyMatch(Predicate<? super T> predicate) {
+        return stream().anyMatch(predicate);
+    }
+
+    @Override
+    public <U> boolean anyMatchValue(Function<T, U> valueFunction, U value) {
+        return stream().map(valueFunction).anyMatch(e -> safeCompareValue(e,value));
+    }
+
+    @Override
+    public boolean allMatch(Predicate<? super T> predicate) {
+        return stream().allMatch(predicate);
+    }
+
+    @Override
+    public <U> boolean allMatchValue(Function<T, U> valueFunction, U value) {
+        return stream().map(valueFunction).allMatch(e -> safeCompareValue(value, e));
+    }
+
+    @Override
+    public boolean noneMatch(Predicate<? super T> predicate) {
+        return stream().noneMatch(predicate);
+    }
+
+    @Override
+    public <U> boolean noneMatchValue(Function<T, U> valueFunction, U value) {
+        return stream().map(valueFunction).noneMatch(e -> safeCompareValue(e,value));
+    }
+
+    protected static <U> boolean safeCompareValue(U value, U otherValue) {
+        if (otherValue == null && value == null) {
+            return true;
+        }
+        if (value != null) {
+            return value.equals(otherValue);
+        } else {
+            // value is null ,otherValue is not null
+            return false;
+        }
+    }
+
 
     protected void forEachPreStreamDo(ConsumerPrevious<? super T> action){
         T pre = null;
@@ -161,7 +220,7 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
         if (ListUtils.isEmpty(list)){
             return Collections.emptyMap();
         }
-        Map<K, V> map = new HashMap<>(list.size());
+        Map<K, V> map = new LinkedHashMap<>(list.size());
         for (T t : list) {
             map.put(keyMapper.apply(t),valueMapper.apply(t));
         }
@@ -170,12 +229,12 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public <K, K2, V> Map<K, Map<K2, V>> toMulti2Map(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends K2> key2Mapper, Function<? super T, ? extends V> valueMapper) {
-        return stream().collect(groupingBy(keyMapper, collectingAndThen(toList(), list -> JDFrame.read(list).toMap(key2Mapper, valueMapper))));
+        return stream().collect(groupingBy(keyMapper,  LinkedHashMap::new,collectingAndThen(toList(), list -> JDFrame.read(list).toMap(key2Mapper, valueMapper))));
     }
 
     @Override
     public <K, K2, K3, V> Map<K, Map<K2, Map<K3, V>>> toMulti3Map(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends K2> key2Mapper, Function<? super T, ? extends K3> key3Mapper, Function<? super T, ? extends V> valueMapper) {
-         return stream().collect(groupingBy(keyMapper, groupingBy(key2Mapper, collectingAndThen(toList(), list -> JDFrame.read(list).toMap(key3Mapper, valueMapper)))));
+         return stream().collect(groupingBy(keyMapper,  LinkedHashMap::new,groupingBy(key2Mapper,  LinkedHashMap::new,collectingAndThen(toList(), list -> JDFrame.read(list).toMap(key3Mapper, valueMapper)))));
     }
 
     protected  <R> Stream<T> whereNullStream(Function<T, R> function) {
@@ -587,7 +646,12 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     @Override
     public <R> List<R> col(Function<T, R> function) {
-        return viewList().stream().map(function).collect(toList());
+        return stream().map(function).collect(toList());
+    }
+
+    @Override
+    public <R> Set<R> colSet(Function<T, R> function) {
+        return stream().map(function).collect(Collectors.toSet());
     }
 
     @Override

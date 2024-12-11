@@ -38,7 +38,10 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
     public SDFrameImpl(Stream<T> data) {
         List<T> tmp = data.collect(toList());
         if (ListUtils.isNotEmpty(tmp)){
-            fieldClass = tmp.get(0).getClass();
+            Optional<T> first = tmp.stream().filter(Objects::nonNull).findFirst();
+            if (first.isPresent()){
+                fieldClass = first.getClass();
+            }
         }
         this.data = tmp.stream();
     }
@@ -53,7 +56,11 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         }*/
         this.data = list.stream();
         if (!list.isEmpty()){
-            fieldClass = list.get(0).getClass();
+            if (list.get(0) != null){
+                fieldClass = list.get(0).getClass();
+            }else {
+                list.stream().filter(Objects::nonNull).findFirst().ifPresent(e -> fieldClass = e.getClass());
+            }
         }
     }
 

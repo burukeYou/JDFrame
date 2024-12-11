@@ -46,7 +46,11 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
 
         dataList = list;
         if (!dataList.isEmpty()){
-            fieldClass = dataList.get(0).getClass();
+            if (dataList.get(0) != null){
+                fieldClass = dataList.get(0).getClass();
+            }else {
+                dataList.stream().filter(Objects::nonNull).findFirst().ifPresent(e -> fieldClass = e.getClass());
+            }
         }
     }
 

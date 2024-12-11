@@ -6,7 +6,7 @@
 
   <groupId>io.github.burukeyou</groupId>
   <artifactId>jdframe</artifactId>
-  <version>0.1.7</version>
+  <version>0.1.8</version>
 
   <!-- info  -->
   <name>jdframe</name>
@@ -38,6 +38,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <sno.serviceId>central</sno.serviceId>
+    <dp.name>JDFrame-${version}</dp.name>
   </properties>
 
   <dependencies>
@@ -114,7 +115,7 @@
         <configuration>
           <publishingServerId>${sno.serviceId}</publishingServerId>
           <tokenAuth>true</tokenAuth>
-          <deploymentName>${name}</deploymentName>
+          <deploymentName>${dp.name}</deploymentName>
         </configuration>
       </plugin>
 
