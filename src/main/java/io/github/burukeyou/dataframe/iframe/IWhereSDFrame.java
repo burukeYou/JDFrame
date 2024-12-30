@@ -174,4 +174,18 @@ public interface IWhereSDFrame<T> extends IWhereFrame<T> {
      * @param value                 query value
      */
     <R> SDFrame<T> whereLikeRight(Function<T, R> function, R value);
+
+    /**
+     * Tests if the  field value starts with the specified prefix.
+     * @param function              the field
+     * @param value                 specified prefix
+     */
+    <R> SDFrame<T> whereStartsWith(Function<T, R> function, R value);
+
+    /**
+     * Tests if the  field value starts with the specified suffix.
+     * @param function              the field
+     * @param value                 specified suffix
+     */
+    <R> SDFrame<T> whereEndsWith(Function<T, R> function, R value);
 }

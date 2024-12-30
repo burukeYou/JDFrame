@@ -3,6 +3,7 @@ package io.github.burukeyou.dataframe.iframe.impl;
 
 import io.github.burukeyou.dataframe.iframe.IFrame;
 import io.github.burukeyou.dataframe.iframe.JDFrame;
+import io.github.burukeyou.dataframe.iframe.SDFrame;
 import io.github.burukeyou.dataframe.iframe.WindowJDFrame;
 import io.github.burukeyou.dataframe.iframe.function.*;
 import io.github.burukeyou.dataframe.iframe.group.GroupConcat;
@@ -597,7 +598,15 @@ public class JDFrameImpl<T> extends AbstractDataFrameImpl<T> implements JDFrame<
         return returnDF(whereLikeRightStream(function,value));
     }
 
+    @Override
+    public <R> JDFrame<T> whereStartsWith(Function<T, R> function, R value) {
+        return whereLikeLeft(function,value);
+    }
 
+    @Override
+    public <R> JDFrame<T> whereEndsWith(Function<T, R> function, R value) {
+        return whereLikeRight(function,value);
+    }
 
     /** ===========================   分组相关  ===================================== **/
     @Override

@@ -169,4 +169,19 @@ public interface IWhereFrame<T> {
      * @param value                 query value
      */
     <R> IFrame<T> whereLikeRight(Function<T, R> function, R value);
+
+    /**
+     * Tests if the  field value starts with the specified prefix.
+     * @param function              the field
+     * @param value                 specified prefix
+     */
+    <R> IFrame<T> whereStartsWith(Function<T, R> function, R value);
+
+    /**
+     * Tests if the  field value starts with the specified suffix.
+     * @param function              the field
+     * @param value                 specified suffix
+     */
+    <R> IFrame<T> whereEndsWith(Function<T, R> function, R value);
+
 }

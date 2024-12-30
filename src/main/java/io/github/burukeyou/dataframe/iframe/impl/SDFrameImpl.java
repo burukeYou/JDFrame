@@ -615,7 +615,15 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         return returnThis(whereLikeRightStream(function,value));
     }
 
+    @Override
+    public <R> SDFrame<T> whereStartsWith(Function<T, R> function, R value) {
+        return whereLikeLeft(function,value);
+    }
 
+    @Override
+    public <R> SDFrame<T> whereEndsWith(Function<T, R> function, R value) {
+        return whereLikeRight(function,value);
+    }
 
     /** ===========================   分组相关  ===================================== **/
 

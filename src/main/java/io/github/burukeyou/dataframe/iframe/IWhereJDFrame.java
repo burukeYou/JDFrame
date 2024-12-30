@@ -169,4 +169,18 @@ public interface IWhereJDFrame<T> extends IWhereFrame<T> {
      * @param value                 query value
      */
     <R> JDFrame<T> whereLikeRight(Function<T, R> function, R value);
+
+    /**
+     * Tests if the  field value starts with the specified prefix.
+     * @param function              the field
+     * @param value                 specified prefix
+     */
+    <R> JDFrame<T> whereStartsWith(Function<T, R> function, R value);
+
+    /**
+     * Tests if the  field value starts with the specified suffix.
+     * @param function              the field
+     * @param value                 specified suffix
+     */
+    <R> JDFrame<T> whereEndsWith(Function<T, R> function, R value);
 }

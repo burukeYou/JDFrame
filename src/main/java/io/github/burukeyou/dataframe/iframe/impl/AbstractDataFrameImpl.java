@@ -239,10 +239,14 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     protected  <R> Stream<T> whereNullStream(Function<T, R> function) {
         return stream().filter(item -> {
+            if (item == null){
+                return true;
+            }
             R r = function.apply(item);
             if (r == null) {
                 return true;
             }
+            // 兼容空字符串判断
             if (r instanceof String) {
                 return "".equals(r);
             } else {
@@ -253,6 +257,9 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
 
     protected  <R> Stream<T> whereNotNullStream(Function<T, R> function) {
         return stream().filter(item -> {
+            if (item == null){
+                return false;
+            }
             R r = function.apply(item);
             if (r == null) {
                 return false;
@@ -316,46 +323,74 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     public <R extends Comparable<R>> Stream<T> whereNotBetweenStream(Function<T, R> function, R start, R end) {
-        return streamFilterNull(function).filter(e -> function.apply(e).compareTo(start) <= 0 || function.apply(e).compareTo(end) >= 0);
+        return stream().filter(e -> {
+            if (e == null || function.apply(e) == null) {
+                return true;
+            }
+            return function.apply(e).compareTo(start) <= 0 || function.apply(e).compareTo(end) >= 0;
+        });
     }
 
     public <R extends Comparable<R>> Stream<T> whereNotBetweenNStream(Function<T, R> function, R start, R end) {
-        return streamFilterNull(function).filter(e -> function.apply(e).compareTo(start) < 0 || function.apply(e).compareTo(end) > 0);
+        return stream().filter(e -> {
+            if (e == null || function.apply(e) == null) {
+                return true;
+            }
+            return function.apply(e).compareTo(start) < 0 || function.apply(e).compareTo(end) > 0;
+        });
     }
 
     public <R> Stream<T> whereInStream(Function<T, R> function, List<R> list) {
         Set<R> set = new HashSet<>(list);
-        return stream().filter(e -> set.contains(function.apply(e)));
+        return stream().filter(e -> set.contains(e == null ? null : function.apply(e)));
     }
 
     public <R> Stream<T> whereNotInStream(Function<T, R> function, List<R> list) {
         Set<R> set = new HashSet<>(list);
-        return stream().filter(e -> !set.contains(function.apply(e)));
+        return stream().filter(e -> {
+            if (e == null){
+                return true;
+            }
+            return !set.contains(function.apply(e));
+        });
     }
 
 
     public <R> Stream<T> whereEqStream(Function<T, R> function, R value) {
         return stream().filter(e -> {
             if (e == null) {
-                return false;
-            }
-
-            R fieldValue = function.apply(e);
-            if (fieldValue == null && value == null) {
-                return true;
-            }
-
-            if (value != null) {
-                return value.equals(fieldValue);
-            } else {
-                // value is null ,fieldValue is not null
-                return false;
+                // e == null && value == null ==> true
+                return value == null;
+            }else {
+                R fieldValue = function.apply(e);
+                if (fieldValue == null && value == null) {
+                    return true;
+                }
+                if (value != null) {
+                    return value.equals(fieldValue);
+                } else {
+                    // value is null ,fieldValue is not null
+                    return false;
+                }
             }
         });
     }
 
     public <R> Stream<T> whereNotEqStream(Function<T, R> function, R value) {
-        return stream().filter(e -> !value.equals(function.apply(e)));
+        return stream().filter(e -> {
+            if (value == null){
+                if (e == null) {
+                    return false;
+                }
+                return function.apply(e) != null;
+            }else {
+                // value != null and e == null
+                if (e == null) {
+                    return true;
+                }
+                return !value.equals(function.apply(e));
+            }
+        });
     }
 
     public <R extends Comparable<R>> Stream<T> whereGtStream(Function<T, R> function, R value) {
@@ -380,7 +415,12 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     }
 
     public <R> Stream<T> whereNotLikeStream(Function<T, R> function, R value) {
-       return streamFilterNull(function).filter(e -> !String.valueOf(function.apply(e)).contains(String.valueOf(value)));
+       return stream().filter(e -> {
+           if (e == null || function.apply(e) == null){
+               return true;
+           }
+           return !String.valueOf(function.apply(e)).contains(String.valueOf(value));
+       });
     }
 
     public <R> Stream<T> whereLikeLeftStream(Function<T, R> function, R value) {
