@@ -1,53 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Document</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="description" content="Description">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="Description">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+
+    <!-- 右侧生成目录css   -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/docsify-toc@1.0.0/dist/toc.css"> -->
+    <link rel="stylesheet" href="https://unpkg.com/docsify-plugin-toc@1.3.1/dist/light.css">
 
 </head>
 <body>
-  <div id="app">
-      加载中....
-  </div>
-
-  <script>
+<div id="app">加载中....</div>
+<script>
     window.$docsify = {
-        // 项目名称
-        // name: 'JDFrame',
-        // 仓库地址，点击右上角的Github章鱼猫头像会跳转到此地址
-        repo: 'https://github.com/burukeYou/JDFrame',           
-        // 侧边栏支持，默认加载的是项目根目录下的_sidebar.md文件
+        name: '',
+        repo: 'https://github.com/burukeYou/JDFrame',
+
+        // 加载侧边栏， 默认从当前目录下加载 _sidebar.md作为侧边栏
         loadSidebar: true,
-        // alias: {
-        //   '/.*/_sidebar.md': '/_sidebar.md'
+
+        // 自定义侧边栏后默认不会再生成目录，设置生成目录的最大层级（建议配置为2-4）
+        // subMaxLevel: 1,
+
+        // 添加目录配置
+         // docsify-toc
+        // toc: {
+        //     scope: '.markdown-section',
+        //     headings: 'h1, h2, h3, h4, h5, h6',
+        //     title: '文章目录',
+        //     maxWidth: "80%",
+        //     collapse: true
         // },
-        // 导航栏支持，默认加载的是项目根目录下的_navbar.md文件
+
+        // docsify-plugin-toc
+        // https://github.com/justintien/docsify-plugin-toc
+        toc: {
+          tocMaxLevel: 5,
+          target: 'h1,h2, h3, h4',
+          ignoreHeaders:  ['<!-- {docsify-ignore} -->', '<!-- {docsify-ignore-all} -->']
+        },
+
+        // 加载导航栏， 默认从当前目录下加载 _navbar.md作为导航栏
         loadNavbar: true,
-        // 封面支持，默认加载的是项目根目录下的_coverpage.md文件
+
+        // 是否显示封面页
         coverpage: true,
         onlyCover: true,
-        // 最大支持渲染的标题层级
-        maxLevel: 3,
-        // 自定义侧边栏后默认不会再生成目录，设置生成目录的最大层级（建议配置为2-4）
-        //subMaxLevel: 3,
-        // 小屏设备下合并导航栏到侧边栏
-        mergeNavbar: true,
-        /*搜索相关设置*/
-        search: 'auto', // 默认值
+
+        // 是否开启搜索
+        search: 'auto',
         search: {
-            maxAge: 86400000,// 过期时间，单位毫秒，默认一天
-            paths: 'auto',// 注意：仅适用于 paths: 'auto' 模式
-            placeholder: '搜索',         
-            noData: '找不到结果',
-            depth: 4,
-            hideOtherSidebarContent: false,
-            namespace: 'JDFrame'
+            paths: 'auto',
+            placeholder: '搜索',
+            noData: '没有找到相关内容',
         },
-        //字数统计
+
+        // 分页
+        pagination: {
+            previousText: '上一页',
+            nextText: '下一页',
+            crossChapter: true,
+            crossChapterText: true,
+        },
+
+        // 复制到剪贴板
+        copyCode: {
+            buttonText: '复制',
+            errorText: '复制失败',
+            successText: '复制成功',
+        },
+
+        // 字数统计
         count:{
           countable:true,
           fontsize:'0.9em',
@@ -55,30 +82,45 @@
           language:'chinese'
         }
     }
-  </script>
-  <!-- Docsify v4 -->
-  <!-- <script src="//cdn.jsdelivr.net/npm/docsify@4"></script> -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+</script>
 
 
+<!--官方文档：https://docsify.js.org/#/zh-cn -->
+<!-- 插件市场： https://github.com/docsifyjs/awesome-docsify -->
 
-  <!-- 复制到剪贴板 -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+<!-- Docsify v4 -->
+<script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
 
-  <!-- 搜索栏 -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+<!-- 搜索插件 -->
+<script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
 
-  <!-- 分页 -->
-  <!-- <script src="//cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script> -->
+<!-- 右侧生成目录-->
+<!-- <script src="https://unpkg.com/docsify-toc@1.0.0/dist/toc.js"></script> -->
+<script src="https://unpkg.com/docsify-plugin-toc@1.3.1/dist/docsify-plugin-toc.min.js"></script>
 
-  <!-- 代码高亮 -->
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-sql.min.js"></script>
+<!-- 分页 -->
+<script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
 
-  <!-- 字数统计 -->
-  <script src="//unpkg.com/docsify-count/dist/countable.js"></script>
+<!-- 复制到黏贴版 -->
+<script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+
+
+<!-- 代码高亮  -->
+<!--https://cdn.jsdelivr.net/npm/prismjs@1/components/-->
+<script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-sql.min.js"></script>
+
+<!-- 回到顶部 -->
+<!-- 文档地址： https://github.com/Sumsung524/docsify-backTop -->
+<script src="https://cdn.jsdelivr.net/gh/Sumsung524/docsify-backTop/dist/docsify-backTop.min.js"></script>
+
+<!-- 字数统计 -->
+<script src="//unpkg.com/docsify-count/dist/countable.js"></script>
+
+
+<!--主题 -->
+
 
 </body>
 </html>
-
-

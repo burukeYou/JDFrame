@@ -14,7 +14,7 @@
 
 
 [GitHub](https://github.com/burukeYou/JDFrame)
-[Get Started](/version/0.x.x/)
+[Get Started](introduce.md)
 
 
 <!-- 背景图片 -->
