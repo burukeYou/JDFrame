@@ -39,9 +39,7 @@ public class SDFrameImpl<T>  extends AbstractDataFrameImpl<T> implements SDFrame
         List<T> tmp = data.collect(toList());
         if (ListUtils.isNotEmpty(tmp)){
             Optional<T> first = tmp.stream().filter(Objects::nonNull).findFirst();
-            if (first.isPresent()){
-                fieldClass = first.getClass();
-            }
+            first.ifPresent(t -> fieldClass = t.getClass());
         }
         this.data = tmp.stream();
     }

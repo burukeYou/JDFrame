@@ -7,9 +7,7 @@ import io.github.burukeyou.dataframe.iframe.window.Sorter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -213,6 +211,25 @@ public interface IFrame<T> extends ISummaryFrame<T>, IWhereFrame<T>, IJoinFrame<
      */
     <U> String joining(Function<T,U> joinField,CharSequence delimiter);
 
+    /**
+     * Performs a reduction on the elements of this stream, using the provided identity value and an associative accumulation function, and returns the reduced value
+     * @see Stream#reduce(Object, BinaryOperator)
+     */
+    T reduce(T identity, BinaryOperator<T> accumulator);
+
+    /**
+     * Performs a reduction on the elements of this stream, using an associative accumulation function, and returns an Optional describing the reduced value
+     * @see  Stream#reduce(BinaryOperator)
+     */
+    T reduce(BinaryOperator<T> accumulator);
+
+    /**
+     * Performs a reduction on the elements of this stream, using the provided identity, accumulation and combining functions
+     * @see Stream#reduce(Object, BiFunction, BinaryOperator)
+     */
+    <U> U reduce(U identity,
+                 BiFunction<U, ? super T, U> accumulator,
+                 BinaryOperator<U> combiner);
 
     /**
      * ===========================   Frame Setting =====================================

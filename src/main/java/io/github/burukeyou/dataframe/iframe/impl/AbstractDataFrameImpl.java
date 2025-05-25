@@ -27,9 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -211,6 +209,22 @@ public abstract class AbstractDataFrameImpl<T> extends AbstractWindowDataFrame<T
     @Override
     public <U> String joining(Function<T, U> joinField, CharSequence delimiter) {
         return joining(joinField,delimiter,"","");
+    }
+
+    @Override
+    public T reduce(T identity, BinaryOperator<T> accumulator) {
+        return stream().reduce(identity,accumulator);
+    }
+
+    @Override
+    public T reduce(BinaryOperator<T> accumulator) {
+        Optional<T> reduce = stream().reduce(accumulator);
+        return reduce.orElse(null);
+    }
+
+    @Override
+    public <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
+        return stream().reduce(identity,accumulator,combiner);
     }
 
     @Override
