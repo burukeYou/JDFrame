@@ -2,13 +2,13 @@
 
 ## 1、 引入依赖
 
-建议使用最新版本
+建议使用最新版本， [版本列表见](https://central.sonatype.com/artifact/io.github.burukeyou/jdframe/versions)
 
 ```xml
 <dependency>
     <groupId>io.github.burukeyou</groupId>
     <artifactId>jdframe</artifactId>
-    <version>0.1.9</version>
+    <version>LATEST</version>
 </dependency>
 ```
 
